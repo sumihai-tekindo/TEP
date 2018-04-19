@@ -1,0 +1,151 @@
+<odoo>
+	<data>
+
+		<record id="spbwizard_wizard_view" model="ir.ui.view">
+			<field name="name">Purchase Order/Inventory Transfer</field>
+			<field name="model">purchasetotalindo.spbwizard</field>
+			<field name="arch" type="xml">
+				<form string="Purchase Order/Inventory Transfer">
+					<group>
+						<group>
+							<field name="pilihan_wizard" widget="radio"/>
+							<field name="buat_baru"/>
+						</group>
+					</group>
+					<footer>
+						<button name="create_request" string="Finished" type="object" class="btn-primary"/>
+						<button string="Cancel" class="btn-default" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="spbwizard_action_view">
+			<field name="name">spbwizard.action.view</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">purchasetotalindo.spbwizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="spbwizard_wizard_view"/>
+			<field name="target">new</field>
+		</record>
+
+		<record model="ir.ui.view" id="spbheader_form_view">
+			<field name="name">spbheader.form</field>
+			<field name="model">purchasetotalindo.spbheader</field>
+			<field name="arch" type="xml">
+				<form string="Surat Permintaan Barang/Jasa">
+					<header>
+						<button name="button_confirm" states="draft" string="Confirm" type="object"/>
+						<button name="button_approve" states="confirm" type="object" string="Approve" class="oe_highlight"/>
+						<button name="button_sendtodraft" states="confirm,cancel" string="Set to draft" type="object"/>
+						<button name="button_cancel" states="draft,confirm,approve" string="Cancel" type="object" />
+						<button name="button_createpo" states="approve" type="object" string="Done" class="oe_highlight"/>
+						<field name="state" widget="statusbar" readonly="1"/>
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<label string="Surat Permintaan Barang/Jasa"/>
+							<h1>
+								<field name="name" readonly="1"/>
+							</h1>
+						</div>
+						<group>
+							<group>
+								<field name="date_spb"/>
+								<field name="project_id"/>
+								<field name="department_id"/>
+							</group>
+							<group>
+								<field name="budget" widget="radio" options="{'horizontal': true}"/>
+								<field name="description"/>
+								<field name="date_required"/>
+							</group>
+						</group>
+						<notebook>
+							<page string="Product">
+								<field name="spbdetail_ids" string="Product Detail">
+									 <tree editable="bottom">
+										<field name="product_id"/>
+										<field name="name"/>
+										<field name="product_uom"/>
+										<field name="quantity_order"/>
+										<field name="coa_budget"/>
+										<field name="quantity_transfer"/>
+										<field name="quantity_po"/>
+										<field name="outstanding_spb"/>
+										<field name="state" invisible="1"/>
+										<button name="%(spbwizard_action_view)d" icon="fa-gear" type="action" attrs="{'invisible':[('state','!=','approve')]}"/>                      
+									</tree>
+									<form>
+										<group>
+											<group>
+												<field name="product_id"/>                      
+												<field name="product_uom"/>
+												<field name="quantity_order"/>
+												<field name="coa_budget"/>
+											</group>
+											<group>                                                
+												<field name="quantity_transfer"/>
+												<field name="quantity_po"/>
+												<field name="outstanding_spb"/>
+											</group>
+										</group>
+										<notebook>
+											<page string="Description">
+												<field name="name"/>
+											</page>
+										</notebook>
+									</form>
+								</field>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="spb_tree_view">
+			<field name="name">spb.tree</field>
+			<field name="model">purchasetotalindo.spbheader</field>
+			<field name="arch" type="xml">
+				<tree string="Surat Permintaan Barang/Jasa">
+					<field name="name"/>
+					<field name="date_spb"/>
+					<field name="project_id"/>
+					<field name="department_id"/>
+					<field name="budget"/>
+					<field name="description"/>
+					<field name="date_required"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="spb_search_view">
+			<field name="name">spb.search</field>
+			<field name="model">purchasetotalindo.spbheader</field>
+			<field name="arch" type="xml">
+				<search>
+					<field name="name"/>
+					<field name="date_spb"/>
+					<field name="project_id"/>
+					<field name="department_id"/>
+					<field name="budget"/>
+					<field name="description"/>
+					<field name="date_required"/>
+					<field name="state"/>
+				</search>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="spb_list_action">
+			<field name="name">Surat Permintaan Barang/Jasa</field>
+			<field name="res_model">purchasetotalindo.spbheader</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="spb_menu" name="Surat Permintaan Barang" parent="purchase.menu_procurement_management" action="spb_list_action" sequence="-1"/>
+	</data>
+</odoo>
