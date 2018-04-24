@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	
+	
+	<template id="laporan_faktur">
+		<t t-call="report.html_container">
+			<t t-foreach="docs" t-as="o">
+				<t t-call="report.external_layout">
+					<div class="page">
+						
+						<!-- JUDUL REPORT-->
+						
+						<h2 class="text-center">Report Faktur</h2>
+						
+						<!-- INFORMASI HEADER -->
+						
+						<!-- <table class="table">
+							<tr>
+								<td><strong>Nama</strong></td>
+								<td><span t-field="o.partner_id"/></td>
+								<td><strong>Alamat</strong></td>
+								<td><span t-field="o.partner_shipping_id"/></td>
+							</tr>
+							<tr>
+								<td><strong>Mata Uang</strong></td>
+								<td><span t-field="o.currency_id"/></td>
+								<td><strong>:a[pram Progress</strong></td>
+								<td><span t-field="o.progress_report"/></td>
+							</tr>
+						</table>
+						
+						
+						
+						<table class="table table-bordered" style="table-layout:auto">
+							<thead>
+								<tr>
+									<th class="text-center">No Contract</th>
+									<th class="text-center">Customer Name</th>
+									<th class="text-center">Customer Address</th>
+									<th class="text-center">Project Name</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><span t-field="l.no_contract"/></td>
+									<td><span t-field="l.customer_name"/></td>
+									<td><span t-field="l.customer_address"/></td>
+									<td><span t-field="l.project_name"/></td>
+								</tr>
+							</tbody>
+						</table> -->
+						
+					</div>
+				</t>
+			</t>
+		</t>
+	</template>
+
+</odoo>

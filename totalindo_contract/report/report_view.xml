@@ -1,0 +1,12 @@
+<odoo>
+	<data>
+		<report 
+        id="cetak_faktur"
+        string="Faktur"
+        model="account.invoice" 
+        report_type="qweb-pdf"
+        file="sti_contract.laporan_faktur" 
+        name="sti_contract.laporan_faktur" 
+    	/>   
+	</data>
+</odoo>
