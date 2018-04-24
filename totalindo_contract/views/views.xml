@@ -1,24 +1,12 @@
 <odoo>
   <data>
 
-    <record model="ir.ui.view" id="informasi_detail_tree_view">
-      <field name="name">informasi.detail.custom</field>
-      <field name="model">informasi.detail</field>
-      <field name="arch" type="xml">
-        <tree string="Informasi Detail">
-          <field name="contract_no"/>
-          <field name="project_name"/>
-          <field name="project_code"/>
-        </tree>
-      </field>
-    </record>
-
     <record model="ir.ui.view" id="monitoring_progressc_tree_view">
       <field name="name">monitoring.progress.custom</field>
       <field name="model">monitoring.progress</field>
       <field name="arch" type="xml">
         <tree string="Monitoring Progress">
-          <field name="contract_no"/>
+          <field name="contract_id"/>
           <field name="customer_name"/>
           <field name="customer_address"/>
           <field name="project_name"/>
@@ -35,13 +23,13 @@
         <field name="partner_shipping_id" position="after">
           <field name="contract_id"/>
           <field name="project_code"/>
-          <!-- <field name="customer_name"/> -->
           <field name="start_date"/>
           <field name="end_date"/>
         </field>
         <field name="payment_term_id" position="after">
           <field name="percent_dp"/>
           <field name="nilai_dp"/>
+          <field name="percent_retensi"/>
           <field name="other"/>
           <field name="currency_id"/>
           <field name="amandement"/>
@@ -83,7 +71,7 @@
           <sheet>
             <group>
               <group>
-                <field name="contract_no"/>
+                <field name="contract_id"/>
                 <field name="customer_name"/>
                 <field name="customer_address"/>
                 <field name="project_name"/>
@@ -173,16 +161,6 @@
       <field name="view_mode">tree,form</field>
       <field name="help" type="html">
         <p class="oe_view_nocontent_create">Buatlah Monitoring Progressnya ...</p>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="form_invoice_list_action">
-      <field name="name">Account Invoice</field>
-      <field name="res_model">account.invoice</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
-      <field name="help" type="html">
-        <p class="oe_view_nocontent_create">Buatlah Form Invoicenya ...</p>
       </field>
     </record>
 

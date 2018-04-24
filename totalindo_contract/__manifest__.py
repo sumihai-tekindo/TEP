@@ -3,8 +3,8 @@
     'name': "Totalindo Contract",
 
     'summary': """
-        Short (1 phrase/line) summary of the module's purpose, used as
-        subtitle on modules listing or apps.openerp.com""",
+        Modul ini merupakan hasil pembuatan dari tim IT Developer
+        PT. Sumihai Teknologi Indonesia""",
 
     'description': """
         Long description of module's purpose

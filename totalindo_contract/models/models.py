@@ -7,72 +7,19 @@ class rekapitulasi_kontrak(models.Model):
 
 	contract_id = fields.Many2one('project.project','Project Name')
 	project_code = fields.Char(string='Project Code', readonly=True)
-	# customer_name = fields.Char(string='Customer Name', readonly=True)
 	start_date = fields.Date(string='Start Date', required=True)
 	end_date = fields.Date(string='End Date', required=True)
 	payment_term = fields.Selection([('15 hari', '15 Hari'), ('akhir bulan', 'Akhir Bulan')], string='Payment Term')
 	percent_dp = fields.Float(string='% Down Payment')
 	nilai_dp = fields.Integer(string='Nilai Down Payment')
+	percent_retensi = fields.Float(string='% Retensi')
 	other = fields.Char(string='Other')
 	currency_id = fields.Many2one('res.currency',string='Currency')
 	amandement = fields.Boolean(string='Amandement')
 	partner_id = fields.Many2one('res.partner')
-	contract_no = fields.Char(string='Contract No', readonly=True)
+	contract_no = fields.Many2one('sale.order',string='Contract No')
 	task_line = fields.One2many('task.detail','task_id')
-	# rekapitulasi_line = fields.One2many('rekapitulasi.detail','rekapitulasi_id')
-
-# class rekapitulasi_detail(models.Model):
-# 	_name = 'rekapitulasi.detail'
-
-# 	rekapitulasi_id = fields.Many2one('rekapitulasi.kontrak','Rekapitulasi Detail')
-# 	rekapitulasi = fields.Char(string='Rekapitulasi')
-# 	daftar_no = fields.Char(string='Daftar No')
-# 	work_description = fields.Char(string='Work Description')
-# 	unit_price = fields.Integer(string='Unit Price')
-# 	tax = fields.Char(string='Tax')
-
-class work_description(models.Model):
-	_name = 'work.description'
-
-	sale_id = fields.Many2one('sale.order',string='Contract No')
-	project_code = fields.Char(string='Project Code', readonly=True)
-	project_id = fields.Many2one('project.code',string='Project Name')
-	package_line = fields.One2many('work.package','package_id')
-	state = fields.Selection([
-        ('draft', 'Draft'),
-        ('confirm', 'Confirm'),
-        ('approve', 'Approve'),
-        ], string='Status', readonly=True, copy=False, default='draft', track_visibility='onchange')
-
-class project_code(models.Model):
-	_name = 'project.code'
-
-	name = fields.Char(string="Nama Projek")
-	kode_project = fields.Char(string="Kode Projek")
-
-class work_package(models.Model):
-	_name = 'work.package'
-
-	package_id = fields.Many2one('work.description','Work Package')
-	no_package = fields.Char(string='No')
-	uraian = fields.Char(string='Uraian')
-	keterangan = fields.Char(string='Keterangan')
-	total = fields.Integer(string='Total')
-
-class informasi_detail(models.Model):
-	_name = 'informasi.detail'
-
-	contract_no = fields.Char(string='Contract No')
-	project_code = fields.Char(string='Project Code')
-	project_name = fields.Char(string='Project Name')
-	task_line = fields.One2many('task.detail','task_id')
-	# name = fields.Char(string="Reference", default='/', readonly=True)
-
-	# @api.model
- #    def create(self, vals):
- #        seq = self.env['ir.sequence'].next_by_code('reference.task') or '/'
- #        vals['name'] = seq
- #        return super(informasi_detail, self).create(vals)
+	# sale_ids = fields.Many2many('res.partner', column1='contract_id', column2='partner_id', string='Sales')
 
 class task_detail(models.Model):
 	_name = 'task.detail'
@@ -92,12 +39,11 @@ class task_detail(models.Model):
 class monitoring_progress(models.Model):
 	_name = 'monitoring.progress'
 
-	contract_no = fields.Many2one('sale.order', string='Contract No', required=True)
-	customer_name = fields.Char(string='Customer Name')
-	customer_address = fields.Char(string='Customer Address')
-	project_name = fields.Char(string='Project Name')
-	# name = fields.Char(string="Reference", default='/', readonly=True)
-	revenue_date = fields.Date(string='Revenue Date')
+	contract_id = fields.Many2one('sale.order', string='Contract No', required=True)
+	customer_name = fields.Many2one('sale.order', string='Customer Name')
+	customer_address = fields.Many2one('sale.order', string='Customer Address')
+	project_name = fields.Many2one('sale.order', string='Project Name')
+	revenue_date = fields.Date(string='Revenue Date', required=True)
 	currency_id = fields.Char(string='Currency')
 	tp_aktual = fields.Char(string='Total Progress Aktual (%)')
 	ap_aktual = fields.Char(string='Akumulasi Progress Aktual (%)')
@@ -113,26 +59,16 @@ class monitoring_progress(models.Model):
         ('billing', 'Billing'),
         ], string='Status', readonly=True, copy=False, default='new', track_visibility='onchange')
 
-
 	# @api.multi
- #    def name_get(self):
- #        result = []
- #        for record in self:
- #            name = name = "[%s] %s" % (record.name, record.currency_id.name)
- #            result.append((record.id, name))
- #        return result
-
-	# @api.multi
- #    def action_confirm(self):
- #        self.write({'state': 'recognize revenue'})
-
- #    @api.multi
- #    def action_cancel(self):
- #        self.write({'state': 'new'})
-
- #    @api.multi
- #    def action_close(self):
- #        self.write({'state': 'billing'})
+ #    @api.onchange('contract_id')
+ #    def onchange_contract_id(self):
+ #        if not self.contract_id:
+ #            self.update({
+ #                'customer_name': False,
+ #                'customer_address': False,
+ #                'project_name': False,
+ #            })
+ #            return
 
 class monitoring_detail(models.Model):
 	_name = 'monitoring.detail'
