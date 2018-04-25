@@ -20,14 +20,21 @@ class rekapitulasi_kontrak(models.Model):
 	contract_no = fields.Many2one('sale.order',string='Contract No')
 	task_line = fields.One2many('task.detail','task_id')
 	# sale_ids = fields.Many2many('res.partner', column1='contract_id', column2='partner_id', string='Sales')
+	# state = fields.Selection([
+ #        ('draft', 'Draft'),
+ #        ('sent', 'Draft Sent'),
+ #        ('sale', 'Confirm'),
+ #        ('done', 'Approved'),
+ #        ('cancel', 'Cancelled'),
+ #    ], related='order_id.state', string='Order Status', readonly=True, copy=False, store=True, default='draft')
 
 class task_detail(models.Model):
 	_name = 'task.detail'
 
 	task_id = fields.Many2one('sale.order','Task Detail')
-	no_task = fields.Char(string='No. Task')
+	no_task = fields.Many2one('project.project', string="No. Task")
 	uraian = fields.Char(string='Uraian')
-	keterangan = fields.Char(string='Keterangan')
+	keterangan = fields.Text(string='Keterangan')
 	satuan = fields.Integer(string='Satuan')
 	quantity = fields.Integer(string='Qty')
 	weight = fields.Integer(string='Weight')
@@ -35,14 +42,15 @@ class task_detail(models.Model):
 	end_date = fields.Date(string='End Date')
 	harga_satuan = fields.Integer(string='Harga Satuan')
 	total_harga = fields.Integer(string='Total Harga')
+	tax = fields.Float(string="Tax")
 
 class monitoring_progress(models.Model):
 	_name = 'monitoring.progress'
 
 	contract_id = fields.Many2one('sale.order', string='Contract No', required=True)
-	customer_name = fields.Many2one('sale.order', string='Customer Name')
-	customer_address = fields.Many2one('sale.order', string='Customer Address')
-	project_name = fields.Many2one('sale.order', string='Project Name')
+	partner_id = fields.Many2one('sale.order', string='Customer Name', track_visibility='onchange')
+	partner_invoice_id = fields.Many2one('sale.order', string='Customer Address', track_visibility='onchange')
+	project_name_id = fields.Many2one('sale.order', string='Project Name', track_visibility='onchange')
 	revenue_date = fields.Date(string='Revenue Date', required=True)
 	currency_id = fields.Char(string='Currency')
 	tp_aktual = fields.Char(string='Total Progress Aktual (%)')
@@ -53,6 +61,7 @@ class monitoring_progress(models.Model):
 	description = fields.Text(string='Description')
 	total_amount = fields.Integer(string='Total')
 	progress_line = fields.One2many('account.invoice', 'progress_id')
+	description = fields.Text(string="Description")
 	state = fields.Selection([
         ('new', 'New'),
         ('recognize', 'Recognize Revenue'),
@@ -64,9 +73,9 @@ class monitoring_progress(models.Model):
  #    def onchange_contract_id(self):
  #        if not self.contract_id:
  #            self.update({
- #                'customer_name': False,
- #                'customer_address': False,
- #                'project_name': False,
+ #                'partner_id': False,
+ #                'partner_invoice_id': False,
+ #                'project_name_id': False,
  #            })
  #            return
 

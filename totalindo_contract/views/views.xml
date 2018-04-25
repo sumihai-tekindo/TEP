@@ -7,9 +7,9 @@
       <field name="arch" type="xml">
         <tree string="Monitoring Progress">
           <field name="contract_id"/>
-          <field name="customer_name"/>
-          <field name="customer_address"/>
-          <field name="project_name"/>
+          <field name="partner_id"/>
+          <field name="partner_invoice_id"/>
+          <field name="project_name_id"/>
           <field name="revenue_date"/>
         </tree>
       </field>
@@ -19,10 +19,13 @@
       <field name="name">sale.order.rekapitulasi</field>
       <field name="model">sale.order</field>
       <field name="inherit_id" ref="sale.view_order_form"/>
-      <field name="arch" type="xml">
+      <field name="arch" type="xml"> 
+        <xpath expr="//page[1]" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
         <field name="partner_shipping_id" position="after">
-          <field name="contract_id"/>
-          <field name="project_code"/>
+          <field name="contract_id" attrs="{'invisible': ['|', ('state', '!=', 'done')]}"/>
+          <field name="project_code" attrs="{'invisible': ['|', ('state', '!=', 'done')]}"/>
           <field name="start_date"/>
           <field name="end_date"/>
         </field>
@@ -33,12 +36,12 @@
           <field name="other"/>
           <field name="currency_id"/>
           <field name="amandement"/>
-          <field name="contract_no"/>
+          <field name="contract_no" attrs="{'required': [('amandement','!=', False)]}"/>
         </field>
-        <notebook>
+        <xpath expr="//notebook/page[1]" position="before">
           <page string="Task">
             <field name="task_line">
-              <tree string="Daftar Penginapan" editable="bottom">
+              <tree string="Task" editable="bottom">
                 <field name="no_task"/>
                 <field name="uraian"/>
                 <field name="keterangan"/>
@@ -49,125 +52,141 @@
                 <field name="end_date"/>
                 <field name="harga_satuan"/>
                 <field name="total_harga"/>
-              </tree>
-            </field>
-          </page>
-        </notebook>
-      </field>
-    </record>
-
-    <record model="ir.ui.view" id="monitoring_progress_form_view">
-      <field name="name">monitoring_progress.form</field>
-      <field name="model">monitoring.progress</field>
-      <field name="arch" type="xml">
-        <form string="Work Description">
-          <header>
-            <button string="Generate Progress" type="object" class="btn-primary"/>
-            <button string="Recalculate Progress" type="object" class="btn-primary"/>
-            <button string="Recognize Revenue" type="object" class="btn-primary"/>
-            <button string="Generate Billing" type="object" class="btn-primary"/>
-            <field name="state" widget="statusbar" statusbar_visible="new,recognize,billing"/>
-          </header>
-          <sheet>
-            <group>
-              <group>
-                <field name="contract_id"/>
-                <field name="customer_name"/>
-                <field name="customer_address"/>
-                <field name="project_name"/>
-              </group>
-              <group>
-                <field name="revenue_date"/>
-                <field name="currency_id"/>
-                <field name="tp_aktual"/>
-                <field name="ap_aktual"/>
-                <field name="tp_approved"/>
-                <field name="ap_approved"/>
-              </group>
-            </group>
-            <notebook>
-              <page string="Monitoring Detail">
-                <field name="detail_line">
-                  <tree string="Monitoring Detail" editable="bottom">
-                    <field name="no_task"/>
-                    <field name="work_description"/>
-                    <field name="unit_price"/>
-                    <field name="progress_date"/>
-                    <field name="pp_aktual"/>
-                    <field name="pp_approved"/>
-                    <field name="total_revenue"/>
-                    <field name="total_invoice"/>
-                  </tree>
-                </field>
-              </page>
-              <page string="Other Information">
-                <field name="description"/>
-              </page>
-            </notebook>
-          </sheet>
-        </form>
-      </field>
-    </record>
-
-    <record model="ir.ui.view" id="form_invoice_form_view">
-      <field name="name">account.invoice.form</field>
-      <field name="model">account.invoice</field>
-      <field name="inherit_id" ref="account.invoice_form"/>
-      <field name="arch" type="xml">
-        <header>
-          <button string="Kwitansi" type="object" class="btn-primary"/>
-          <!-- <button name="cetak_faktur" string="Faktur" type="object" class="btn-primary"/> -->
-        </header>
-        <field name="payment_term_id" position="after">
-          <field name="progress_id"/>
-          <field name="no_contract"/>
-          <field name="project_name"/>
-        </field>
-        <field name="team_id" position="after">
-          <field name="tanggal_invoice"/>
-          <field name="nilai_tender"/>
-          <field name="user_id"/>
-          <field name="uang_muka"/>
-          <field name="proporsional_dp"/>
-          <field name="retensi"/>
-          <field name="proporsional_retensi"/>
-        </field>
-        <notebook>
-          <page string="Monitoring Detail">
-            <field name="detail_line">
-              <tree string="Form Invoice" editable="bottom">
-                <field name="no_invoice"/>
-                <field name="work_description"/>
-                <field name="progress_date"/>
-                <field name="progress_aktual"/>
-                <field name="progress_approved"/>
                 <field name="tax"/>
-                <field name="nilai_invoice"/>
               </tree>
             </field>
-          </page>
-          <page string="Kwitansi">
-          </page>
-          <page string="Faktur">
-          </page>
-        </notebook>
-      </field>
-    </record>
+            <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+              <field name="amount_untaxed" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+              <field name="amount_tax" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+              <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                <label for="amount_total" />
+                <button name="button_dummy"
+                  states="draft,sent" string="(update)" type="object" class="oe_edit_only oe_link"/>
+                </div>
+                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+              </group>
+              <field name="note" class="oe_inline" placeholder="Setup default terms and conditions in your company settings."/>
+              <div class="oe_clear"/>
+            </page>
+          </xpath>
+        </field>
+      </record>
 
-    <record model="ir.actions.act_window" id="monitoring_progress_list_action">
-      <field name="name">Monitoring Progress</field>
-      <field name="res_model">monitoring.progress</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
-      <field name="help" type="html">
-        <p class="oe_view_nocontent_create">Buatlah Monitoring Progressnya ...</p>
-      </field>
-    </record>
+      <record model="ir.ui.view" id="monitoring_progress_form_view">
+        <field name="name">monitoring_progress.form</field>
+        <field name="model">monitoring.progress</field>
+        <field name="arch" type="xml">
+          <form string="Work Description">
+            <header>
+              <button string="Generate Progress" type="object" class="btn-primary"/>
+              <button string="Recalculate Progress" type="object" class="btn-primary"/>
+              <button string="Recognize Revenue" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'open')]}"/>
+              <button string="Generate Billing" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'open')]}"/>
+              <field name="state" widget="statusbar" statusbar_visible="new,recognize,billing"/>
+            </header>
+            <sheet>
+              <group>
+                <group>
+                  <field name="contract_id"/>
+                  <field name="partner_id"/>
+                  <field name="partner_invoice_id"/>
+                  <field name="project_name_id"/>
+                  <field name="ap_approved"/>
+                </group>
+                <group>
+                  <field name="revenue_date"/>
+                  <field name="currency_id"/>
+                  <field name="tp_aktual"/>
+                  <field name="ap_aktual"/>
+                  <field name="tp_approved"/>
+                </group>
+              </group>
+              <notebook>
+                <page string="Detail Lines">
+                  <field name="detail_line">
+                    <tree string="Detail Lines" editable="bottom">
+                      <field name="no_task"/>
+                      <field name="work_description"/>
+                      <field name="unit_price"/>
+                      <field name="progress_date"/>
+                      <field name="pp_aktual"/>
+                      <field name="pp_approved"/>
+                      <field name="total_revenue"/>
+                      <field name="total_invoice"/>
+                    </tree>
+                  </field>
+                </page>
+                <page string="Other Information">
+                  <field name="description"/>
+                </page>
+              </notebook>
+              <h2>Description</h2>
+              <field string="Description" name="description" class="oe_inline" placeholder="Masukkan berita acara mengenai progress dari suatu kontrak."/>
+              <div class="oe_clear"/>
+            </sheet>
+          </form>
+        </field>
+      </record>
 
-    <menuitem id="contract_totalindo" name="Kontrak" parent="sales_team.menu_base_partner"/>
+      <record model="ir.ui.view" id="form_invoice_form_view">
+        <field name="name">account.invoice.form</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+          <header>
+            <button string="Kwitansi" type="object" class="btn-primary"/>
+            <!-- <button name="cetak_faktur" string="Faktur" type="object" class="btn-primary"/> -->
+          </header>
+          <field name="payment_term_id" position="after">
+            <field name="progress_id"/>
+            <field name="no_contract"/>
+            <field name="project_name"/>
+          </field>
+          <field name="team_id" position="after">
+            <field name="tanggal_invoice"/>
+            <field name="nilai_tender"/>
+            <field name="user_id"/>
+            <field name="uang_muka"/>
+            <field name="proporsional_dp"/>
+            <field name="retensi"/>
+            <field name="proporsional_retensi"/>
+          </field>
+          <notebook>
+            <page string="Monitoring Detail">
+              <field name="detail_line">
+                <tree string="Form Invoice" editable="bottom">
+                  <field name="no_invoice"/>
+                  <field name="work_description"/>
+                  <field name="progress_date"/>
+                  <field name="progress_aktual"/>
+                  <field name="progress_approved"/>
+                  <field name="tax"/>
+                  <field name="nilai_invoice"/>
+                </tree>
+              </field>
+            </page>
+            <page string="Kwitansi">
+            </page>
+            <page string="Faktur">
+            </page>
+          </notebook>
+        </field>
+      </record>
 
-        <menuitem id="monitoring_progress_kontrak" name="Monitoring Progress" parent="contract_totalindo"
-          action="monitoring_progress_list_action"/>
+      <record model="ir.actions.act_window" id="monitoring_progress_list_action">
+        <field name="name">Monitoring Progress</field>
+        <field name="res_model">monitoring.progress</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">Buatlah Monitoring Progressnya ...</p>
+        </field>
+      </record>
 
-        </data>
-      </odoo>
+      <menuitem id="contract_totalindo" name="Kontrak" parent="sales_team.menu_base_partner"/>
+
+      <menuitem id="monitoring_progress_kontrak" name="Monitoring Progress" parent="contract_totalindo"
+        action="monitoring_progress_list_action"/>
+
+      </data>
+    </odoo>

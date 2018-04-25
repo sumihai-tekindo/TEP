@@ -3,11 +3,13 @@
     'name': "Totalindo Company",
 
     'summary': """
-        Modul ini merupakan hasil pembuatan dari tim IT Developer
-        PT. Sumihai Teknologi Indonesia""",
+        Developed by PT. Sumihai Teknologi Indonesia - Official Partner of Odoo""",
 
     'description': """
-        Long description of module's purpose
+        Modul ini merupakan hasil pembuatan dari tim IT Developer
+        PT. Sumihai Teknologi Indonesia. Modul ini berisi tentang
+        informasi yang dibutuhkan oleh PT. Totalindo Eka Persada
+        tentang perusahaan
     """,
 
     'author': "Yodi Safikri",
