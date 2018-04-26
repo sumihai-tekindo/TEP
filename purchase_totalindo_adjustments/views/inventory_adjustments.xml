@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+        <record id="view_adj_form_inherit" model="ir.ui.view">
+            <field name="name">stock.adj.form.inherit</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div/h1" position="after">
+                    <h3>
+                        <field name="name_code" attrs="{'invisible': [('state', '=', 'draft')], 'readonly': 'True'}"/>
+                    </h3>
+                </xpath>
+                <xpath expr="//field[@name='package_id']" position="after">
+                    <field name="type_barang"/>
+                    <field name="oleh"/>
+                    <field name="department_id"/>
+                    <field name="referensi"/>
+                </xpath>
+            </field>
+        </record>       
+    </data>
+</odoo>
