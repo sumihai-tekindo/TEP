@@ -6,6 +6,8 @@ class rekapitulasi_kontrak(models.Model):
 	_inherit = 'sale.order'
 
 	contract_id = fields.Many2one('project.project','Project Name')
+	sale_charge_id = fields.Many2one('sale.charge.config', 'Sale Charge Config', readonly=True, required=True,
+									 states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
 	project_code = fields.Char(string='Project Code', readonly=True)
 	start_date = fields.Date(string='Start Date', required=True)
 	end_date = fields.Date(string='End Date', required=True)
@@ -19,30 +21,91 @@ class rekapitulasi_kontrak(models.Model):
 	partner_id = fields.Many2one('res.partner')
 	contract_no = fields.Many2one('sale.order',string='Contract No')
 	task_line = fields.One2many('task.detail','task_id')
+
 	# sale_ids = fields.Many2many('res.partner', column1='contract_id', column2='partner_id', string='Sales')
-	# state = fields.Selection([
- #        ('draft', 'Draft'),
- #        ('sent', 'Draft Sent'),
- #        ('sale', 'Confirm'),
- #        ('done', 'Approved'),
- #        ('cancel', 'Cancelled'),
- #    ], related='order_id.state', string='Order Status', readonly=True, copy=False, store=True, default='draft')
+	state = fields.Selection([
+        ('draft', 'Draft'),
+        ('sent', 'Draft Sent'),
+        ('sale', 'Confirm'),
+        ('done', 'Approved'),
+        ('cancel', 'Cancelled'),
+    ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
 
 class task_detail(models.Model):
 	_name = 'task.detail'
 
 	task_id = fields.Many2one('sale.order','Task Detail')
-	no_task = fields.Many2one('project.project', string="No. Task")
+	product_id = fields.Many2one('product.template', string="No. Task")
 	uraian = fields.Char(string='Uraian')
 	keterangan = fields.Text(string='Keterangan')
-	satuan = fields.Integer(string='Satuan')
-	quantity = fields.Integer(string='Qty')
-	weight = fields.Integer(string='Weight')
+	satuan = fields.Integer('Satuan', required=True, default=1)
+	quantity = fields.Integer('Qty', default=1, required=True)
+	weight = fields.Integer('Weight', required=True, default=1)
 	start_date = fields.Date(string='Start Date')
 	end_date = fields.Date(string='End Date')
-	harga_satuan = fields.Integer(string='Harga Satuan')
-	total_harga = fields.Integer(string='Total Harga')
-	tax = fields.Float(string="Tax")
+	harga_satuan = fields.Integer('Harga Satuan', required=True, default=1)
+	total_harga = fields.Float(string='Total Harga', compute='_compute_harga', store=True)
+	tax = fields.Float(string="Tax", default=1)
+	freight_charge = fields.Float('Total', compute='_compute_freight_charge', onchange='_fill_orderline',
+								  store=True)
+
+	@api.depends('satuan', 'weight', 'harga_satuan')
+	def _compute_harga(self):
+		for task in self:
+			if task.satuan != 0 and task.weight != 0 and task.harga_satuan != 0:
+				task.total_harga = task.satuan * task.weight * task.harga_satuan
+
+	@api.depends('total_harga', 'tax')
+	def _compute_freight_charge(self):
+		for record in self:
+			if record.total_harga != 0 and record.tax != 0:
+				record.freight_charge = record.total_harga * record.tax
+
+	@api.onchange('freight_charge')
+	def _fill_orderline(self):
+		vals = {'order_line': []}
+		if self.freight_charge <= 0:
+			return {'value': vals}
+		elif self.freight_charge:
+			obj_product_template = self.env['product.template']
+			obj_product_product = self.env['product.product']
+			freight_product = obj_product_product.search([('is_freight_charge', '=', True)])
+			if freight_product:
+				for record in self:
+					vals['order_line'].append({
+						'product_id': freight_product[0].id,
+						'name': freight_product[0].name,
+						'product_uom_qty': 1,
+						'product_uom': freight_product[0].uom_id.id,
+						'price_unit': record.freight_charge,
+						'tax_id': freight_product[0].taxes_id[0]
+					})
+					return {'value': vals}
+			else:
+				obj_product_template.create({
+					'name': 'Freight Charge',
+					'sale_ok': True,
+					'is_freight_charge': True,
+					'type': 'service',
+					'default_code': 'FC01',
+					'purchase_method': 'purchase',
+					# 'taxes_id': [],
+					# 'supplier_taxes_id': []
+				})
+				freight_product = obj_product_product.search([('is_freight_charge', '=', True)])
+				if freight_product:
+					for record in self:
+						vals['order_line'].append({
+							'product_id': freight_product[0].id,
+							'name': freight_product[0].name,
+							'product_uom_qty': 1,
+							'product_uom': freight_product[0].uom_id.id,
+							'price_unit': record.freight_charge,
+							'tax_id': freight_product[0].taxes_id[0]
+						})
+						return {'value': vals}
+
+
 
 class monitoring_progress(models.Model):
 	_name = 'monitoring.progress'
@@ -53,20 +116,20 @@ class monitoring_progress(models.Model):
 	project_name_id = fields.Many2one('sale.order', string='Project Name', track_visibility='onchange')
 	revenue_date = fields.Date(string='Revenue Date', required=True)
 	currency_id = fields.Char(string='Currency')
-	tp_aktual = fields.Char(string='Total Progress Aktual (%)')
-	ap_aktual = fields.Char(string='Akumulasi Progress Aktual (%)')
-	tp_approved = fields.Char(string='Total Progress Approved (%)')
-	ap_approved = fields.Char(string='Akumulasi Progress Approved (%)')
+	tp_aktual = fields.Float(string='Total Progress Aktual (%)')
+	ap_aktual = fields.Float(string='Akumulasi Progress Aktual (%)')
+	tp_approved = fields.Float(string='Total Progress Approved (%)')
+	ap_approved = fields.Float(string='Akumulasi Progress Approved (%)')
 	detail_line = fields.One2many('monitoring.detail','detail_id')
 	description = fields.Text(string='Description')
 	total_amount = fields.Integer(string='Total')
 	progress_line = fields.One2many('account.invoice', 'progress_id')
 	description = fields.Text(string="Description")
 	state = fields.Selection([
-        ('new', 'New'),
-        ('recognize', 'Recognize Revenue'),
-        ('billing', 'Billing'),
-        ], string='Status', readonly=True, copy=False, default='new', track_visibility='onchange')
+		('new', 'New'),
+		('recognize', 'Recognize Revenue'),
+		('billing', 'Billing'),
+		], string='Status', readonly=True, copy=False, default='new', track_visibility='onchange')
 
 	# @api.multi
  #    @api.onchange('contract_id')
@@ -105,9 +168,11 @@ class form_invoice(models.Model):
 	proporsional_dp = fields.Boolean(string='Uang Muka Proporsional')
 	retensi = fields.Float(string='Retensi')
 	proporsional_retensi = fields.Boolean(string='Retensi Proporsional')
+	no_kwitansi = fields.Char(string='No. Kwitansi')
+	tanggal_kwitansi = fields.Date(string='Tanggal Kwitansi')
+	no_faktur = fields.Char(string='No Faktur')
+	tanggal_faktur = fields.Date(string='Tanggal Faktur')
 	detail_line = fields.One2many('detail.invoice','detail_id')
-	kwitansi_line = fields.One2many('kwitansi.invoice','kwitansi_id')
-	faktur_line = fields.One2many('faktur.invoice','faktur_id')
 
 	# @api.multi
  #    def cetak_faktur(self):
@@ -116,7 +181,7 @@ class form_invoice(models.Model):
 class detail_invoice(models.Model):
 	_name = 'detail.invoice'
 
-	detail_id = fields.Many2one('form.invoice','Detail')
+	detail_id = fields.Many2one('account.invoice','Detail')
 	no_invoice = fields.Char(string='No.')
 	work_description = fields.Char(string='Work Description')
 	progress_date = fields.Date(string='Progress Date')
@@ -125,16 +190,3 @@ class detail_invoice(models.Model):
 	tax = fields.Float(string='Tax')
 	nilai_invoice = fields.Float(string='Nilai Invoice')
 
-class kwitansi_invoice(models.Model):
-	_name = 'kwitansi.invoice'
-
-	kwitansi_id = fields.Many2one('form.invoice',string='Kwitansi')
-	no_kwitansi = fields.Char(string='No. Kwitansi',readonly=True)
-	tanggal_kwitansi = fields.Date(string='Tanggal Kwitansi')
-
-class faktur_line(models.Model):
-	_name = 'faktur.invoice'
-
-	faktur_id = fields.Many2one('form.invoice',string='Faktur')
-	no_faktur = fields.Char(string='No Faktur', readonly=True)
-	tanggal_faktur = fields.Date(string='Tanggal Faktur')

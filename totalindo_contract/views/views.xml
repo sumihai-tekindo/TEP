@@ -20,9 +20,12 @@
       <field name="model">sale.order</field>
       <field name="inherit_id" ref="sale.view_order_form"/>
       <field name="arch" type="xml"> 
-        <xpath expr="//page[1]" position="attributes">
+       <!--  <xpath expr="//page[1]" position="attributes">
           <attribute name="invisible">1</attribute>
-        </xpath>
+        </xpath> -->
+        <field name="state" position="after">
+          <field name="state" readonly="1" widget="statusbar"/>
+        </field>
         <field name="partner_shipping_id" position="after">
           <field name="contract_id" attrs="{'invisible': ['|', ('state', '!=', 'done')]}"/>
           <field name="project_code" attrs="{'invisible': ['|', ('state', '!=', 'done')]}"/>
@@ -42,7 +45,7 @@
           <page string="Task">
             <field name="task_line">
               <tree string="Task" editable="bottom">
-                <field name="no_task"/>
+                <field name="product_id"/>
                 <field name="uraian"/>
                 <field name="keterangan"/>
                 <field name="satuan"/>
@@ -53,9 +56,10 @@
                 <field name="harga_satuan"/>
                 <field name="total_harga"/>
                 <field name="tax"/>
+                <field name="freight_charge"/>
               </tree>
             </field>
-            <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+            <!-- <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
               <field name="amount_untaxed" widget='monetary' options="{'currency_field': 'currency_id'}"/>
               <field name="amount_tax" widget='monetary' options="{'currency_field': 'currency_id'}"/>
               <div class="oe_subtotal_footer_separator oe_inline o_td_label">
@@ -66,7 +70,7 @@
                 <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
               </group>
               <field name="note" class="oe_inline" placeholder="Setup default terms and conditions in your company settings."/>
-              <div class="oe_clear"/>
+              <div class="oe_clear"/> -->
             </page>
           </xpath>
         </field>
@@ -166,8 +170,24 @@
               </field>
             </page>
             <page string="Kwitansi">
+              <group>
+                <group>
+                  <field name="no_kwitansi"/>
+                  <field name="tanggal_kwitansi"/>
+                </group>
+                <group>
+                </group>
+              </group>
             </page>
             <page string="Faktur">
+              <group>
+                <group>
+                  <field name="no_faktur"/>
+                  <field name="tanggal_faktur"/>
+                </group>
+                <group>
+                </group>
+              </group>
             </page>
           </notebook>
         </field>

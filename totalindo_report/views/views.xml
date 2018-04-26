@@ -1,5 +1,11 @@
 <odoo>
   <data>
+   <!--  <record id="sale.report_sale_order" model="ir.actions.report.xml">
+        <field name="report_type">py3o</field>
+        <field name="py3o_filetype">odt</field>
+        <field name="module">totalindo_report</field>
+        <field name="py3o_template_fallback">report/kwitansi_invoice.odt</field>
+    </record> -->
     <record id="ppm_print_receipt_py3o" model="ir.actions.report.xml">
         <field name="name">Print Kwitansi (Docx)</field>
         <field name="type">ir.actions.report.xml</field>

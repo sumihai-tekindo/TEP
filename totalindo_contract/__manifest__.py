@@ -29,6 +29,7 @@
         # 'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'views/product_view.xml',
         # 'report/print_faktur.xml',
         # 'report/report_view.xml'
     ],
