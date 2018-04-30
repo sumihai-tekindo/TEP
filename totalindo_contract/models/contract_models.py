@@ -10,7 +10,7 @@ class rekapitulasi_kontrak(models.Model):
 									 states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
 	project_code = fields.Char(string='Project Code', readonly=True)
 	start_date = fields.Date(string='Start Date', required=True)
-	end_date = fields.Date(string='End Date', required=True)
+	# end_date = fields.Date(string='End Date', required=True)
 	payment_term = fields.Selection([('15 hari', '15 Hari'), ('akhir bulan', 'Akhir Bulan')], string='Payment Term')
 	percent_dp = fields.Float(string='% Down Payment')
 	nilai_dp = fields.Integer(string='Nilai Down Payment')
@@ -20,97 +20,35 @@ class rekapitulasi_kontrak(models.Model):
 	amandement = fields.Boolean(string='Amandement')
 	partner_id = fields.Many2one('res.partner')
 	contract_no = fields.Many2one('sale.order',string='Contract No')
-	task_line = fields.One2many('task.detail','task_id')
-
-	# sale_ids = fields.Many2many('res.partner', column1='contract_id', column2='partner_id', string='Sales')
-	state = fields.Selection([
-        ('draft', 'Draft'),
-        ('sent', 'Draft Sent'),
-        ('sale', 'Confirm'),
-        ('done', 'Approved'),
-        ('cancel', 'Cancelled'),
-    ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
-
-class task_detail(models.Model):
-	_name = 'task.detail'
-
-	task_id = fields.Many2one('sale.order','Task Detail')
-	product_id = fields.Many2one('product.template', string="No. Task")
-	uraian = fields.Char(string='Uraian')
-	keterangan = fields.Text(string='Keterangan')
-	satuan = fields.Integer('Satuan', required=True, default=1)
-	quantity = fields.Integer('Qty', default=1, required=True)
-	weight = fields.Integer('Weight', required=True, default=1)
-	start_date = fields.Date(string='Start Date')
-	end_date = fields.Date(string='End Date')
 	harga_satuan = fields.Integer('Harga Satuan', required=True, default=1)
 	total_harga = fields.Float(string='Total Harga', compute='_compute_harga', store=True)
 	tax = fields.Float(string="Tax", default=1)
 	freight_charge = fields.Float('Total', compute='_compute_freight_charge', onchange='_fill_orderline',
 								  store=True)
+	state = fields.Selection([
+		('draft', 'Draft'),
+		('sent', 'Draft Sent'),
+		('sale', 'Confirm'),
+		('done', 'Approved'),
+		('cancel', 'Cancelled'),
+	], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
 
-	@api.depends('satuan', 'weight', 'harga_satuan')
-	def _compute_harga(self):
-		for task in self:
-			if task.satuan != 0 and task.weight != 0 and task.harga_satuan != 0:
-				task.total_harga = task.satuan * task.weight * task.harga_satuan
+class custom_sale_order(models.Model):
+	_inherit = 'sale.order.line'
 
-	@api.depends('total_harga', 'tax')
-	def _compute_freight_charge(self):
-		for record in self:
-			if record.total_harga != 0 and record.tax != 0:
-				record.freight_charge = record.total_harga * record.tax
-
-	@api.onchange('freight_charge')
-	def _fill_orderline(self):
-		vals = {'order_line': []}
-		if self.freight_charge <= 0:
-			return {'value': vals}
-		elif self.freight_charge:
-			obj_product_template = self.env['product.template']
-			obj_product_product = self.env['product.product']
-			freight_product = obj_product_product.search([('is_freight_charge', '=', True)])
-			if freight_product:
-				for record in self:
-					vals['order_line'].append({
-						'product_id': freight_product[0].id,
-						'name': freight_product[0].name,
-						'product_uom_qty': 1,
-						'product_uom': freight_product[0].uom_id.id,
-						'price_unit': record.freight_charge,
-						'tax_id': freight_product[0].taxes_id[0]
-					})
-					return {'value': vals}
-			else:
-				obj_product_template.create({
-					'name': 'Freight Charge',
-					'sale_ok': True,
-					'is_freight_charge': True,
-					'type': 'service',
-					'default_code': 'FC01',
-					'purchase_method': 'purchase',
-					# 'taxes_id': [],
-					# 'supplier_taxes_id': []
-				})
-				freight_product = obj_product_product.search([('is_freight_charge', '=', True)])
-				if freight_product:
-					for record in self:
-						vals['order_line'].append({
-							'product_id': freight_product[0].id,
-							'name': freight_product[0].name,
-							'product_uom_qty': 1,
-							'product_uom': freight_product[0].uom_id.id,
-							'price_unit': record.freight_charge,
-							'tax_id': freight_product[0].taxes_id[0]
-						})
-						return {'value': vals}
-
-
+	uraian = fields.Char(string='Uraian')
+	no_task = fields.Char(string="No. Task")
+	keterangan = fields.Text(string='Keterangan')
+	satuan = fields.Integer('Satuan', required=True, default=1)
+	weight = fields.Integer('Weight', readonly=True, default=1)
+	start_date = fields.Date(string='Start Date')
+	# end_date = fields.Date(string='End Date')
 
 class monitoring_progress(models.Model):
 	_name = 'monitoring.progress'
 
 	contract_id = fields.Many2one('sale.order', string='Contract No', required=True)
+	name = fields.Char(string="Reference", default='/', readonly=True)
 	partner_id = fields.Many2one('sale.order', string='Customer Name', track_visibility='onchange')
 	partner_invoice_id = fields.Many2one('sale.order', string='Customer Address', track_visibility='onchange')
 	project_name_id = fields.Many2one('sale.order', string='Project Name', track_visibility='onchange')
@@ -130,6 +68,12 @@ class monitoring_progress(models.Model):
 		('recognize', 'Recognize Revenue'),
 		('billing', 'Billing'),
 		], string='Status', readonly=True, copy=False, default='new', track_visibility='onchange')
+
+	@api.model
+	def create(self, vals):
+		seq = self.env['ir.sequence'].next_by_code('contract.monitoring') or '/'
+		vals['name'] = seq
+		return super(monitoring_progress, self).create(vals)
 
 	# @api.multi
  #    @api.onchange('contract_id')
@@ -174,10 +118,6 @@ class form_invoice(models.Model):
 	tanggal_faktur = fields.Date(string='Tanggal Faktur')
 	detail_line = fields.One2many('detail.invoice','detail_id')
 
-	# @api.multi
- #    def cetak_faktur(self):
- #        return self.env['report'].get_action(self, 'sti_contract.laporan_faktur')
-	
 class detail_invoice(models.Model):
 	_name = 'detail.invoice'
 

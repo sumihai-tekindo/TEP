@@ -12,10 +12,6 @@
                         <field name="is_freight_charge" />
                         <label for="is_freight_charge" />
                     </div>
-                    <div>
-                        <field name="is_other_charge" />
-                        <label for="is_other_charge" />
-                    </div>
                 </xpath>
             </field>
         </record>

@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
-from . import models
+from . import contract_models
 import product_template
