@@ -10,7 +10,7 @@ class rekapitulasi_kontrak(models.Model):
 									 states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
 	project_code = fields.Char(string='Project Code', readonly=True)
 	start_date = fields.Date(string='Start Date', required=True)
-	# end_date = fields.Date(string='End Date', required=True)
+	end_date = fields.Date(string='End Date', required=True)
 	payment_term = fields.Selection([('15 hari', '15 Hari'), ('akhir bulan', 'Akhir Bulan')], string='Payment Term')
 	percent_dp = fields.Float(string='% Down Payment')
 	nilai_dp = fields.Integer(string='Nilai Down Payment')
@@ -39,10 +39,9 @@ class custom_sale_order(models.Model):
 	uraian = fields.Char(string='Uraian')
 	no_task = fields.Char(string="No. Task")
 	keterangan = fields.Text(string='Keterangan')
-	satuan = fields.Integer('Satuan', required=True, default=1)
 	weight = fields.Integer('Weight', readonly=True, default=1)
 	start_date = fields.Date(string='Start Date')
-	# end_date = fields.Date(string='End Date')
+	end_date = fields.Date(string='End Date')
 
 class monitoring_progress(models.Model):
 	_name = 'monitoring.progress'
@@ -74,17 +73,6 @@ class monitoring_progress(models.Model):
 		seq = self.env['ir.sequence'].next_by_code('contract.monitoring') or '/'
 		vals['name'] = seq
 		return super(monitoring_progress, self).create(vals)
-
-	# @api.multi
- #    @api.onchange('contract_id')
- #    def onchange_contract_id(self):
- #        if not self.contract_id:
- #            self.update({
- #                'partner_id': False,
- #                'partner_invoice_id': False,
- #                'project_name_id': False,
- #            })
- #            return
 
 class monitoring_detail(models.Model):
 	_name = 'monitoring.detail'
