@@ -1,28 +1,4 @@
 <odoo>
   <data>
-   <!--  <record id="sale.report_sale_order" model="ir.actions.report.xml">
-        <field name="report_type">py3o</field>
-        <field name="py3o_filetype">odt</field>
-        <field name="module">totalindo_report</field>
-        <field name="py3o_template_fallback">report/kwitansi_invoice.odt</field>
-    </record> -->
-    <record id="ppm_print_receipt_py3o" model="ir.actions.report.xml">
-        <field name="name">Print Kwitansi (Docx)</field>
-        <field name="type">ir.actions.report.xml</field>
-        <field name="model">account.invoice</field>
-        <field name="report_name">totalindo_report.py3o_print_kwitansi</field>
-        <field name="report_type">py3o</field>
-        <field name="py3o_filetype">docx</field>
-        <field name="module">totalindo_report</field>
-        <field name="py3o_template_fallback">report/kwitansi_invoice.odt</field>
-    </record>
-    
-    <record id="tep_print_kwitansi_py3o_print_action" model="ir.values">
-        <field eval="'action'" name="key" />
-        <field eval="'client_print_multi'" name="key2" />
-        <field name="model">account.invoice</field>
-        <field name="name">Print Kwitansi (Docx)</field>
-        <field eval="'ir.actions.report.xml,'+str(ppm_print_receipt_py3o)" name="value" />
-    </record>
   </data>
 </odoo>

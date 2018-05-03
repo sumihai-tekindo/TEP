@@ -7,6 +7,7 @@ class sti_company(models.Model):
 
 	company_id = fields.Many2one('res.company')
 	user_id = fields.Many2one('res.users','Director Name', required=True)
+	npwp = fields.Char('NPWP')
 
 class sti_customer(models.Model):
 	_inherit = 'res.partner'

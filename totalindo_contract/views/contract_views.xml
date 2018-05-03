@@ -47,18 +47,30 @@
 				<xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='price_subtotal']" position="attributes">
 					<attribute name="invisible">1</attribute>
 				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='analytic_tag_ids']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='price_total']" position="attributes">
+					<attribute name="string">Total Harga</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+					<attribute name="string">Harga Satuan</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='product_uom_qty']" position="attributes">
+					<attribute name="string">Qty</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='product_uom']" position="attributes">
+					<attribute name="string">Satuan</attribute>
+				</xpath>
+				<!-- <xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='route_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath> -->
 				<xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="replace">
-                       <field name="product_id" invisible="1"
-                       context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':False, 'company_id': parent.company_id}"
-                       groups="base.group_user"
-                       on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,False,product_uos_qty,False,name,parent.partner_id, False, True, parent.date_order, product_packaging, parent.fiscal_position, False, parent.warehouse_id, context)"/>
-                </xpath>
-                <!-- <xpath expr="//field[@name='order_line']/form//field[@name='product_id']" position="replace">
-                       <field name="product_id" invisible="1"
-                       context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':False, 'company_id': parent.company_id}"
-                       groups="base.group_user"
-                       on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,False,product_uos_qty,False,name,parent.partner_id, False, True, parent.date_order, product_packaging, parent.fiscal_position, False, parent.warehouse_id, context)"/>
-                </xpath> -->
+					<field name="product_id" invisible="1"
+						context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':False, 'company_id': parent.company_id}"
+						groups="base.group_user"
+						on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,False,product_uos_qty,False,name,parent.partner_id, False, True, parent.date_order, product_packaging, parent.fiscal_position, False, parent.warehouse_id, context)"/>
+					</xpath>
 				<field name="state" position="after">
 					<field name="state" readonly="1" widget="statusbar"/>
 				</field>
@@ -75,7 +87,7 @@
 					<field name="other"/>
 					<field name="currency_id"/>
 					<field name="amandement"/>
-					<field name="contract_no" attrs="{'required': [('amandement','!=', False)]}"/>
+					<field name="contract_no" attrs="{'invisible': [('amandement','!=', True)]}"/>
 				</field>
 			</field>
 		</record>
@@ -89,11 +101,11 @@
 					<field name="no_task"/>
 					<field name="uraian"/>
 					<field name="keterangan"/>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='product_uom']" position="after">
 					<field name="weight"/>
 					<field name="start_date"/>
 					<field name="end_date"/>
-					<field name="product_id" />
-						<!-- attrs="{'default': [('is_freight_charge', '!=', False)]}"/> -->
 				</xpath>
 				<xpath expr="//field[@name='order_line']/form//field[@name='tax_id']" position="before">
 					<field name="no_task"/>
@@ -168,8 +180,6 @@
 			<field name="inherit_id" ref="account.invoice_form"/>
 			<field name="arch" type="xml">
 				<header>
-					<button string="Kwitansi" type="object" class="btn-primary"/>
-					<!-- <button name="cetak_faktur" string="Faktur" type="object" class="btn-primary"/> -->
 				</header>
 				<xpath expr="//page[1]" position="attributes">
 					<attribute name="string">Detail Lines</attribute>
@@ -188,20 +198,41 @@
 					<field name="retensi"/>
 					<field name="proporsional_retensi"/>
 				</field>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='discount']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='account_analytic_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='account_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='analytic_tag_ids']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='layout_category_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='quantity']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='uom_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='name']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
+					<field name="no_invoice"/>
+					<field name="work_description"/>
+					<field name="progress_date"/>
+					<field name="progress_aktual"/>
+					<field name="progress_approved"/>
+				</xpath>
 				<notebook>
-					<page string="Monitoring Detail">
-						<field name="detail_line">
-							<tree string="Form Invoice" editable="bottom">
-								<field name="no_invoice"/>
-								<field name="work_description"/>
-								<field name="progress_date"/>
-								<field name="progress_aktual"/>
-								<field name="progress_approved"/>
-								<field name="tax"/>
-								<field name="nilai_invoice"/>
-							</tree>
-						</field>
-					</page>
 					<page string="Kwitansi">
 						<group>
 							<group>
@@ -223,11 +254,6 @@
 						</group>
 					</page>
 				</notebook>
-				<!-- <xpath expr="//field[@name='product_id']" position="attributes">
-					<attribute name="domain">
-						['|', ('is_freight_charge', '=', True)]
-					</attribute>
-				</xpath> -->
 			</field>
 		</record>
 

@@ -104,14 +104,20 @@ class form_invoice(models.Model):
 	tanggal_kwitansi = fields.Date(string='Tanggal Kwitansi')
 	no_faktur = fields.Char(string='No Faktur')
 	tanggal_faktur = fields.Date(string='Tanggal Faktur')
-	detail_line = fields.One2many('detail.invoice','detail_id')
+
+	@api.multi
+	def cetak_kwitansi(self):
+		return self.env['report'].get_action(self, 'totalindo_contract.laporan_kwitansi')
+
+	@api.multi
+	def cetak_faktur(self):
+		return self.env['report'].get_action(self, 'totalindo_contract.laporan_faktur')
 
 class detail_invoice(models.Model):
-	_name = 'detail.invoice'
+	_inherit = 'account.invoice.line'
 
-	detail_id = fields.Many2one('account.invoice','Detail')
 	no_invoice = fields.Char(string='No.')
-	work_description = fields.Char(string='Work Description')
+	work_description = fields.Char(string='Task')
 	progress_date = fields.Date(string='Progress Date')
 	progress_aktual = fields.Float(string='Progress Aktual')
 	progress_approved = fields.Float(string='Progress Approved')

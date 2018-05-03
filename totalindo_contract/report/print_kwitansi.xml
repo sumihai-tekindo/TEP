@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	
+	
+	<template id="laporan_kwitansi">
+		<t t-call="report.html_container">
+			<t t-foreach="docs" t-as="o">
+				<t t-call="report.external_layout">
+					<div class="page">
+						<div id="container_2">
+							<style>
+								#container_2 {
+								width: 250px;
+								height: 100px;
+								border: 1px solid black;
+								-webkit-transform: rotate(270deg);
+								-moz-transform: rotate(270deg);
+								-o-transform: rotate(270deg);
+								-ms-transform: rotate(270deg);
+								transform: rotate(270deg);
+								}
+							</style>
+							<h5 class="text-center">Totalindo</h5>
+							<h5 class="text-center">Building Construction</h5>
+							<h5 class="text-center">PT. Totalindo Eka Persada Tbk.</h5>
+						</div>
+
+						<!-- INFORMASI HEADER -->
+
+						<table class="table">
+							<tr>
+								<td><strong>No. Kwitansi</strong></td>
+								<td><span t-field="o.no_kwitansi"/></td>
+							</tr>
+							<tr>
+								<td><strong>Sudah Terima Dari</strong></td>
+								<td><span t-field="o.partner_id.name"/></td>
+							</tr>
+							<tr>
+								<td><strong>Banyaknya Uang</strong></td>
+								<td><span t-field="o.invoice_line_ids.price_unit"/></td>
+							</tr>
+							<tr>
+								<td><strong>Untuk Pembayaran</strong></td>
+								<td><span t-field="o.invoice_line_ids.name"/></td>
+							</tr>
+						</table>
+						<h5 class="text-right">Jakarta,<span t-field="o.tanggal_faktur"/></h5><br/><br/><br/>
+						<h5 class="text-right"><span t-field="o.company_id.user_id.name"/></h5>
+						<h5 class="text-left">Jumlah Rp.<span t-field="o.amount_total"/></h5>
+						<h5 class="text-right">Direktur</h5>
+					</div>
+				</t>
+			</t>
+		</t>
+	</template>
+
+</odoo>

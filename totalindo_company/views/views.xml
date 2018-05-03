@@ -7,6 +7,7 @@
       <field name="arch" type="xml">
         <field name="website" position="after">
           <field name="user_id"/>
+          <field name="npwp"/>
         </field>
       </field>
     </record>
