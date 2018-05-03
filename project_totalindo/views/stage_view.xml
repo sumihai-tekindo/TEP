@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record model="ir.ui.view" id="site_stage_view_form">
+			<field name="name">site.stage.form</field>
+			<field name="model">site.stage</field>
+			<field name="arch" type="xml">
+				<form string="Stage">
+					<group>
+						<group>
+							<field name="name" />
+						</group>
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="site_stage_view_tree">
+			<field name="name">site.stage.tree</field>
+			<field name="model">site.stage</field>
+			<field name="arch" type="xml">
+				<tree string="Stage">
+					<field name="name" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- Stage -->
+		<record id="site_stage_view" model="ir.actions.act_window">
+			<field name="name">Stage</field>
+			<field name="res_model">site.stage</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_type">form</field>
+		</record>
+		<menuitem name="Stage" id="site_stage_menu" parent="geoengine_configuration_submenu"
+			action="site_stage_view" sequence="10" />
+	</data>
+</odoo>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="view_task_form2" model="ir.ui.view">
+			<field name="name">Task Totalindo</field>
+			<field name="model">project.task</field>
+			<field name="inherit_id" ref="project.view_task_form2" />
+			<field name="arch" type="xml">
+				<field name="project_id" position="before">
+					<field name="code" />
+					<field name="currency_id" invisible="1" />
+				</field>
+				<xpath expr="//form/sheet/group/group[1]" position="inside">
+					<field name="day_planned" />
+					<label for="unit_planned" />
+					<div class="o_row">
+						<field name="unit_planned" />
+						<field name="uom_id" required="1" />
+					</div>
+					<field name="amount" />
+					<field name="weight" />
+				</xpath>
+				<xpath expr="//form/sheet/group/group[2]" position="inside">
+					<field name="exp_date_start" />
+					<field name="exp_date_end" />
+					<field name="progress_planned" widget="progressbar" />
+					<field name="progress_actual" widget="progressbar" />
+					<field name="date_start" />
+					<field name="date_end" />
+				</xpath>
+				<page name="description_page" position="before">
+					<page name="progress" string="Progress">
+						<field name="progress_ids" readonly="1">
+							<tree editable="top">
+								<field name="name" />
+								<field name="progress_unit" />
+								<field name="progress_day" />
+								<field name="date" />
+								<field name="user_id" />
+							</tree>
+						</field>
+					</page>
+				</page>
+				<!-- hide unused fields -->
+				<field name="date_deadline" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+			</field>
+		</record>
+
+		<record id="view_task_form2_inherited" model="ir.ui.view">
+			<field name="name">Task Timesheet Totalindo</field>
+			<field name="model">project.task</field>
+			<field name="inherit_id" ref="hr_timesheet.view_task_form2_inherited" />
+			<field name="arch" type="xml">
+				<field name="planned_hours" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+				<field name="progress" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
+			</field>
+		</record>
+
+		<!-- Task Progress -->
+		<record model="ir.ui.view" id="task_progress_view_form">
+			<field name="name">project.task.progress.form</field>
+			<field name="model">project.task.progress</field>
+			<field name="arch" type="xml">
+				<form string="Progress">
+					<sheet>
+						<div class="oe_title">
+							<h1 class="o_row">
+								<field name="name" placeholder="Work Summary..." />
+							</h1>
+						</div>
+						<group>
+							<group>
+								<field name="task_id" />
+								<field name="progress_unit" />
+								<field name="progress_day" />
+							</group>
+							<group>
+								<field name="date" />
+								<field name="user_id" />
+							</group>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="task_progress_view_tree">
+			<field name="name">project.task.progress.tree</field>
+			<field name="model">project.task.progress</field>
+			<field name="arch" type="xml">
+				<tree string="Progress">
+					<field name="name" />
+					<field name="task_id" />
+					<field name="progress_unit" />
+					<field name="progress_day" />
+					<field name="date" />
+					<field name="user_id" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="task_progress_action" model="ir.actions.act_window">
+			<field name="name">Task Progress</field>
+			<field name="res_model">project.task.progress</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_type">form</field>
+		</record>
+		<menuitem name="Task Progress" id="task_progress_menu"
+			parent="project.menu_project_management" action="task_progress_action"
+			sequence="20" />
+	</data>
+</odoo>

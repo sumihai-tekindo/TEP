@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record model="ir.ui.view" id="site_type_view_form">
+			<field name="name">site.type.form</field>
+			<field name="model">site.type</field>
+			<field name="arch" type="xml">
+				<form string="Type">
+					<group>
+						<group>
+							<field name="name" />
+						</group>
+					</group>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="site_type_view_tree">
+			<field name="name">site.type.tree</field>
+			<field name="model">site.type</field>
+			<field name="arch" type="xml">
+				<tree string="Type">
+					<field name="name" />
+				</tree>
+			</field>
+		</record>
+
+		<!-- Type -->
+		<record id="site_type_view" model="ir.actions.act_window">
+			<field name="name">Type</field>
+			<field name="res_model">site.type</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_type">form</field>
+		</record>
+		<menuitem name="Type" id="site_type_menu" parent="geoengine_configuration_submenu"
+			action="site_type_view" sequence="20" />
+	</data>
+</odoo>
