@@ -201,18 +201,3 @@ class detail_invoice(models.Model):
 	progress_approved = fields.Float(string='Progress Approved')
 	tax = fields.Float(string='Tax')
 	nilai_invoice = fields.Float(string='Nilai Invoice')
-
-class journal_project(models.Model):
-	_name = 'journal.project'
-
-	wip_pengakuan = fields.Many2one('account.account','WIP Pendapatan')
-	revenue = fields.Many2one('account.account','Revenue')
-	beban_pajak = fields.Many2one('account.account','Beban Pajak')
-	pph_4_2 = fields.Many2one('account.account','Pajak PPh Pasal 4(2)')
-	piutang_bruto = fields.Many2one('account.account','Piutang Bruto')
-	ar_retensi = fields.Many2one('account.account','AR Retensi')
-	uang_muka = fields.Many2one('account.account','Uang Muka')
-	ppn_keluaran = fields.Many2one('account.account','PPN Keluaran')
-	cogs = fields.Many2one('account.account','COGS')
-	wip_cogs = fields.Many2one('account.account','WIP COGS')
-	accrued_biaya = fields.Many2one('account.account','Accrued Biaya')

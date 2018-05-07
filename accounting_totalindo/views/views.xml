@@ -68,6 +68,15 @@
 			</field>
 		</record>
 
+		<record id="seq_journal" model="ir.sequence">
+				<field name="name">Journal Project Berjalan</field>
+				<field name="code">account.journal</field>
+				<field name="prefix">JP/</field>
+				<field name="suffix">/TEP/%(month)s/%(year)s</field>
+				<field name="padding">6</field>
+				<field eval="1" name="number_increment"/>
+			</record>
+
 		<record model="ir.actions.act_window" id="journal_project_list_action">
 			<field name="name">Journal Project</field>
 			<field name="res_model">journal.project</field>
