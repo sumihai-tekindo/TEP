@@ -38,16 +38,16 @@
 							</tr>
 							<tr>
 								<td><strong>Banyaknya Uang</strong></td>
-								<td><span t-field="o.invoice_line_ids.price_unit"/></td>
+								<td><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
 							</tr>
 							<tr>
 								<td><strong>Untuk Pembayaran</strong></td>
-								<td><span t-field="o.invoice_line_ids.name"/></td>
+								<td><span t-field="o.project_name"/></td>
 							</tr>
 						</table>
 						<h5 class="text-right">Jakarta,<span t-field="o.tanggal_faktur"/></h5><br/><br/><br/>
 						<h5 class="text-right"><span t-field="o.company_id.user_id.name"/></h5>
-						<h5 class="text-left">Jumlah Rp.<span t-field="o.amount_total"/></h5>
+						<h5 class="text-left">Jumlah Rp.<span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></h5>
 						<h5 class="text-right">Direktur</h5>
 					</div>
 				</t>

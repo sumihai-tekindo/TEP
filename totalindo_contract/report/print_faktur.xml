@@ -72,7 +72,7 @@
 		                        <tr>
 		                            <td><span t-field="l.product_id"/></td>
 		                            <td><span t-field="l.name"/></td>
-		                            <td><span t-field="l.price_unit"/></td>
+		                            <td><span t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
 		                        </tr>
 		                    </t>
 		                </tbody>
