@@ -25,9 +25,10 @@
     'category': 'Project',
     'author': "Joenan <joenannr@gmail.com>",
     'license': 'AGPL-3',
-    'website': 'http://keepapp.co.id',
+    'website': 'https://www.arkana.co.id',
     'depends': [
         'account_accountant',
+        'account_budget',
     ],
     'data': [
         'views/account_view.xml',
