@@ -28,6 +28,12 @@ class ProjectTaskUpdate(models.Model):
                                required=True, readonly=True, states={'draft': [('readonly', False)]})
 #     attachement = fields.Binary(string='Attachement')
     
+    @api.model
+    def create(self, vals):
+        import pdb;pdb.set_trace()
+        return super(ProjectTaskUpdate, self).create(vals)
+        
+    
     @api.multi
     def name_get(self):
         res = []
