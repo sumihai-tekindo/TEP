@@ -32,6 +32,7 @@
         'hr_timesheet',
         'stock',
         'purchase',
+        'sale',
     ],
     'data': [
         'views/project_view.xml',

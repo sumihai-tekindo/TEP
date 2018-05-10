@@ -30,7 +30,8 @@ class ProjectProject(models.Model):
             project.contract_amount = contract_amount
             est_profit_amount = contract_amount - project.budget_amount
             project.est_profit_amount = est_profit_amount
-            project.est_margin_amount = est_profit_amount / (contract_amount + est_profit_amount) * 100
+            amount_total = contract_amount + est_profit_amount
+            project.est_margin_amount = est_profit_amount / amount_total * 100 if amount_total > 0.0 else 0.0
     
     @api.depends('budget_ids.planned_amount')
     def _budget_amount(self):

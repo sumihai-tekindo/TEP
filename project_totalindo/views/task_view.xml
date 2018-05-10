@@ -18,7 +18,7 @@
 						<field name="uom_id" required="1" />
 					</div>
 					<field name="amount" />
-					<field name="weight" />
+					<field name="weight" widget="progressbar" />
 				</xpath>
 				<xpath expr="//form/sheet/group/group[2]" position="inside">
 					<field name="exp_date_start" />
@@ -62,6 +62,17 @@
 			</field>
 		</record>
 
+		<record id="task_type_edit_weight" model="ir.ui.view">
+			<field name="name">Task Type Totalindo</field>
+			<field name="model">project.task.type</field>
+			<field name="inherit_id" ref="project.task_type_edit" />
+			<field name="arch" type="xml">
+				<field name="fold" position="after">
+					<field name="exclude_weight" />
+				</field>
+			</field>
+		</record>
+
 		<!-- Task Progress -->
 		<record model="ir.ui.view" id="task_progress_view_form">
 			<field name="name">project.task.progress.form</field>
@@ -83,6 +94,9 @@
 							<group>
 								<field name="date" />
 								<field name="user_id" />
+							</group>
+							<group>
+								<field name="progress_expected" widget="progressbar" />
 							</group>
 						</group>
 					</sheet>

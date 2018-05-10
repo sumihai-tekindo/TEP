@@ -28,7 +28,6 @@
     'website': 'https://www.arkana.co.id',
     'depends': [
         'account_accountant',
-        'account_budget',
     ],
     'data': [
         'views/account_view.xml',
