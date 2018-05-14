@@ -30,7 +30,7 @@
 						<table class="table">
 							<tr>
 								<td><strong>No. Kwitansi</strong></td>
-								<td><span t-field="o.no_kwitansi"/></td>
+								<td><span t-field="o.sale_id.name"/></td>
 							</tr>
 							<tr>
 								<td><strong>Sudah Terima Dari</strong></td>
