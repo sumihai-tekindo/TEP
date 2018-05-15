@@ -88,6 +88,8 @@ class ProjectProject(models.Model):
     expense_ids = fields.Many2many('account.move.line', 'project_move_line_rel', 'project_id', 'move_line_id',
         string='Expenses', compute='_expense_ids')
     
+    location_id = fields.Many2one('stock.location', string='Project Location', domain=[('usage', '=', 'internal')])
+    
     @api.multi
     def budget_tree_view(self):
         self.ensure_one()
