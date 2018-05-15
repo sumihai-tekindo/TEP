@@ -112,8 +112,8 @@
 				<tree string="Progress">
 					<field name="name" />
 					<field name="task_id" />
-					<field name="progress_unit" />
-					<field name="progress_day" />
+					<field name="progress_unit" sum="progress" />
+					<field name="progress_day" sum="progress" />
 					<field name="progress_expected" />
 					<field name="progress_actual" />
 					<field name="date" />
