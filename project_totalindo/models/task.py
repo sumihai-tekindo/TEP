@@ -19,7 +19,10 @@ class ProjectTask(models.Model):
     @api.depends('unit_planned', 'progress_ids.progress_unit')
     def _compute_progress_actual(self):
         for task in self:
-            task.progress_actual = sum([progress.progress_unit for progress in task.progress_ids]) / task.unit_planned * 100 if task.unit_planned > 0.0 else 0.0
+            total_progress = sum([progress.progress_unit for progress in task.progress_ids])
+            progress_planned = task.unit_planned
+            task.progress_actual = total_progress / progress_planned * task.weight if progress_planned > 0.0 else 0.0
+            task.progress_actual = total_progress / progress_planned * 100 if progress_planned > 0.0 else 0.0
     
     @api.depends('amount')
     def _compute_weight(self):
@@ -39,7 +42,8 @@ class ProjectTask(models.Model):
     exp_date_start = fields.Date(string='Start Date')
     exp_date_end = fields.Date(string='End Date')
     progress_planned = fields.Float(string='Scheduled Progress', compute='_compute_progress_planned')
-    progress_actual = fields.Float(string='Work Progress', compute='_compute_progress_actual', store=True)
+    progress_actual = fields.Float(string='Work Progress', compute='_compute_progress_actual', store=True, group_operator="avg")
+    progress_actual_task = fields.Float(string='Work Progress Task', compute='_compute_progress_actual', store=True, group_operator="avg")
     date_start = fields.Date(string='Actual Start Date')
     date_end = fields.Date(string='Actual End Date')
     
@@ -49,8 +53,9 @@ class ProjectTask(models.Model):
 class ProjectTaskProgress(models.Model):
     _name = 'project.task.progress'
     _description = 'Task Progress'
+    _order = 'date desc'
     
-    @api.depends('task_id.exp_date_start', 'task_id.exp_date_end', 'task_id.weight', 'date')
+    @api.depends('task_id.exp_date_start', 'task_id.exp_date_end', 'task_id.weight', 'date', 'progress_unit')
     def _progress_expected(self):
         for progress in self:
             if progress.task_id.exp_date_start and progress.task_id.exp_date_end and progress.date:
@@ -58,12 +63,15 @@ class ProjectTaskProgress(models.Model):
                 time_date_end = datetime.strptime(progress.task_id.exp_date_end, '%Y-%m-%d')
                 time_date = datetime.strptime(progress.date, '%Y-%m-%d')
                 progress.progress_expected = float((time_date - time_date_start).days) / float((time_date_end - time_date_start).days) * progress.task_id.weight
-    
+                progress_ids = self.search([('task_id', '=', progress.task_id.id), ('date', '<=', progress.date)])
+                progress.progress_actual = sum(progress_ids.mapped('progress_unit')) / progress.task_id.unit_planned * progress.task_id.weight
+
     name = fields.Char(string='Work Summary', required=True)
     task_id = fields.Many2one('project.task', string='Task', required=True)
     progress_unit = fields.Float(string='Units Completed')
     progress_day = fields.Float(string='Days Spent')
-    progress_expected = fields.Float(string='Expected Progress', compute='_progress_expected', store=True)
+    progress_expected = fields.Float(string='Expected Progress', compute='_progress_expected', store=True, group_operator="avg")
+    progress_actual = fields.Float(string='Actual Progress', compute='_progress_expected', store=True, group_operator="avg")
     date = fields.Date(string='Date', default=fields.Date.context_today, required=True)
     user_id = fields.Many2one('res.users', string='Done by', default=lambda self: self.env.uid, required=True)
 

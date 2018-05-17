@@ -33,8 +33,8 @@
 						<field name="progress_ids" readonly="1">
 							<tree editable="top">
 								<field name="name" />
-								<field name="progress_unit" />
-								<field name="progress_day" />
+								<field name="progress_unit" sum="progress" />
+								<field name="progress_day" sum="progress" />
 								<field name="date" />
 								<field name="user_id" />
 							</tree>
@@ -97,6 +97,7 @@
 							</group>
 							<group>
 								<field name="progress_expected" widget="progressbar" />
+								<field name="progress_actual" widget="progressbar" />
 							</group>
 						</group>
 					</sheet>
@@ -111,8 +112,10 @@
 				<tree string="Progress">
 					<field name="name" />
 					<field name="task_id" />
-					<field name="progress_unit" />
-					<field name="progress_day" />
+					<field name="progress_unit" sum="progress" />
+					<field name="progress_day" sum="progress" />
+					<field name="progress_expected" />
+					<field name="progress_actual" />
 					<field name="date" />
 					<field name="user_id" />
 				</tree>
@@ -122,7 +125,7 @@
 		<record id="task_progress_action" model="ir.actions.act_window">
 			<field name="name">Task Progress</field>
 			<field name="res_model">project.task.progress</field>
-			<field name="view_mode">tree,form</field>
+			<field name="view_mode">tree,form,graph,pivot</field>
 			<field name="view_type">form</field>
 		</record>
 		<menuitem name="Task Progress" id="task_progress_menu"

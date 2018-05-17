@@ -81,27 +81,27 @@
 					<table class="table table-bordered">
 						<tr>
 							<td><strong>Harga Jual / Penggantian</strong></td>
-							<td><span t-field="o.amount_total"/></td>
+							<td class="text-right"><span t-field="o.amount_total"/></td>
 						</tr>
 						<tr>
 							<td><strong>Dikurangi Potongan Harga</strong></td>
-							<td><span t-field="o.amount_total"/></td>
+							<td class="text-right"><span t-field="o.uang_muka" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
 						</tr>
 						<tr>
 							<td><strong>Dikurangi Uang Muka</strong></td>
-							<td><span t-field="o.amount_total"/></td>
+							<td class="text-right"><span t-field="o.uang_muka" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
 						</tr>
 						<tr>
 							<td><strong>Dasar Pengenaan Pajak</strong></td>
-							<td><span t-field="o.amount_tax"/></td>
+							<td class="text-right"><span t-field="o.amount_tax"/></td>
 						</tr>
 						<tr>
 							<td><strong>PPN = 10% x Dasar Pengenaan Pajak</strong></td>
-							<td><span t-field="o.amount_tax"/></td>
+							<td class="text-right"><span t-field="o.amount_tax"/></td>
 						</tr>
 						<tr>
 							<td><strong>Total PPnBM (Pajak Penjualan Barang Mewah)</strong></td>
-							<td><span t-field="o.residual"/></td>
+							<td class="text-right"><span t-field="o.residual"/></td>
 						</tr>
 					</table>
 					<h6>Sesuai dengan ketentuan yang berlaku, Direktorat Jenderal Pajak mengatur bahwa Faktur Pajak ini telah ditandatangani<br/>

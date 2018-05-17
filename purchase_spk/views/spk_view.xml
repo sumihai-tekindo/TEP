@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<!-- Purchase SPK -->
+		<record model="ir.ui.view" id="purchase_spk_view_form">
+			<field name="name">purchase.spk.form</field>
+			<field name="model">purchase.spk</field>
+			<field name="arch" type="xml">
+				<form string="Purchase Order">
+					<header>
+						<button name="action_confirm" states="draft" string="Confirm"
+							type="object" class="oe_highlight" />
+						<button name="action_pm_approve" states="pm_approve"
+							string="PM Approve" type="object" class="oe_highlight" />
+						<button name="action_dir_approve" string="Dir Approve"
+							type="object" states="dir_approve" class="oe_highlight" />
+						<button name="action_done" string="Lock" type="object"
+							states="open" class="oe_highlight" />
+						<button name="action_cancel" states="draft,pm_approve,dir_approve,open"
+							string="Cancel" type="object" />
+						<button name="action_set_draft" states="cancel" string="Set to Draft"
+							type="object" />
+						<button name="action_unlock" type="object" string="Unlock"
+							states="done" groups="purchase.group_purchase_manager" />
+						<field name="state" widget="statusbar"
+							statusbar_visible="draft,pm_approve,dir_approve,open,done"
+							readonly="1" />
+					</header>
+					<sheet>
+						<div class="oe_title">
+							<h1>
+								<field name="name" readonly="1" />
+							</h1>
+						</div>
+						<group>
+							<group>
+								<field name="parent_id" />
+								<field name="partner_id"
+									context="{'search_default_supplier':1, 'default_supplier':1, 'default_customer':0}"
+									domain="[('supplier','=',True)]" />
+								<field name="partner_ref" />
+							</group>
+							<group>
+								<field name="date_order" />
+								<field name="currency_id" groups="base.group_multi_currency" />
+								<field name="company_id" groups="base.group_multi_company"
+									options="{'no_create': True}" />
+							</group>
+							<group>
+								<field name="project_id" />
+								<field name="task_id" />
+							</group>
+						</group>
+						<notebook>
+							<page string="Task">
+								<field name="order_line"
+									attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}">
+									<tree string="SPK Lines" editable="bottom">
+										<field name="currency_id" invisible="1" />
+										<field name="state" invisible="1" />
+										<field name="sequence" widget="handle" />
+										<field name="product_id"
+											attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"
+											context="{'partner_id':parent.partner_id, 'quantity':quantity,'uom':uom_id, 'company_id': parent.company_id}" />
+										<field name="name" />
+										<field name="account_analytic_id" context="{'default_partner_id':parent.partner_id}"
+											groups="purchase.group_analytic_accounting" />
+										<field name="quantity" />
+										<field name="uom_id" groups="product.group_uom"
+											attrs="{'readonly': [('state', 'in', ('purchase', 'done', 'cancel'))]}" />
+										<field name="price_unit" />
+										<field name="taxes_id" widget="many2many_tags"
+											domain="[('type_tax_use','=','purchase')]" context="{'default_type_tax_use': 'purchase'}" />
+										<field name="price_subtotal" widget="monetary" />
+									</tree>
+								</field>
+								<group class="oe_subtotal_footer oe_right">
+									<field name="amount_untaxed" widget="monetary"
+										options="{'currency_field': 'currency_id'}" />
+									<field name="amount_tax" widget="monetary"
+										options="{'currency_field': 'currency_id'}" />
+									<div class="oe_subtotal_footer_separator oe_inline">
+										<label for="amount_total" />
+									</div>
+									<field name="amount_total" nolabel="1"
+										class="oe_subtotal_footer_separator" widget="monetary"
+										options="{'currency_field': 'currency_id'}" />
+								</group>
+								<field name="notes" class="oe_inline"
+									placeholder="An administrator can set up default Terms and conditions in your Company settings." />
+								<div class="oe_clear" />
+							</page>
+						</notebook>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers" />
+						<field name="message_ids" widget="mail_thread" />
+					</div>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="purchase_spk_view_tree">
+			<field name="name">purchase.spk.tree</field>
+			<field name="model">purchase.spk</field>
+			<field name="arch" type="xml">
+				<tree string="Progress">
+					<field name="name" />
+					<field name="date_order" />
+					<field name="task_id" />
+					<field name="state" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="purchase_spk_action" model="ir.actions.act_window">
+			<field name="name">Purchase SPK</field>
+			<field name="res_model">purchase.spk</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_type">form</field>
+		</record>
+
+		<menuitem name="Purchase SPK" id="purchase_spk_menu"
+			parent="purchase.menu_procurement_management" action="purchase_spk_action"
+			sequence="7" />
+	</data>
+</odoo>

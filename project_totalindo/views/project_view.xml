@@ -1,6 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 	<data>
+		<!-- Replace default project view -->
+		<record id="project.edit_project" model="ir.ui.view">
+			<field name="name">project.project.form</field>
+			<field name="model">project.project</field>
+			<field name="arch" type="xml">
+				<form string="Project">
+					<sheet string="Project">
+						<field name="analytic_account_id" invisible="1" required="0" />
+						<div class="oe_button_box" name="button_box" groups="base.group_user">
+							<button class="oe_stat_button" name="attachment_tree_view"
+								type="object" icon="fa-files-o">
+								<field string="Documents" name="doc_count" widget="statinfo" />
+							</button>
+							<button class="oe_stat_button" type="action"
+								attrs="{'invisible':[('use_tasks','=', False)]}" name="245"
+								icon="fa-tasks">
+								<field string="Tasks" name="task_count" widget="statinfo"
+									options="{'label_field': 'label_tasks'}" />
+							</button>
+							<button name="toggle_active" type="object"
+								confirm="(Un)archiving a project automatically (un)archives its tasks and issues. Do you want to proceed?"
+								class="oe_stat_button" icon="fa-archive">
+								<field name="active" widget="boolean_button"
+									options="{&quot;terminology&quot;: &quot;archive&quot;}" />
+							</button>
+						</div>
+						<div class="oe_title">
+							<h1>
+								<field name="name" placeholder="Project Name" />
+							</h1>
+							<div name="options_active" class="oe_edit_only">
+								<div>
+									<field name="use_tasks" class="oe_inline" />
+									<label for="use_tasks" class="oe_inline" string="Tasks" />
+									<span attrs="{'invisible':[('use_tasks', '=', False)]}">as </span>
+									<field name="label_tasks" class="oe_inline oe_input_align"
+										attrs="{'invisible': [('use_tasks', '=', False)]}" />
+								</div>
+							</div>
+						</div>
+						<group>
+							<group>
+								<field name="code" string="Code" />
+								<label for="street" string="Address" />
+								<div class="o_address_format">
+									<field name="street" placeholder="Street..." class="o_address_street" />
+									<field name="street2" placeholder="Subdistrict"
+										options="{'no_quick_create': 1, 'no_create_edit': 1}" />
+									<field name="city_id" placeholder="City" class="o_address_city"
+										options="{'no_quick_create': 1, 'no_create_edit': 1}" />
+									<field name="state_id" class="o_address_state"
+										placeholder="State" context="{'country_id': country_id, 'zip': zip}"
+										options="{'no_quick_create': 1, 'no_create_edit': 1}" />
+									<field name="zip" placeholder="ZIP" class="o_address_zip" />
+									<field name="country_id" placeholder="Country" class="o_address_country"
+										options="{'no_quick_create': 1, 'no_create_edit': 1}" />
+								</div>
+								<field name="user_id" />
+								<field name="partner_id" />
+							</group>
+							<group>
+								<field name="date_from" />
+								<field name="date_to" />
+								<field name="tender_amount" />
+								<field name="currency_id" invisible="1" />
+								<field name="dp_amount" />
+								<field name="catering" />
+							</group>
+						</group>
+						<notebook>
+							<page name="settings" string="Settings">
+								<!-- <group> <field name="user_id" string="Project Manager" attrs="{'readonly':[('active','=',False)]}" 
+									/> <field name="privacy_visibility" widget="radio" /> <field name="partner_id" 
+									string="Customer" /> </group> -->
+								<group name="misc">
+									<group string="Configuration" groups="base.group_no_one">
+										<field name="sequence" groups="base.group_no_one" />
+									</group>
+									<group string="Time Scheduling" groups="base.group_no_one">
+										<field name="resource_calendar_id" groups="base.group_no_one" />
+									</group>
+								</group>
+							</page>
+							<page name="emails" string="Emails"
+								attrs="{'invisible': [('alias_domain', '=', False)]}">
+								<group name="group_alias">
+									<label for="alias_name" string="Email Alias" />
+									<div name="alias_def">
+										<field name="alias_id" class="oe_read_only oe_inline"
+											string="Email Alias" required="0" />
+										<div class="oe_edit_only oe_inline" name="edit_alias"
+											style="display: inline;">
+											<field name="alias_name" class="oe_inline" />
+											@
+											<field name="alias_domain" class="oe_inline" readonly="1" />
+										</div>
+									</div>
+									<label for="alias_model" string="Incoming Emails create"
+										class="oe_edit_only" />
+									<field name="alias_model" class="oe_inline oe_edit_only"
+										nolabel="1" />
+									<field name="alias_contact" class="oe_inline oe_edit_only"
+										string="Accept Emails From" />
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+					<div class="oe_chatter">
+						<field name="message_follower_ids" widget="mail_followers"
+							help="Follow this project to automatically track the events associated to tasks and issues of this project."
+							groups="base.group_user" />
+					</div>
+				</form>
+			</field>
+		</record>
+
 		<record id="edit_project" model="ir.ui.view">
 			<field name="name">Project Totalindo</field>
 			<field name="model">project.project</field>
@@ -15,8 +131,8 @@
 					</button>
 				</div>
 				<div name="button_box" position="inside">
-					<button class="oe_stat_button" type="object" name="picking_type_kanban_view"
-						icon="fa-dropbox" string="Inventory">
+					<button class="oe_stat_button" type="object"
+						name="picking_type_kanban_view" icon="fa-dropbox" string="Inventory">
 					</button>
 				</div>
 				<div name="button_box" position="inside">
@@ -43,37 +159,6 @@
 					<button class="oe_stat_button" type="object" name="supp_inv_tree_view"
 						icon="fa-check-square" string="Supp Invoice">
 					</button>
-				</div>
-				<div class="oe_title" position="after">
-					<group>
-						<group>
-							<field name="code" string="Code" />
-							<label for="street" string="Address" />
-							<div class="o_address_format">
-								<field name="street" placeholder="Street..." class="o_address_street" />
-								<field name="street2" placeholder="Subdistrict"
-									options="{'no_quick_create': 1, 'no_create_edit': 1}" />
-								<field name="city_id" placeholder="City" class="o_address_city"
-									options="{'no_quick_create': 1, 'no_create_edit': 1}" />
-								<field name="state_id" class="o_address_state"
-									placeholder="State" context="{'country_id': country_id, 'zip': zip}"
-									options="{'no_quick_create': 1, 'no_create_edit': 1}" />
-								<field name="zip" placeholder="ZIP" class="o_address_zip" />
-								<field name="country_id" placeholder="Country" class="o_address_country"
-									options="{'no_quick_create': 1, 'no_create_edit': 1}" />
-							</div>
-							<field name="manager_id" />
-							<field name="partner_id" />
-						</group>
-						<group>
-							<field name="date_from" />
-							<field name="date_to" />
-							<field name="tender_amount" />
-							<field name="currency_id" invisible="1" />
-							<field name="dp_amount" />
-							<field name="catering" />
-						</group>
-					</group>
 				</div>
 				<page name="settings" position="before">
 					<page name="team" string="Team">
@@ -136,6 +221,26 @@
 						</field>
 					</page>
 				</page>
+				<!-- <xpath expr="//page[@name='settings']/group[1]" position="attributes"> 
+					<attribute name="invisible">1</attribute> </xpath> -->
+				<page name="settings" position="inside">
+					<group string="Inventory">
+						<group>
+							<field name="location_id" required="1" />
+						</group>
+					</group>
+				</page>
+			</field>
+		</record>
+
+		<record id="project_invoice_form" model="ir.ui.view">
+			<field name="name">Project Timesheet Totalindo</field>
+			<field name="model">project.project</field>
+			<field name="inherit_id" ref="hr_timesheet.project_invoice_form" />
+			<field name="arch" type="xml">
+				<field name="subtask_project_id" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</field>
 			</field>
 		</record>
 

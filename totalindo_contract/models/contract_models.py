@@ -8,6 +8,8 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTF
 
+import odoo.addons.decimal_precision as dp
+
 
 INDONESIAN_MONTHES = {
 	1: 'Januari',
@@ -39,14 +41,11 @@ class rekapitulasi_kontrak(models.Model):
 	percent_retensi = fields.Float(string='% Retensi')
 	other = fields.Char(string='Other')
 	currency_id = fields.Many2one('res.currency',string='Currency')
-	amandement = fields.Boolean(string='Amandement')
+	amandement = fields.Selection([('tambah', 'Tambah'), ('kurang', 'Kurang')], string='Amandement')
 	partner_id = fields.Many2one('res.partner')
 	contract_no = fields.Many2one('sale.order',string='Contract No')
 	harga_satuan = fields.Integer('Harga Satuan', required=True, default=1)
-	total_harga = fields.Float(string='Total Harga', compute='_compute_harga', store=True)
 	tax = fields.Float(string="Tax", default=1)
-	freight_charge = fields.Float('Total', compute='_compute_freight_charge', onchange='_fill_orderline',
-								  store=True)
 	state = fields.Selection([
 		('draft', 'Draft'),
 		('sent', 'Draft Sent'),
@@ -61,9 +60,15 @@ class custom_sale_order(models.Model):
 	uraian = fields.Char(string='Uraian')
 	no_task = fields.Char(string="No. Task")
 	keterangan = fields.Text(string='Keterangan')
-	weight = fields.Integer('Weight', readonly=True, default=1)
+	weight = fields.Float('Weight', readonly=True, compute='_compute_weight', digits=dp.get_precision('Discount'), default=0.0)
 	start_date = fields.Date(string='Start Date')
 	end_date = fields.Date(string='End Date')
+
+	@api.depends('weight','product_uom_qty', 'price_unit')
+	def _compute_weight(self):
+		for record in self:
+			if record.order_id.amount_untaxed != 0 and record.price_unit != 0 and record.product_uom_qty != 0:
+				record.weight = record.product_uom_qty * record.price_unit / record.order_id.amount_untaxed * 100
 
 class monitoring_progress(models.Model):
 	_name = 'monitoring.progress'
@@ -87,6 +92,7 @@ class monitoring_progress(models.Model):
 	state = fields.Selection([
 		('new', 'New'),
 		('recognize', 'Recognize Revenue'),
+		('approve', 'Customer Approved'),
 		('billing', 'Billing'),
 		], string='Status', readonly=True, copy=False, default='new', track_visibility='onchange')
 
