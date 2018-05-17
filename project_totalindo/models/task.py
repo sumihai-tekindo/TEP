@@ -53,6 +53,7 @@ class ProjectTask(models.Model):
 class ProjectTaskProgress(models.Model):
     _name = 'project.task.progress'
     _description = 'Task Progress'
+    _order = 'date desc'
     
     @api.depends('task_id.exp_date_start', 'task_id.exp_date_end', 'task_id.weight', 'date', 'progress_unit')
     def _progress_expected(self):
@@ -63,7 +64,7 @@ class ProjectTaskProgress(models.Model):
                 time_date = datetime.strptime(progress.date, '%Y-%m-%d')
                 progress.progress_expected = float((time_date - time_date_start).days) / float((time_date_end - time_date_start).days) * progress.task_id.weight
                 progress_ids = self.search([('task_id', '=', progress.task_id.id), ('date', '<=', progress.date)])
-                progress.progress_actual = sum(progress_ids.mapped('progress_unit')) / progress.task_id.progress_planned * 100
+                progress.progress_actual = sum(progress_ids.mapped('progress_unit')) / progress.task_id.unit_planned * progress.task_id.weight
 
     name = fields.Char(string='Work Summary', required=True)
     task_id = fields.Many2one('project.task', string='Task', required=True)
