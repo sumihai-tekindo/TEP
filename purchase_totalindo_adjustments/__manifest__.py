@@ -3,14 +3,13 @@
     'name': "Purchase Totalindo Adjustments",
 
     'summary': """
-        Short (1 phrase/line) summary of the module's purpose, used as
-        subtitle on modules listing or apps.openerp.com""",
+        This module is modifying the inventory adjustments form in this application""",
 
     'description': """
         Long description of module's purpose
     """,
 
-    'author': "Sumihai Teknologi",
+    'author': "Sumihai Teknologi Indonesia",
     'website': "http://www.yourcompany.com",
 
     # Categories can be used to filter modules in modules listing

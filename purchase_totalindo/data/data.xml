@@ -1,0 +1,20 @@
+<odoo>
+	<data>
+		<record id="sequence_spb" model="ir.sequence">
+            <field name="name">Surat Permintaan Barang</field>
+            <field name="code">spb.sequence</field>
+            <field name="prefix">SPB/</field>
+            <field name="padding">6</field>
+            <field name="suffix">/%(month)s/%(year)s</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="sequence_po" model="ir.sequence">
+            <field name="name">Purchase Order</field>
+            <field name="code">po.sequence.inherit</field>
+            <field name="prefix">PON/</field>
+            <field name="padding">6</field>
+            <field name="suffix">/%(month)s/%(year)s</field>
+            <field name="company_id" eval="False"/>
+        </record>
+	</data>
+</odoo>

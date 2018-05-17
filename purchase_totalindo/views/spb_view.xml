@@ -1,0 +1,178 @@
+<odoo>
+	<data>
+
+		<record id="spbwizard_wizard_view" model="ir.ui.view">
+			<field name="name">Purchase Order/Inventory Transfer</field>
+			<field name="model">spb.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Purchase Order/Inventory Transfer">
+					<group>
+						<group>
+							<field name="pilihan_wizard" widget="radio" options="{'horizontal': true}"/>
+							<field name="buat_baru" widget="radio" options="{'horizontal': true}" string="Buat baru?"/>
+							<field name="purchase_id" string="Add to PO?" attrs="{'invisible': ['|',('pilihan_wizard','!=', 'po'), ('buat_baru','!=','no')]}"/>
+							<field name="internal_id" string="Add to Inventory Transfer?" attrs="{'invisible': ['|',('pilihan_wizard','!=', 'it'), ('buat_baru','!=','no')]}"/>
+							<field name="partner_id" string="Vendor" attrs="{'invisible': ['|',('pilihan_wizard','!=','po'),('buat_baru','!=','yes')], 'required': [('pilihan_wizard','=','po'), ('buat_baru','=','yes')]}"/>
+							<field name="proyek_id" string="Project" attrs="{'invisible': [('buat_baru','=','no')], 'required': [('buat_baru','=','yes')]}"/>
+						</group>
+					</group>
+					<footer>
+						<button name="btn_wizard" string="Yes" type="object" class="btn-primary"/>
+						<button string="Cancel" class="btn-default" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="spbwizard_action_view">
+			<field name="name">Purchase Order / Inventory Transfer</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">spb.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="spbwizard_wizard_view"/>
+			<field name="target">new</field>
+		</record>
+
+		<record id="spb_form" model="ir.ui.view">
+            <field name="name">spb.form</field>
+            <field name="model">spb</field>
+            <field name="arch" type="xml">
+                <form string="Surat Permintaan Barang">
+                <header>
+                    <button name="button_confirm" states="draft" type="object" string="Confirm" class="oe_highlight" groups="purchase.group_purchase_user"/>
+					<button name="button_submit2pm" states="confirm" type="object" string="Submit to PM" class="oe_highlight" groups="purchase.group_purchase_manager"/>
+					<button name="button_approve" states="approved" type="object" string="Approved" class="oe_highlight" groups="purchase.group_purchase_manager"/>
+					<button name="button_sendtodraft" states="confirm" type="object" string="Send to draft" class="oe_highlight"/>					
+					<button name="button_cancel" states="confirm" type="object" string="Cancel" class="oe_highlight"/>
+					<field name="state" widget="statusbar" statusbar_visible="draft,confirm,approved,done,cancel" readonly="1"/>
+                </header>
+                <sheet>
+                	<div class="oe_title">
+                        <label string="Surat Permintaan Barang"/>
+                        <h1>
+                            <field name="name" readonly="1" width="200"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="tanggal_spb" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+							<field name="proyek_id" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+							<field name="departemen_id" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+							<field name="nomer_gambar" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+                        </group>
+                        <group>
+                            <field name="budegeted" widget="radio" options="{'horizontal': true}" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+                            <field name="sifat_kebutuhan" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+                            <field name="tanggal_diperlukan" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Products">
+                            <field name="spb_line_ids" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}" string="SPB Products">
+                                 <tree string="Surat Permintaan Barang Lines" editable="bottom">
+                                    <field name="state" invisible="1"/>
+                                    <field name="product_id"/>
+									<field name="name"/>
+									<field name="satuan"/>
+									<field name="jumlah_permintaan"/>
+									<field name="account_analytic"/>
+									<field name="quantity_transfer"/>
+									<field name="quantity_po"/>
+									<field name="outstanding_spb"/>
+									<button name="%(spbwizard_action_view)d" icon="fa-gear" type="action" attrs="{'invisible': [('state','not in', ('done'))]}"/>
+									<button name="view_po_for_spbline" icon="fa-files-o" type="object" attrs="{'invisible': [('state','not in', ('done'))]}"/>
+                                </tree>
+                                <form string="Purchase Order Line">
+                                    <sheet>
+                                        <group>
+											<group>
+												<field name="product_id"/>                      
+												<field name="satuan"/>
+												<field name="jumlah_permintaan"/>
+											</group>
+											<group>                                                
+												<field name="quantity_transfer"/>
+												<field name="quantity_po"/>
+												<field name="outstanding_spb"/>
+											</group>
+										</group>
+										<notebook>
+											<page string="Description">
+												<field name="name"/>
+											</page>
+										</notebook>
+                                    </sheet>
+                                </form>
+                            </field>
+                            <field name="notes" class="oe_inline" placeholder="Notes"/>
+                            <div class="oe_clear"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                </form>
+            </field>
+        </record>
+
+		<record model="ir.ui.view" id="spb_tree_view">
+			<field name="name">spb.tree</field>
+			<field name="model">spb</field>
+			<field name="arch" type="xml">
+				<tree string="Surat Permintaan Barang">
+					<field name="name"/>
+					<field name="tanggal_spb"/>
+					<field name="proyek_id"/>
+					<field name="departemen_id"/>
+					<field name="budegeted"/>
+					<field name="sifat_kebutuhan"/>
+					<field name="tanggal_diperlukan"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="spb_search_view">
+			<field name="name">spb.search</field>
+			<field name="model">spb</field>
+			<field name="arch" type="xml">
+				<search>
+					<field name="name"/>
+					<field name="tanggal_spb"/>
+					<field name="proyek_id"/>
+					<field name="departemen_id"/>
+					<field name="budegeted"/>
+					<field name="sifat_kebutuhan"/>
+					<field name="tanggal_diperlukan"/>
+					<field name="state"/>
+				</search>
+			</field>
+		</record>
+
+		<record id="view_spb_filter" model="ir.ui.view">
+            <field name="name">spb.filter</field>
+            <field name="model">spb</field>
+            <field name="arch" type="xml">
+                <search string="Search Surat Permintaan Barang">
+                    <field name="name"/>
+                    <field name="create_uid"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Vendor" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Tanggal SPB" domain="[]" context="{'group_by':'tanggal_spb'}"/>
+                        <filter string="Project" domain="[]" context="{'group_by':'proyek_id'}"/>
+                        <filter string="Department" domain="[]" context="{'group_by':'departemen_id'}"/>
+                        <filter string="Tanggal diperlukan" domain="[]" context="{'group_by':'tanggal_diperlukan'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+		<record model="ir.actions.act_window" id="spb_list_action">
+			<field name="name">Surat Permintaan Barang</field>
+			<field name="res_model">spb</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="spb_menu" name="Surat Permintaan Barang" parent="purchase.menu_procurement_management" action="spb_list_action" sequence="-1"/>
+	</data>
+</odoo>
