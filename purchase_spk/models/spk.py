@@ -7,12 +7,14 @@ from datetime import datetime
 class PurchaseSpk(models.Model):
     _name = 'purchase.spk'
     _description = 'SPK'
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _order = 'date_order desc, id desc'
 
-    @api.depends('line_ids.price_total')
+    @api.depends('order_line.price_total')
     def _amount_all(self):
-        for spk in self:
+        for order in self:
             amount_untaxed = amount_tax = 0.0
-            for line in spk.line_ids:
+            for line in order.order_line:
                 amount_untaxed += line.price_subtotal
                 # FORWARDPORT UP TO 10.0
                 if order.company_id.tax_calculation_rounding_method == 'round_globally':
@@ -32,14 +34,14 @@ class PurchaseSpk(models.Model):
         'cancel': [('readonly', True)],
     }
     
-    name = fields.Char(string='Name', required=True, readonly=True)
+    name = fields.Char(string='Name', required=True, readonly=True, default='Draft SPK')
     parent_id = fields.Many2one('purchase.spk', string='Parent SPK', states=READONLY_STATES)
-    partner_id = fields.Many2one('res.partner', string='Vendor', states=READONLY_STATES)
-    vendor_ref = fields.Char(string='Vendor Reference', states=READONLY_STATES)
-    project_id = fields.Many2one('project.project', string='Project', states=READONLY_STATES)
-    task_id = fields.Many2one('project.task', string='Task', states=READONLY_STATES)
-    date = fields.Date(string='Order Date', states=READONLY_STATES)
-    line_ids = fields.One2many('purchase.spk.line', 'spk_id', string='Lines', states=READONLY_STATES)
+    partner_id = fields.Many2one('res.partner', string='Vendor', required=True, states=READONLY_STATES)
+    partner_ref = fields.Char(string='Vendor Reference', states=READONLY_STATES)
+    project_id = fields.Many2one('project.project', string='Project', required=True, states=READONLY_STATES)
+    task_id = fields.Many2one('project.task', string='Task', required=True, states=READONLY_STATES)
+    date_order = fields.Date(string='Order Date', required=True, states=READONLY_STATES)
+    order_line = fields.One2many('purchase.spk.line', 'order_id', string='Lines', states=READONLY_STATES)
     
     company_id = fields.Many2one('res.company', 'Company', required=True, index=True, default=lambda self: self.env.user.company_id.id)
     currency_id = fields.Many2one('res.currency', 'Currency', required=True, default=lambda self: self.env.user.company_id.currency_id.id)
@@ -49,17 +51,55 @@ class PurchaseSpk(models.Model):
     amount_tax = fields.Monetary(string='Taxes', store=True, readonly=True, compute='_amount_all')
     amount_total = fields.Monetary(string='Total', store=True, readonly=True, compute='_amount_all')
     
-    state = fields.Selection([('draft','Draft'),
+    state = fields.Selection([('draft', 'Draft'),
                               ('pm_approve', 'PM Approval'),
                               ('dir_approve', 'Director Approval'),
                               ('open', 'In Progress'),
                               ('done', 'Done'),
-                              ('cancel', 'Cancelled'),], string='State', readonly=True)
-
+                              ('cancel', 'Cancelled')], string='State', default='draft', readonly=True, copy=False, index=True)
+    notes = fields.Text(string='Terms and Conditions')
+    
     @api.multi
     def action_confirm(self):
-        for spk in self:
-            spk.state = 'pm_approve'
+        for order in self:
+            order.state = 'pm_approve'
+    
+    @api.multi
+    def action_pm_approve(self):
+        for order in self:
+            order.state = 'dir_approve'
+    
+    @api.multi
+    def action_dir_approve(self):
+        for order in self:
+            order.state = 'open'
+    
+    @api.multi
+    def action_done(self):
+        for order in self:
+            order.state = 'done'
+    
+    @api.multi
+    def action_cancel(self):
+        for order in self:
+            order.state = 'cancel'
+    
+    @api.multi
+    def action_set_draft(self):
+        for order in self:
+            order.state = 'draft'
+    
+    @api.multi
+    def action_unlock(self):
+        for order in self:
+            order.state = 'open'
+    
+    @api.onchange('project_id')
+    def onchange_project_id(self):
+        if not self.project_id:
+            self.task_id = False
+        return {'domain': {'task_id': [('project_id', '=', self.project_id.id)]}}
+    
     
 class PurchaseSpkLine(models.Model):
     _name = 'purchase.spk.line'
@@ -68,22 +108,25 @@ class PurchaseSpkLine(models.Model):
     @api.depends('quantity', 'price_unit', 'taxes_id')
     def _compute_amount(self):
         for line in self:
-            taxes = line.taxes_id.compute_all(line.price_unit, line.spk_id.currency_id, line.quantity, product=False, partner=line.order_id.partner_id)
+            taxes = line.taxes_id.compute_all(line.price_unit, line.order_id.currency_id, line.quantity, product=False, partner=line.order_id.partner_id)
             line.update({
                 'price_tax': taxes['total_included'] - taxes['total_excluded'],
                 'price_total': taxes['total_included'],
                 'price_subtotal': taxes['total_excluded'],
             })
-
+            
+    sequence = fields.Integer(string='Sequence', default=10)
     name = fields.Char(string='Description', required=True)
-    spk_id = fields.Many2one('purchase.spk', string='SPK')
-    analytic_id = fields.Many2one('account.analytic.account', string='Analytic Account')
-    quantity = fields.Float(string='Volume', digits=dp.get_precision('Product Unit of Measure'))
-    uom_id = fields.Many2one('product.uom', string='UoM')
-    price_unit = fields.Float(string='Unit Price', digits=dp.get_precision('Product Price'))
-    taxes_ids = fields.Many2many('account.tax', string='Taxes', domain=[('active', '=', True)])
-    company_id = fields.Many2one('res.company', 'Company', required=True, index=True, default=lambda self: self.env.user.company_id.id)
-    currency_id = fields.Many2one('res.currency', 'Currency', required=True, default=lambda self: self.env.user.company_id.currency_id.id)
+    order_id = fields.Many2one('purchase.spk', string='SPK')
+    state = fields.Selection(related='order_id.state', store=True)
+    product_id = fields.Many2one('product.product', string='Product', required=True)
+    account_analytic_id = fields.Many2one('account.analytic.account', string='Analytic Account', required=True)
+    quantity = fields.Float(string='Volume', digits=dp.get_precision('Product Unit of Measure'), required=True)
+    uom_id = fields.Many2one('product.uom', string='UoM', required=True)
+    price_unit = fields.Float(string='Unit Price', digits=dp.get_precision('Product Price'), required=True)
+    taxes_id = fields.Many2many('account.tax', string='Taxes', domain=[('active', '=', True)])
+    company_id = fields.Many2one('res.company', 'Company', related='order_id.company_id', readonly=True)
+    currency_id = fields.Many2one('res.currency', 'Currency', related='order_id.currency_id', readonly=True)
     
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', store=True)
     price_total = fields.Monetary(compute='_compute_amount', string='Total', store=True)

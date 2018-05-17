@@ -30,6 +30,7 @@
         'purchase',
     ],
     'data': [
+        'views/res_config_views.xml',
         'views/spk_view.xml',
     ],
     'installable': True,
