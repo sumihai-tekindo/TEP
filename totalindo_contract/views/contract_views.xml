@@ -78,13 +78,16 @@
 						<field name="end_date"/>
 					</field>
 					<field name="payment_term_id" position="after">
+						<!-- <div>
+							<field name="percent_dp" />
+							<label string=" %" />
+						</div> -->
 						<field name="percent_dp"/>
 						<field name="nilai_dp"/>
 						<field name="percent_retensi"/>
 						<field name="other"/>
 						<field name="currency_id"/>
 						<field name="amandement"/>
-						<!-- <field name="amandement_type" attrs="{'invisible': [('amandement','!=', True)]}"/> -->
 						<field name="contract_no" attrs="{'invisible': [('amandement','=', False)]}"/>
 					</field>
 				</field>
