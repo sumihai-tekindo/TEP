@@ -31,7 +31,8 @@
     ],
     'data': [
         'views/res_config_views.xml',
-        'views/spk_view.xml',
+        'views/spk_views.xml',
+        'views/opname_views.xml',
     ],
     'installable': True,
     'active': False,

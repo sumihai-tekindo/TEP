@@ -104,7 +104,9 @@
 			<field name="name">purchase.spk.tree</field>
 			<field name="model">purchase.spk</field>
 			<field name="arch" type="xml">
-				<tree string="Progress">
+				<tree decoration-bf="message_unread==True" decoration-muted="state=='cancel'"
+					decoration-info="state in ('pm_approve','dir_approve')" string="SPK">
+					<field name="message_unread" invisible="1"/>
 					<field name="name" />
 					<field name="date_order" />
 					<field name="task_id" />
