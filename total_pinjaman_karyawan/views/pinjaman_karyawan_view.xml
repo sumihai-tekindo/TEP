@@ -1,0 +1,108 @@
+<odoo>
+	<data>
+		<record id="view_pinjaman_karyawan_tree" model="ir.ui.view">
+			<field name="name">pinjaman.karyawan.tree</field>
+			<field name="model">pinjaman.karyawan</field>
+			<field name="type">tree</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<tree string="Pinjaman Karyawan">
+					<field name="name" />
+					<field name="karyawan_id"/>
+					<field name="jabatan_id"/>
+					<field name="nilai_pinjaman"/>
+				</tree>
+			</field>
+		</record>
+
+
+		<record id="view_pinjaman_karyawan_form" model="ir.ui.view">
+			<field name="name">pinjaman.karyawan.form</field>
+			<field name="model">pinjaman.karyawan</field>
+			<field name="type">form</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<form string="Pinjaman Karyawan">
+					<header>
+						<button string="Submit" name="to_submit" type="object" states="new" class="oe_highlight"/>
+						<button string="Reported" name="reported" type="object" states="to_submit" class="oe_highlight"/>
+						<button string="Posted" name="posted" type="object" states="reported" class="oe_highlight"/>
+						<button string="Reset" name="reset_to_new" type="object" class="oe_highlight"/>
+						<field name="state" widget="statusbar"/>
+					</header>
+					<sheet>
+						<div class="oe_title">
+	                        <label for="name"/>
+	                        <h1>
+	                            <field name="name"/>
+	                        </h1>
+                    	</div>
+                    	<group>
+                    		<group>
+                    			<field name="tanggal"/>
+                    			<field name="karyawan_id"/>
+                    			<field name="jabatan_id"/>
+                    			<field name="project_id"/>
+                    			<field name="nilai_pinjaman"/>
+                    			<label for="jumlah_cicilan"/>
+	                                <div class="o_row">
+	                                    <field name="jumlah_cicilan"/><span>kali</span>
+	                                </div>
+	                            <field name="cicilan_perbulan"/>
+                    		</group>
+                    		<group>
+                    			<field name="bulan_awal_pemotongan"/>
+                    			<field name="keperluan"/>
+                    			<field name="transfer_ke_rek"/>
+                    			<field name="no_rekening"/>
+                    		</group>
+                    	</group>
+                    	<notebook>
+                    		<page string="Detail">
+                    			<field name="detail_ids">
+                    				<tree editable="bottom">
+		                    			<field name="tanggal_cicil"/>
+		                    			<field name="nilai_cicilan"/>
+		                    			<field name="total_nilai_cicilan"/>
+		                    			<field name="sisa_pinjaman"/>
+		                    			<field name="state"/>
+		                    		</tree>
+		                    	</field>
+                    		</page>
+                    	</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_pinjaman_karyawan_filter" model="ir.ui.view">
+            <field name="name">form.pinjaman.karyawan.filter</field>
+            <field name="model">pinjaman.karyawan</field>
+            <field name="arch" type="xml">
+                <search string="Search Karyawan">
+                    <field name="karyawan_id" string="Karyawan"/>
+               </search>
+            </field>
+        </record>
+		
+
+		<record id="action_pinjaman_karyawan" model="ir.actions.act_window">
+			<field name="name">Pinjaman Karyawan</field>
+			<field name="res_model">pinjaman.karyawan</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_pinjaman_karyawan_tree"/>
+			<field name="help" type="html">
+			<field name="search_view_id" ref="view_pinjaman_karyawan_filter"/>
+				<p class="oe_view_nocontent_create">
+				Click to add a new data
+				</p>
+				<p>klik tombol create untuk membuat data baru</p>
+			</field>
+		</record>
+
+
+		<menuitem id="pinjaman_menu" name="Pinjaman" sequence="20"/>
+		<menuitem id="pinjaman_karyawan_menu" name="Pinjaman Karyawan" parent="pinjaman_menu" sequence="1"/>
+		<menuitem id="menu_pinjaman_karyawan" name="Pinjaman Karyawan" parent="pinjaman_karyawan_menu" action="action_pinjaman_karyawan" sequence="1"/>
+	</data>
+</odoo>

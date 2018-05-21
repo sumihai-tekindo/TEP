@@ -1,0 +1,97 @@
+<odoo>
+	<data>
+		<record id="view_mutasi_karyawan_tree" model="ir.ui.view">
+			<field name="name">mutasi.karyawan.tree</field>
+			<field name="model">hr.mutasi.karyawan</field>
+			<field name="type">tree</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<tree string="Mutasi Karyawan">
+					<field name="name" />
+					<field name="tanggal_pengajuan"/>
+					<field name="kebutuhan_proyek"/>
+				</tree>
+			</field>
+		</record>
+
+
+		<record id="view_mutasi_karyawan_form" model="ir.ui.view">
+			<field name="name">mutasi.karyawan.form</field>
+			<field name="model">hr.mutasi.karyawan</field>
+			<field name="type">form</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<form string="Mutasi Karyawan">
+					<header>
+						<field name="state" widget="statusbar"/>
+					</header>
+					<sheet>
+						<div class="oe_title">
+	                        <label for="name"/>
+	                        <h1>
+	                            <field name="name"/>
+	                        </h1>
+                    	</div>
+                    	<group>
+                    		<field name="tanggal_pengajuan"/>
+                    		<field name="kebutuhan_proyek"/>
+                    	</group>
+                    	<notebook>
+                    		<page string="Detail">
+                    			<field name="detail_ids">
+                    				<tree editable="bottom">
+                    					<field name="nama_karyawan"/>
+                    					<field name="proyek_semula"/>
+                    					<field name="jabatan_semula"/>
+                    					<field name="proyek_dituju"/>
+                    					<field name="jabatan_baru"/>
+                    					<field name="mobilisasi_date"/>
+                    				</tree>
+                    			</field>
+                    		</page>
+                    	</notebook>
+                    	<field name="note"/>
+                    </sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_mutasi_karyawan_filter" model="ir.ui.view">
+            <field name="name">form.mutasi.karyawan.filter</field>
+            <field name="model">hr.mutasi.karyawan</field>
+            <field name="arch" type="xml">
+                <search string="Search Tanggal">
+                    <field name="tanggal_pengajuan" string="tanggal"/>
+               </search>
+            </field>
+        </record>
+		
+
+		<record id="action_mutasi_karyawan" model="ir.actions.act_window">
+			<field name="name">Mutasi Karyawan</field>
+			<field name="res_model">hr.mutasi.karyawan</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_mutasi_karyawan_tree"/>
+			<field name="help" type="html">
+			<field name="search_view_id" ref="view_mutasi_karyawan_filter"/>
+				<p class="oe_view_nocontent_create">
+				Click to add a new data
+				</p>
+				<p>klik tombol create untuk membuat data baru</p>
+			</field>
+		</record>
+
+
+		<menuitem
+            id="menu_mutasi_karyawan"
+            name="Mutasi Karyawan"
+            parent="hr.menu_hr_root"
+            sequence="101"/>
+
+        <menuitem
+            id="menu_view_mutasi_karyawan"
+            action="action_mutasi_karyawan"
+            parent="menu_mutasi_karyawan"
+            sequence="1"/>
+    </data>
+</odoo>

@@ -1,0 +1,92 @@
+<odoo>
+	<data>
+		<record id="view_phk_karyawan_tree" model="ir.ui.view">
+			<field name="name">phk.karyawan.tree</field>
+			<field name="model">hr.phk</field>
+			<field name="type">tree</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<tree string="PHK Karyawan">
+					<field name="employee_id" />
+					<field name="jabatan_id"/>
+					<field name="project_id"/>
+					<field name="tanggal_phk"/>
+				</tree>
+			</field>
+		</record>
+
+
+		<record id="view_phk_karyawan_form" model="ir.ui.view">
+			<field name="name">phk.karyawan.form</field>
+			<field name="model">hr.phk</field>
+			<field name="type">form</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<form>
+					<header>
+						<button string="Submit to Legal" name="submit_to_legal" type="object" states="new" class="oe_highlight"/>
+						<button string="Submit to HRD" name="submit_to_hrd" type="object" states="submit_to_legal" class="oe_highlight"/>
+						<button string="Approve" name="approved" type="object" states="submit_to_hrd" class="oe_highlight"/>
+						<button string="Reject" name="rejected" type="object" states="submit_to_hrd" class="oe_highlight"/>
+
+						<field name="state" widget="statusbar"/>
+					</header>
+					<sheet>
+						<group>
+							<field name="employee_id" />
+							<field name="jabatan_id"/>
+							<field name="project_id"/>
+							<field name="mulai_bekerja"/>
+							<field name="tanggal_phk"/>
+							<field name="alasan"/>
+							<field name="note"/>
+						</group>
+					</sheet>
+				</form>
+
+			</field>
+		</record>
+
+		<record id="view_phk_karyawan_filter" model="ir.ui.view">
+            <field name="name">form.phk.karyawan.filter</field>
+            <field name="model">hr.phk</field>
+            <field name="arch" type="xml">
+                <search string="Search employee">
+                    <field name="employee_id" string="Employee"/>
+               </search>
+            </field>
+        </record>
+
+
+        <record id="action_phk_karyawan" model="ir.actions.act_window">
+			<field name="name">Pemutusan Hubungan Kerja</field>
+			<field name="res_model">hr.phk</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_phk_karyawan_tree"/>
+			<field name="help" type="html">
+			<field name="search_view_id" ref="view_phk_karyawan_filter"/>
+				<p class="oe_view_nocontent_create">
+				Click to add a new data
+				</p>
+				<p>klik tombol create untuk membuat data baru</p>
+			</field>
+		</record>
+
+
+		<menuitem
+            id="menu_phk_karyawan"
+            name="Pemutusan Hubungan Kerja"
+            parent="hr.menu_hr_root"
+            sequence="102"/>
+
+        <menuitem
+            id="menu_view_phk_karyawan"
+            action="action_phk_karyawan"
+            parent="menu_phk_karyawan"
+            sequence="1"/>
+
+
+
+
+    </data>
+</odoo>

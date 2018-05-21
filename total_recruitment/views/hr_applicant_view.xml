@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="crm_case_form_view_job_inherit">
+            <field name="name">hr.applicant</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.crm_case_form_view_job"/>
+            <field name="arch" type="xml">
+            	<field name="type_id" position="after">
+            		<field name="no_ktp"/>
+            		<field name="nomor_npwp"/>
+            	</field>
+            	<field name="description" position="before">
+            		<notebook>
+            			<page string="Keluarga">
+		                    <field name="keluarga_ids">
+		                    	<tree editable="bottom">
+		                    		<field name="nama"/>
+		                    		<field name="hubungan"/>
+		                    		<field name="tgl_lahir"/>
+		                    	</tree>
+		                    </field>
+		                </page>
+		                <page string="Pendidikan Terakhir">
+		                	<field name="pendidikan_ids">
+		                		<tree editable="bottom">
+		                			<field name="tahun"/>
+		                			<field name="gelar"/>
+		                			<field name="jurusan"/>
+		                			<field name="nama_sekolah"/>
+		                		</tree>
+		                	</field>
+		                </page>
+		                <page string="Riwayat Pekerjaan">
+		                	<field name="riwayat_pekerjaan_ids">
+		                		<tree editable="bottom">
+		                			<field name="jabatan"/>
+		                			<field name="perusahaan"/>
+		                			<field name="tahun"/>
+		                		</tree>
+		                	</field>
+		                </page>
+            		</notebook>
+            	</field>
+            </field>
+        </record>
+    </data>
+</odoo>

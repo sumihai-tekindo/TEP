@@ -1,0 +1,69 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="fleet_vehicle_view_form_inherit">
+            <field name="name">fleet.vehicle</field>
+            <field name="model">fleet.vehicle</field>
+            <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+            <field name="arch" type="xml">
+           		<field name="driver_id" position="replace">
+           			<field name="employee_id"/>
+           		</field>
+           		<field name="vin_sn" position="after">
+           			<field name="machine_number"/>
+           			<field name="production_year"/>
+           		</field>
+           		<field name="fuel_type" position="replace">
+           			<field name="fuel_type"/>
+           		</field>
+
+
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="fleet_vehicle_view_tree_inherit">
+          <field name="name">fleet.vehicle.tree</field>
+          <field name="model">fleet.vehicle</field>
+          <field name="inherit_id" ref="fleet.fleet_vehicle_view_tree"/>
+          <field name="arch" type="xml">
+            <field name="driver_id" position="replace">
+              <field name="employee_id"/>
+            </field>
+          </field>
+        </record>
+
+
+
+        <record model="ir.ui.view" id="fleet_vehicle_log_services_view_form_inherit">
+          <field name="name">fleet.vehicle.log.service.form.inherit</field>
+          <field name="model">fleet.vehicle.log.services</field>
+          <field name="inherit_id" ref="fleet.fleet_vehicle_log_services_view_form"/>
+          <field name="arch" type="xml">
+            <xpath expr="/form/sheet" position="before">
+              <header>
+                <button name="submitted" string="Submit" states="new" type="object" class="btn-primary"/>
+                <button name="approved" string="Approve" states="submitted" type="object" class="btn-primary"/>
+                <button name="repair" string="Repair" states="approved" type="object" class="btn-primary"/>
+                <button name="create_cash_register" string="Create Cash Register" states="in_repair" type="object" class="btn-primary"/>
+
+                <field name="state" widget="statusbar"/>
+              </header>
+            </xpath>
+            <field name="amount" position="attributes">
+              <attribute name="attrs">{'invisible': [('state', '=', 'new')]}</attribute>
+            </field>
+            <xpath expr="/form/sheet/group[1]/group[2]" position="attributes">
+              <attribute name="attrs">{'invisible': [('state', '=', 'new')]}</attribute>
+            </xpath>
+            <xpath expr="/form/sheet/group[2]" position="attributes">
+              <attribute name="attrs">{'invisible': [('state', '=', 'new')]}</attribute>
+            </xpath>
+            <xpath expr="/form/sheet/group[3]" position="attributes">
+              <attribute name="attrs">{'invisible': [('state', '=', 'new')]}</attribute>
+            </xpath>
+          </field>
+        </record>
+
+
+    </data>
+</odoo>

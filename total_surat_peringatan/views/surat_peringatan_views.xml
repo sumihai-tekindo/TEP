@@ -1,0 +1,120 @@
+<data>
+	<odoo>
+		<record id="view_surat_peringatan_tree" model="ir.ui.view">
+			<field name="name">surat.peringatan.tree</field>
+			<field name="model">surat.peringatan</field>
+			<field name="type">tree</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<tree string="Surat Peringatan">
+					<field name="name" />
+					<field name="employee_id"/>
+					<field name="nama_atasan"/>
+					<field name="jabatan"/>
+					<field name="start_date"/>
+					<field name="end_date"/>
+					<field name="tipe_sp"/>
+					<field name="category_id"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_surat_peringatan_form" model="ir.ui.view">
+			<field name="name">surat.peringatan.form</field>
+			<field name="model">surat.peringatan</field>
+			<field name="type">form</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<form string="Surat Peringatan">
+					<header>
+						<button name="submit_to_legal" type="object" string="Submit to Legal" states="new" class="oe_highlight"/>
+						<button name="submit_to_hrd" type="object" string="Submit to HR" states="submit_to_legal" class="oe_highlight"/>
+						<button name="approve" type="object" string="Approve" states="submit_to_hrd" class="oe_highlight"/>
+						<field name="state" widget="statusbar"/>
+					</header>
+					<sheet>
+						<div class="oe_title">
+	                        <label for="name"/>
+	                        <h1>
+	                            <field name="name"/>
+	                        </h1>
+                    	</div>
+                    	<group>
+                    		<group>
+                    			<field name="tanggal_pelanggaran"/>
+                    			<field name="employee_id"/>
+                    			<field name="nama_atasan"/>
+                    			<field name="jabatan"/>
+                    			<field name="project_id"/>
+                    			<label for="start_date"/>
+	                                <div class="o_row">
+	                                    <field name="start_date"/><span>-</span><field name="end_date"/>
+	                                </div>
+                    		</group>
+                    		<group>
+                    			<field name="tipe_sp"/>
+                    			<field name="category_id"/>
+                    			<field name="note"/>
+                    			<field name="phk"/>
+                    		</group>
+                    	</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_surat_peringatan_filter" model="ir.ui.view">
+            <field name="name">form.surat.peringatan.filter</field>
+            <field name="model">surat.peringatan</field>
+            <field name="arch" type="xml">
+                <search string="Search Karyawan">
+                    <field name="employee_id" string="Karyawan"/>
+               </search>
+            </field>
+        </record>
+
+
+
+		<record id="action_surat_peringatan" model="ir.actions.act_window">
+			<field name="name">Surat Peringatan</field>
+			<field name="res_model">surat.peringatan</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_surat_peringatan_tree"/>
+			<field name="search_view_id" ref="view_surat_peringatan_filter"/>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+				Click to add a new data
+				</p>
+				<p>klik tombol create untuk membuat data baru</p>
+			</field>
+		</record>
+
+
+		<record id="wizard_phk" model="ir.ui.view">
+            <field name="name">wizard_phk</field>
+            <field name="model">wizard.phk</field>
+            <field name="arch" type="xml">
+                <form>
+                	<separator string="Karyawan ybs akan di PHK, apakah anda ingin melanjutkan?"/>
+                    <footer>
+                        <button name="yes" type="object" string="Yes"/>
+                        <button special="cancel" string="Cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+		<menuitem
+            id="menu_surat_peringatan"
+            name="Surat Peringatan"
+            parent="hr.menu_hr_root"
+            sequence="100"/>
+
+        <menuitem
+            id="menu_view_surat_peringatan"
+            action="action_surat_peringatan"
+            parent="menu_surat_peringatan"
+            sequence="1"/>
+	</odoo>
+</data>
