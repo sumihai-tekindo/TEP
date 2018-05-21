@@ -57,8 +57,6 @@ class SuratPeringatan(models.Model):
 				else:
 					self.phk = True
 					self.state = 'submit_to_legal'
-			else:
-				print "aaaa"
 		self.state = 'submit_to_legal'
 
 

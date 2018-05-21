@@ -35,11 +35,3 @@ class PlafonMedical(models.Model):
 			name = '' +rec.name + ' ' '/' + ' ' +jabatan
 			res.append((rec.id, name))
 		return res
-	# tipe_medical 			= fields.Selection([('sakit','Sakit'),
-	# 											('melahirkan_normal','Melahirkan Normal'),
-	# 											('caesar','Caesar'),
-	# 											('keguguran','Keguguran'),
-	# 											('bingkai','Bingkai'),
-	# 											('lensa','Lensa'),
-	# 											('medical_tahunan','Medical Tahunan')], 'Tipe Medical')
-

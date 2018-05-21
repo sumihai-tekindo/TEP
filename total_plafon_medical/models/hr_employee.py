@@ -10,7 +10,6 @@ class hr_employee(models.Model):
 	@api.one
 	def _get_trigger(self):
 		datetimeFormat = '%Y-%m-%d'
-		print ">>>>>>>>>"
 		saldo = 0
 		tahun_param = []
 		ending_day_of_current_year = datetime.now().date().replace(month=12, day=31)
@@ -29,7 +28,6 @@ class hr_employee(models.Model):
 				end_year_formatted = datetime.strptime(str(ending_day_of_current_year),datetimeFormat)
 				bulan_berjalan = str((end_year_formatted-join_date_formatted).days)
 				bulan_berjalan_int = int(bulan_berjalan) / 30
-				print ">>>>>>>>>>>>>>>>>><<<<<<<<<<<<,", bulan_berjalan_int
 				if int(bulan_berjalan_int) >= 12:
 					saldo = contract_data.wage
 				else:
@@ -38,7 +36,6 @@ class hr_employee(models.Model):
 					tahun_param.append(str(x.tahun))
 
 				if str(end_year_formatted.year) not in tahun_param:
-					print "riinnnnnnnnnnnnn"
 					vals = {
 						'medical_id' : self.id,
 						'saldo_medical' : saldo,
@@ -52,19 +49,14 @@ class hr_employee(models.Model):
 	@api.one
 	@api.depends('join_date_trigger')
 	def _get_join_date(self):
-		print "@@@@@@@@@@@@@@@@@@@@@@@@2"
 		contract_id = self.env['hr.contract'].search([('employee_id','=',self.id),('state','=','open')])
 		if len(contract_id) > 1:
 			raise Warning('Karyawan harus memiliki lebih dari 1 kontrak yg running')
 		for contract in contract_id:
-			print ">>>>>>>>>>>>>", contract.trial_date_start
 			if contract.trial_date_start:
-				print "run 1"
 				self.join_date = contract.trial_date_start
 			else:
-				print "run 2"
 				self.join_date = contract.date_start
-
 
 
 
