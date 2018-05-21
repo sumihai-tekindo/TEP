@@ -33,6 +33,7 @@
         'report/print_kwitansi.xml',
         'report/print_faktur.xml',
         'report/report_view.xml',
+        'data/data.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

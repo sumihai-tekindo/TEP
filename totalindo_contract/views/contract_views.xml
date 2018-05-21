@@ -72,7 +72,7 @@
 						<field name="state" readonly="1" widget="statusbar"/>
 					</field>
 					<field name="partner_shipping_id" position="after">
-						<field name="contract_id" attrs="{'invisible': ['|', ('state', '!=', 'done')]}"/>
+						<field name="contract_id"/>
 						<field name="project_code" attrs="{'invisible': ['|', ('state', '!=', 'done')]}"/>
 						<field name="start_date"/>
 						<field name="end_date"/>
@@ -125,11 +125,11 @@
 				<field name="arch" type="xml">
 					<form string="Work Description">
 						<header>
-							<button string="Generate Progress" type="object" class="btn-primary"/>
-							<button string="Recalculate Progress" type="object" class="btn-primary"/>
-							<button string="Recognize Revenue" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'open')]}"/>
-							<button string="Customer Approved" type="object" class="btn-primary" attrs="{'visible': ['|', ('state', '!=', 'open')]}"/>
-							<button string="Generate Billing" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'open')]}"/>
+							<button name="generate_progress" string="Generate Progress" type="object" class="btn-primary"/>
+							<button name="recalculate_progress" string="Recalculate Progress" type="object" class="btn-primary"/>
+							<button name="recognize_revenue" string="Recognize Revenue" type="object" class="btn-primary"/>
+							<button name="customer_approved" string="Customer Approved" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'open')]}"/>
+							<button name="generate_billing" string="Generate Billing" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'open')]}"/>
 							<field name="state" widget="statusbar" statusbar_visible="new,recognize,,approve,billing"/>
 						</header>
 						<sheet>
@@ -163,14 +163,24 @@
 											<field name="total_invoice"/>
 										</tree>
 									</field>
+									<group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+		                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+		                                    <label for="amount_total" />
+		                                    <button name="button_dummy"
+		                                        states="draft,sent" string="(update)" type="object" class="oe_edit_only oe_link"/>
+		                                </div>
+		                                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+		                            </group>
+		                            <field name="note" class="oe_inline" placeholder="Setup default terms and conditions in your company settings."/>
+		                            <div class="oe_clear"/>
 								</page>
 								<page string="Other Information">
 									<field name="description"/>
 								</page>
 							</notebook>
-							<h2>Description</h2>
+							<!-- <h2>Description</h2>
 							<field string="Description" name="description" class="oe_inline" placeholder="Masukkan berita acara mengenai progress dari suatu kontrak."/>
-							<div class="oe_clear"/>
+							<div class="oe_clear"/> -->
 						</sheet>
 					</form>
 				</field>
@@ -189,7 +199,7 @@
 					<field name="payment_term_id" position="after">
 						<field name="progress_id"/>
 						<field name="no_contract"/>
-						<field name="project_name"/>
+						<field name="project_name_id"/>
 					</field>
 					<field name="team_id" position="after">
 						<field name="tanggal_invoice"/>
@@ -259,11 +269,29 @@
 				</field>
 			</record>
 
-			<record id="seq_umroh" model="ir.sequence">
+			<record id="sequence_invoice" model="ir.sequence">
+				<field name="name">Account Invoice</field>
+				<field name="code">account.sequence.inherit</field>
+				<field name="prefix">INV/</field>
+				<field name="padding">6</field>
+				<field name="suffix">/%(month)s/%(year)s</field>
+				<field name="company_id" eval="False"/>
+			</record>
+
+			<record id="sequence_so" model="ir.sequence">
+				<field name="name">Sales Order</field>
+				<field name="code">so.sequence.inherit</field>
+				<field name="prefix">BOQ/</field>
+				<field name="padding">6</field>
+				<field name="suffix">/%(month)s/%(year)s</field>
+				<field name="company_id" eval="False"/>
+			</record>
+
+			<record id="seq_monitoring" model="ir.sequence">
 				<field name="name">Monitoring Contract Berjalan</field>
 				<field name="code">contract.monitoring</field>
 				<field name="prefix">PRT/</field>
-				<field name="suffix">/TEP/%(month)s/%(year)s</field>
+				<field name="suffix">/%(month)s/%(year)s</field>
 				<field name="padding">6</field>
 				<field eval="1" name="number_increment"/>
 			</record>
