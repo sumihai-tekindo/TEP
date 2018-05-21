@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="generate_leaves_tree_view" model="ir.ui.view">
+            <field name="name">Generate Leaves</field>
+            <field name="model">generate.leaves</field>
+            <field name="arch" type="xml">
+                <tree string="">
+                    <field name="name"/>
+                    <field name="tahun"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="generate_leaves_form_view" model="ir.ui.view">
+            <field name="name">Generate Leaves</field>
+            <field name="model">generate.leaves</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header>
+                        <button string="Generate" name="generate" type="object" class="oe_highlight"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="tahun" placeholdeer="contoh : 2015"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_generate_leaves" model="ir.actions.act_window">
+            <field name="name">Generate Leaves</field>
+            <field name="res_model">generate.leaves</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                Click to add a new data
+                </p>
+                <p>klik tombol create untuk membuat data baru</p>
+            </field>
+        </record>
+
+
+
+        <menuitem
+            id="menu_generate_leaves_parent"
+            name="Generate"
+            parent="hr_holidays.menu_hr_holidays_root"
+            sequence="101"
+            />
+
+        <menuitem
+            id="menu_generate_leaves"
+            name="Generate Leaves"
+            parent="menu_generate_leaves_parent"
+            sequence="1"
+            action="action_generate_leaves"/>
+    </data>
+</odoo>

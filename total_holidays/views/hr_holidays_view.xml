@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="edit_holiday_new_inherit">
+            <field name="name">hr.holidays</field>
+            <field name="model">hr.holidays</field>
+            <field name="inherit_id" ref="hr_holidays.edit_holiday_new"/>
+            <field name="arch" type="xml">
+            	<field name="department_id" position="after">
+            		<field name="karyawan_pengganti"/>
+            	</field>
+            	<xpath expr="/form/header/button[@name='action_confirm']" position="after">
+            		<button string="Approve by Manager" name="approve_by_manager" states="draft" type="object" class="oe_highlight"/>
+            		<button string="Approve by PM" name="approve_by_pm" states="approve_by_manager" type="object" class="oe_highlight"/>
+            		<button string="Approve by HRD" name="approve_by_hrd" states="approve_by_pm" type="object" class="oe_highlight"/>
+            	</xpath>
+            	<xpath expr="/form/header/field[@name='state']" position="replace">
+            		<field name="state" widget="statusbar" statusbar_visible="draft,approve_by_manager,approve_by_pm,validate"/>
+            	</xpath>
+            </field>
+    	</record>
+	</data>
+</odoo>
