@@ -72,7 +72,7 @@
 		                        <tr>
 		                            <td><span t-field="l.product_id"/></td>
 		                            <td><span t-field="l.name"/></td>
-		                            <td><span t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+		                            <td><span t-field="l.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
 		                        </tr>
 		                    </t>
 		                </tbody>
@@ -93,7 +93,7 @@
 						</tr>
 						<tr>
 							<td><strong>Dasar Pengenaan Pajak</strong></td>
-							<td class="text-right"><span t-field="o.amount_tax"/></td>
+							<td class="text-right"><span t-field="o.invoice_line_ids.price_subtotal"/></td>
 						</tr>
 						<tr>
 							<td><strong>PPN = 10% x Dasar Pengenaan Pajak</strong></td>
@@ -107,7 +107,7 @@
 					<h6>Sesuai dengan ketentuan yang berlaku, Direktorat Jenderal Pajak mengatur bahwa Faktur Pajak ini telah ditandatangani<br/>
 						secara elektronik sehingga tidak diperlukan tanda tangan basah pada Faktur Pajak ini.
 					</h6>
-					<h5 class="text-right">Jakarta,<span t-field="o.tanggal_faktur"/></h5><br/><br/><br/>
+					<h5 class="text-right">Jakarta,<span t-field="o.date_faktur_custom"/></h5><br/><br/><br/>
 					<h5 class="text-right"><span t-field="o.company_id.user_id.name"/></h5>
 					<h5 class="text-right">Direktur</h5>
 		

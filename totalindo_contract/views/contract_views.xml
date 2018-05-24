@@ -50,6 +50,12 @@
 				<xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='analytic_tag_ids']" position="attributes">
 					<attribute name="invisible">1</attribute>
 				</xpath>
+				<xpath expr="//field[@name='order_line']/form/group/group/field[@name='layout_category_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<!-- <xpath expr="//field[@name='order_line']/form/group/group/field[@name='product_packaging']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath> -->
 				<xpath expr="/form/sheet/notebook/page/field[@name='order_line']/tree/field[@name='price_total']" position="attributes">
 					<attribute name="string">Total Harga</attribute>
 				</xpath>
@@ -125,12 +131,12 @@
 				<field name="arch" type="xml">
 					<form string="Work Description">
 						<header>
-							<button name="generate_progress" string="Generate Progress" type="object" class="btn-primary"/>
+							<button name="generate_progress" string="Generate Progress" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'new')]}"/>
 							<button name="recalculate_progress" string="Recalculate Progress" type="object" class="btn-primary"/>
 							<button name="recognize_revenue" string="Recognize Revenue" type="object" class="btn-primary"/>
-							<button name="customer_approved" string="Customer Approved" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'open')]}"/>
-							<button name="generate_billing" string="Generate Billing" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'open')]}"/>
-							<field name="state" widget="statusbar" statusbar_visible="new,recognize,,approve,billing"/>
+							<button name="customer_approved" string="Customer Approved" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'approve')]}"/>
+							<button name="generate_billing" string="Generate Billing" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'billing')]}"/>
+							<field name="state" widget="statusbar" statusbar_visible="new,recognize,approve,billing"/>
 						</header>
 						<sheet>
 							<group>
@@ -153,34 +159,30 @@
 								<page string="Detail Lines">
 									<field name="detail_line">
 										<tree string="Detail Lines" editable="bottom">
-											<field name="no_task"/>
-											<field name="work_description"/>
-											<field name="unit_price"/>
-											<field name="progress_date"/>
-											<field name="pp_aktual"/>
+											<field name="state" invisible="1"/>
+											<field name="no_task" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
+											<field name="task_description" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
+											<field name="unit_price" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
+											<field name="progress_date" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
+											<field name="pp_aktual" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
 											<field name="pp_approved"/>
-											<field name="total_revenue"/>
+											<field name="total_revenue" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
 											<field name="total_invoice"/>
 										</tree>
 									</field>
 									<group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
-		                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
-		                                    <label for="amount_total" />
-		                                    <button name="button_dummy"
-		                                        states="draft,sent" string="(update)" type="object" class="oe_edit_only oe_link"/>
-		                                </div>
-		                                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
-		                            </group>
-		                            <field name="note" class="oe_inline" placeholder="Setup default terms and conditions in your company settings."/>
-		                            <div class="oe_clear"/>
+										<div class="oe_subtotal_footer_separator oe_inline o_td_label">
+											<label for="amount_total" />
+											<button name="button_dummy"
+												states="draft,sent" string="(update)" type="object" class="oe_edit_only oe_link"/>
+										</div>
+										<field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+									</group>
 								</page>
 								<page string="Other Information">
 									<field name="description"/>
 								</page>
 							</notebook>
-							<!-- <h2>Description</h2>
-							<field string="Description" name="description" class="oe_inline" placeholder="Masukkan berita acara mengenai progress dari suatu kontrak."/>
-							<div class="oe_clear"/> -->
 						</sheet>
 					</form>
 				</field>
@@ -192,6 +194,7 @@
 				<field name="inherit_id" ref="account.invoice_form"/>
 				<field name="arch" type="xml">
 					<header>
+						
 					</header>
 					<xpath expr="//page[1]" position="attributes">
 						<attribute name="string">Detail Lines</attribute>
@@ -205,10 +208,10 @@
 						<field name="tanggal_invoice"/>
 						<field name="nilai_tender"/>
 						<field name="user_id"/>
-						<field name="uang_muka"/>
 						<field name="proporsional_dp"/>
-						<field name="retensi"/>
+						<field name="uang_muka" attrs="{'invisible': [('proporsional_dp','=', False)]}"/>
 						<field name="proporsional_retensi"/>
+						<field name="retensi" attrs="{'invisible': [('proporsional_retensi','=', False)]}"/>
 					</field>
 					<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='discount']" position="attributes">
 						<attribute name="invisible">1</attribute>
@@ -249,7 +252,7 @@
 							<group>
 								<group>
 									<field name="no_kwitansi"/>
-									<field name="date_invoice"/>
+									<field name="tanggal_kwitansi"/>
 								</group>
 								<group>
 								</group>

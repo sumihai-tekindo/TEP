@@ -1,25 +1,5 @@
 <odoo>
 	<data>
-		<record model="ir.ui.view" id="journal_project_tree_view">
-			<field name="name">journal.project.custom</field>
-			<field name="model">journal.project</field>
-			<field name="arch" type="xml">
-				<tree string="Journal Project">
-					<field name="wip_pengakuan"/>
-					<field name="revenue"/>
-					<field name="beban_pajak"/>
-					<field name="pph_4_2"/>
-					<field name="piutang_bruto"/>
-					<field name="ar_retensi"/>
-					<field name="uang_muka"/>
-					<field name="ppn_keluaran"/>
-					<field name="cogs"/>
-					<field name="wip_cogs"/>
-					<field name="accrued_biaya"/>
-				</tree>
-			</field>
-		</record>
-
 		<record model="ir.ui.view" id="journal_project_form_view">
 			<field name="name">journal.project.form</field>
 			<field name="model">journal.project</field>
@@ -28,23 +8,22 @@
 					<sheet>
 						<group>
 							<group string="Pengakuan Pendapatan">
-								<field name="wip_pengakuan"/>
 								<field name="revenue"/>
 								<field name="beban_pajak"/>
 								<field name="pph_4_2"/>
 								<field name="piutang_bruto"/>
 							</group>
-							<group string="Billing Ke Customer">
-								<field name="ar_retensi"/>
-								<field name="uang_muka"/>
-								<field name="ppn_keluaran"/>
-							</group>
-						</group>
-						<group col="2">
 							<group string="Pengakuan COGS">
 								<field name="cogs"/>
 								<field name="wip_cogs"/>
 								<field name="accrued_biaya"/>
+							</group>
+						</group>
+						<group col="2">
+							<group string="Billing Ke Customer">
+								<field name="ar_retensi"/>
+								<field name="uang_muka"/>
+								<field name="ppn_keluaran"/>
 							</group>
 						</group>
 					</sheet>
@@ -60,11 +39,6 @@
 				<field name="deprecated" position="after">
 					<field name="is_journal_project"/>
 				</field>
-				<!-- <xpath expr="//field[@name='name']" position="attributes">
-                    <attribute name="domain">
-                        ['|', ('is_journal_project', '=', True), ('is_journal_project', '=', True)]
-                    </attribute>
-                </xpath> -->
 			</field>
 		</record>
 
@@ -81,7 +55,7 @@
 			<field name="name">Journal Project</field>
 			<field name="res_model">journal.project</field>
 			<field name="view_type">form</field>
-			<field name="view_mode">tree,form</field>
+			<field name="view_mode">form</field>
 			<field name="help" type="html">
 				<p class="oe_view_nocontent_create">Buatlah Journal Projectnya ...</p>
 			</field>

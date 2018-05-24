@@ -4,10 +4,9 @@ from datetime import datetime
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
-
+from odoo.addons.totalindo_report import terbilang
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTF
-
 import odoo.addons.decimal_precision as dp
 
 
@@ -87,16 +86,15 @@ class monitoring_progress(models.Model):
 	partner_invoice_id = fields.Many2one('res.partner', string='Customer Address', track_visibility='onchange')
 	project_name_id = fields.Many2one('project.project', string='Project Name', track_visibility='onchange')
 	revenue_date = fields.Date(string='Revenue Date', required=True)
-	currency_id = fields.Char(string='Currency')
+	currency_id = fields.Many2one("res.currency", readonly=True)
 	tp_aktual = fields.Float(string='Total Progress Aktual (%)')
 	ap_aktual = fields.Float(string='Akumulasi Progress Aktual (%)')
-	tp_approved = fields.Float(string='Total Progress Approved (%)')
+	tp_approved = fields.Float(string='Total Progress Approved (%)', related='detail_line.pp_approved', store=True)
 	ap_approved = fields.Float(string='Akumulasi Progress Approved (%)')
 	detail_line = fields.One2many('monitoring.detail','monitoring_progress_id')
 	description = fields.Text(string='Description')
 	total_amount = fields.Integer(string='Total')
 	progress_line = fields.One2many('account.invoice', 'progress_id')
-	description = fields.Text(string="Description")
 	state = fields.Selection([
 		('new', 'New'),
 		('recognize', 'Recognize Revenue'),
@@ -106,24 +104,12 @@ class monitoring_progress(models.Model):
 	note = fields.Text(string="Description")
 	amount_total = fields.Float(string="Total", readonly=True)
 
-	# @api.depends('detail_line.total_invoice')
- #    def _amount_total(self):
- #        for order in self:
- #            amount_untaxed = amount_tax = 0.0
- #            for line in order.order_line:
- #                amount_untaxed += line.price_subtotal
- #                # FORWARDPORT UP TO 10.0
- #                if order.company_id.tax_calculation_rounding_method == 'round_globally':
- #                    price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
- #                    taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id, partner=order.partner_shipping_id)
- #                    amount_tax += sum(t.get('amount', 0.0) for t in taxes.get('taxes', []))
- #                else:
- #                    amount_tax += line.price_tax
- #            order.update({
- #                'amount_untaxed': order.pricelist_id.currency_id.round(amount_untaxed),
- #                'amount_tax': order.pricelist_id.currency_id.round(amount_tax),
- #                'amount_total': amount_untaxed + amount_tax,
- #            })
+	@api.onchange('contract_id')
+	def monitoring_contract(self):
+		self.partner_id = self.contract_id.partner_id.id
+		self.partner_invoice_id = self.contract_id.partner_invoice_id.id
+		self.project_name_id = self.contract_id.contract_id.id
+		self.currency_id = self.contract_id.currency_id.id
 
 	@api.model
 	def create(self, vals):
@@ -135,6 +121,7 @@ class monitoring_progress(models.Model):
 
 	@api.multi
 	def generate_progress(self):
+		self.write({'state': 'new'})
 		for monitoring in self:
 			project_id = monitoring.project_name_id and monitoring.project_name_id.id or False
 			project_start_date = monitoring.project_name_id.date_from
@@ -155,7 +142,7 @@ class monitoring_progress(models.Model):
 						'monitoring_progress_id': monitoring_id,
 						'no_task': task.name or '/',
 						'task_id': task.id,
-						'work_description': task.progress_ids.name,
+						# 'work_description': task.progress_ids.name,
 						'unit_price': task.amount,
 						'progress_date': dt_delta_date.days,
 						'pp_aktual': task.progress_actual,
@@ -163,13 +150,17 @@ class monitoring_progress(models.Model):
 						'total_revenue': task.progress_actual/100.0 * task.amount,
 						'total_invoice': 0.0,
 						}
+					x = self.env['monitoring.detail'].new(t_temp)
 
-					self.env['monitoring.detail'].create(t_temp)
-					header_total_percentage+=progress_actual
+					for progress in task.progress_ids:
+						t_temp.update(dict(x._convert_to_write(x._cache),work_description=progress.name))
+						self.env['monitoring.detail'].create(t_temp)
+					header_total_percentage+=task.progress_actual
 				monitoring.tp_aktual = header_total_percentage
-	
+
 	@api.multi
 	def recalculate_progress(self):
+		self.write({'state': 'recognize'})
 		for monitoring in self:
 			project_id = monitoring.project_name_id and monitoring.project_name_id.id or False
 			project_start_date = monitoring.project_name_id.date_from
@@ -197,56 +188,18 @@ class monitoring_progress(models.Model):
 				line.write(t_temp)
 				header_total_percentage+=task.progress_actual
 			monitoring.tp_aktual = header_total_percentage
+			
 	@api.multi
 	def recognize_revenue(self):
-		project_task = self.env['project.project'].search([('project_name_id', '=', self.id)])
-		if self.detail_line:
-			self.detail_line.unlink()
-		for pt in project_task:
-			for project in pt.detail_line:
-				print '================================================='
-		# 		print passport.nama_passport, passport.tipe_kamar, passport.name.jenis_kelamin, passport.name
-		# 		print so.name, so.partner_id.name, so.paket_id.name
-				self.detail_line.create({
-					'no_task': project.nama_passport,
-					'work_description': project.work_description,
-					'unit_price': project.name.unit_price,
-					'project_name_id': self.id,
-				})
+		self.write({'state': 'approve'})
 
 	@api.multi
 	def customer_approved(self):
-		project_task = self.env['project.project'].search([('project_name_id', '=', self.id)])
-		if self.detail_line:
-			self.detail_line.unlink()
-		for pt in project_task:
-			for project in pt.detail_line:
-				print '================================================='
-		# 		print passport.nama_passport, passport.tipe_kamar, passport.name.jenis_kelamin, passport.name
-		# 		print so.name, so.partner_id.name, so.paket_id.name
-				self.detail_line.create({
-					'no_task': project.nama_passport,
-					'work_description': project.work_description,
-					'unit_price': project.name.unit_price,
-					'project_name_id': self.id,
-				})
+		self.write({'state': 'billing'})
 
 	@api.multi
 	def generate_billing(self):
-		project_task = self.env['project.project'].search([('project_name_id', '=', self.id)])
-		if self.detail_line:
-			self.detail_line.unlink()
-		for pt in project_task:
-			for project in pt.detail_line:
-				print '================================================='
-		# 		print passport.nama_passport, passport.tipe_kamar, passport.name.jenis_kelamin, passport.name
-		# 		print so.name, so.partner_id.name, so.paket_id.name
-				self.detail_line.create({
-					'no_task': project.nama_passport,
-					'work_description': project.work_description,
-					'unit_price': project.name.unit_price,
-					'project_name_id': self.id,
-				})
+		self.write({'state': 'recognize'})
 
 class monitoring_detail(models.Model):
 	_name = 'monitoring.detail'
@@ -255,19 +208,26 @@ class monitoring_detail(models.Model):
 	monitoring_progress_id = fields.Many2one('monitoring.progress','Detail')
 	no_task = fields.Char(string='No. Task')
 	task_id = fields.Many2one('project.task',"Related Task")
-	work_description = fields.Char(string='Work Description')
+	task_description = fields.Char(string='Task Name')
 	unit_price = fields.Integer(string='Unit Price')
 	progress_date = fields.Integer(string='Progress to Date')
 	pp_aktual = fields.Float(string='% Progress Aktual')
 	pp_approved = fields.Float(string='% Progress Approved')
 	total_revenue = fields.Integer(string='Total Revenue')
 	total_invoice = fields.Integer(string='Total Invoice', compute="_compute_invoice")
+	state = fields.Selection(related='monitoring_progress_id.state', store=True, default='new')
 
 	@api.depends('total_invoice','unit_price', 'pp_approved')
 	def _compute_invoice(self):
 		for record in self:
 			if record.unit_price != 0 and record.pp_approved != 0:
 				record.total_invoice = record.unit_price * record.pp_approved/100
+
+	# @api.onchange('pp_approved')
+	# def _approved_progress(self):
+	# 	self.ensure_one()
+	# 	self.monitoring_progress_id.tp_approved = self.pp_approved
+	# 	print self.monitoring_progress_id.tp_approved
 
 class form_invoice(models.Model):
 	_inherit = 'account.invoice'
@@ -284,9 +244,17 @@ class form_invoice(models.Model):
 	proporsional_retensi = fields.Boolean(string='Retensi Proporsional')
 	no_kwitansi = fields.Char(string='No. Kwitansi')
 	tanggal_kwitansi = fields.Date(string='Tanggal Kwitansi')
+	date_kwitansi_custom = fields.Char(compute='_get_custom_date_format', string="Tanggal Kwitansi")
 	no_faktur = fields.Char(string='No Faktur')
 	tanggal_faktur = fields.Date(string='Tanggal Faktur')
-	# amount_terbilang = fields.Char('Terbilang', compute='_get_terbilang')
+	date_faktur_custom = fields.Char(compute='_get_custom_date_format', string="Tanggal Faktur")
+	amount_terbilang = fields.Char('Terbilang', compute='_get_terbilang')
+
+	@api.onchange('progress_id')
+	def progress_report(self):
+		self.no_contract = self.progress_id.contract_id.id
+		self.project_name_id = self.progress_id.project_name_id.id
+		self.partner_id = self.progress_id.partner_id.id
 
 	@api.model
 	def create(self, vals):
@@ -310,46 +278,20 @@ class form_invoice(models.Model):
 		return '%s %s %s' % (dd,dm,dy)
 
 	@api.multi
-	@api.depends('date_invoice', 'date_due', 'tanggal_faktur', 'tanggal_kwitansi')
+	@api.depends('date_kwitansi_custom', 'date_faktur_custom')
 	def _get_custom_date_format(self):
 		for inv in self:
-			if inv.date_invoice:
-				self.date_invoice_custom = self._format_local_date(inv.date_invoice)
-			if inv.date_due:
-				self.date_due_custom = self._format_local_date(inv.date_due)
+			if inv.tanggal_kwitansi:
+				self.date_kwitansi_custom = self._format_local_date(inv.tanggal_kwitansi)
+			if inv.tanggal_faktur:
+				self.date_faktur_custom = self._format_local_date(inv.tanggal_faktur)
 
-	# @api.multi
-	# def _get_terbilang(self):
-	# 	result = {}
-	# 	for row in self:
-	# 		temp = row.terbilang(int(row.amount))
-	# 		result.update({row.id:temp})
-	# 	self.amount_terbilang = temp + " Rupiah"
-
-	def terbilang(self, satuan):
-		huruf = ["","Satu","Dua","Tiga","Empat","Lima","Enam","Tujuh","Delapan","Sembilan","Sepuluh","Sebelas"]
-		hasil = ""; 
-		if satuan < 12: 
-			hasil = hasil + huruf[satuan]; 
-		elif satuan < 20: 
-			hasil = hasil + self.terbilang(satuan-10)+" Belas"; 
-		elif satuan < 100:
-			hasil = hasil + self.terbilang(satuan/10)+" Puluh "+self.terbilang(satuan%10); 
-		elif satuan < 200: 
-			hasil=hasil+"Seratus "+self.terbilang(satuan-100); 
-		elif satuan < 1000: 
-			hasil=hasil+self.terbilang(satuan/100)+" Ratus "+self.terbilang(satuan%100); 
-		elif satuan < 2000: 
-			hasil=hasil+"Seribu "+self.terbilang(satuan-1000); 
-		elif satuan < 1000000: 
-			hasil=hasil+self.terbilang(satuan/1000)+" Ribu "+self.terbilang(satuan%1000); 
-		elif satuan < 1000000000:
-			hasil=hasil+self.terbilang(satuan/1000000)+" Juta "+self.terbilang(satuan%1000000);
-		elif satuan < 1000000000000:
-			hasil=hasil+self.terbilang(satuan/1000000000)+" Milyar "+self.terbilang(satuan%1000000000)
-		elif satuan >= 1000000000000:
-			hasil="Angka terlalu besar, harus kurang dari 1 Trilyun!"; 
-		return hasil;   
+	@api.multi
+	def _get_terbilang(self):
+		result = {}
+		for row in self:
+			temp = terbilang(int(row.amount_total))
+			row.amount_terbilang = temp + " Rupiah" 
 
 	@api.multi
 	def cetak_kwitansi(self):
