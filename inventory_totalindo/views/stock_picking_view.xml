@@ -10,7 +10,7 @@
                 <!-- ini untuk form internal transfer -->
                 <field name="location_id" position="before">
                     <field name="type_bon" invisible="1"/>
-                    <field name="spb_id" attrs="{'invisible': [('picking_type_code', '!=', 'internal')]}"/>
+                    <field name="spb_id"/>
                 </field>
                 <!-- internal transfer -->
 

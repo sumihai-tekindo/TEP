@@ -1,0 +1,27 @@
+<odoo>
+    <data>
+        <record id="view_adj_form_inherit" model="ir.ui.view">
+            <field name="name">stock.adj.form.inherit</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//header/button[@name='prepare_inventory']" position="replace">
+            		<button name="prepare_inventory" states="draft" string="Start Inventory" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
+            		<button name="prepare_inventory" states="confirm" string="Submit to GA" type="object" class="oe_highlight" groups="stock.group_stock_manager"/>
+                </xpath>
+                <xpath expr="//div/h1" position="after">
+                    <h3>
+                        <field name="name_code" attrs="{'invisible': [('state', '=', 'draft')], 'readonly': 'True'}"/>
+                    </h3>
+                </xpath>
+                <xpath expr="//field[@name='package_id']" position="after">
+                	<field name="project_id"/>
+                    <field name="type_barang"/>
+                    <field name="oleh"/>
+                    <field name="department_id"/>
+                    <field name="referensi"/>
+                </xpath>
+            </field>
+        </record>       
+    </data>
+</odoo>
