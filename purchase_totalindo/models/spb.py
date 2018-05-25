@@ -86,7 +86,7 @@ class SPBLine(models.Model):
 	jumlah_permintaan 	= fields.Float(string="Jumlah Permintaan", required=True)
 	account_analytic 	= fields.Many2one('account.analytic.account', string="Account Analytic") 
 	quantity_transfer 	= fields.Float(string="Quantity Transfer")
-	quantity_po 		= fields.Float(string="Quantity PO", compute="compute_po")
+	quantity_po 		= fields.Float(string="Quantity PO", store=True, compute="compute_po")
 	outstanding_spb 	= fields.Float(string="Outstanding SPB",store=True, compute="sum_outstanding_spb")
 	state 				= fields.Selection(related="spb_id.state", store=True, default="draft", string="Status")
 	spb_id 				= fields.Many2one('spb')
@@ -110,30 +110,25 @@ class SPBLine(models.Model):
 
 		return result
 
-	@api.depends('po_lines')
+	@api.multi
+	def compute_it(self):
+		for record in self:
+			record.quantity_transfer=sum(record.get_qty_it(record.spb_id.id,record.product_id.id))
+
+	@api.multi
 	def compute_po(self):
-		for line in self:
-			line.quantity_po = sum(po_lines.product_qty)
+		for record in self:
+			record.quantity_po=sum(record.get_qty_po(record.spb_id.id,record.product_id.id))
 
-	# @api.multi
-	# def compute_it(self):
-	# 	for record in self:
-	# 		record.quantity_transfer=sum(record.get_qty_it(record.spb_id.id,record.product_id.id))
+	def get_qty_po(self,spb_id, product_id):
+		product_qtys = []
+		product_qtys = self.env['purchase.order.line'].search([('spb_id','=',spb_id),('product_id','=',product_id)])
+		return [x.product_qty for x in product_qtys] 
 
-	# @api.multi
-	# def compute_po(self):
-	# 	for record in self:
-	# 		record.quantity_po=sum(record.get_qty_po(record.spb_id.id,record.product_id.id))
-
-	# def get_qty_po(self,spb_id, product_id):
-	# 	product_qtys = []
-	# 	product_qtys = self.env['purchase.order.line'].search([('spb_id','=',spb_id),('product_id','=',product_id)])
-	# 	return [x.product_qty for x in product_qtys] 
-
-	# def get_qty_it(self,spb_id,product_id):
-	# 	product_uom_qtys = []
-	# 	product_uom_qtys = self.env['stock.move'].search([('picking_id.spb_id','=',spb_id),('product_id','=',product_id)])
-	# 	return [y.product_uom_qty for y in product_uom_qtys] 
+	def get_qty_it(self,spb_id,product_id):
+		product_uom_qtys = []
+		product_uom_qtys = self.env['stock.move'].search([('picking_id.spb_id','=',spb_id),('product_id','=',product_id)])
+		return [y.product_uom_qty for y in product_uom_qtys] 
 
 	@api.depends('jumlah_permintaan','quantity_transfer','quantity_po')
 	def sum_outstanding_spb(self):

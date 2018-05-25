@@ -15,7 +15,8 @@ class PurchaseOrder(models.Model):
 		if vals.get('name', 'New') == 'New':
 			vals['name'] = self.env['ir.sequence'].next_by_code('po.sequence.inherit') or '/'
 			code = self.env['project.project'].browse(vals['project_id']).code
-			vals['name'] = vals['name'][:10]+'/TEP-'+code+vals['name'][10:]
+			if code:
+				vals['name'] = vals['name'][:10]+'/TEP-'+code+vals['name'][10:]
 		return super(PurchaseOrder, self).create(vals)
 
 	@api.model
