@@ -229,9 +229,3 @@ class monitoring_detail(models.Model):
 		for record in self:
 			if record.unit_price != 0 and record.pp_approved != 0:
 				record.total_invoice = record.unit_price * record.pp_approved/100
-
-	# @api.onchange('pp_approved')
-	# def _approved_progress(self):
-	# 	self.ensure_one()
-	# 	self.monitoring_progress_id.tp_approved = self.pp_approved
-	# 	print self.monitoring_progress_id.tp_approved
