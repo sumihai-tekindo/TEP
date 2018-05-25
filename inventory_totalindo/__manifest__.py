@@ -8,15 +8,14 @@
     'category': 'Uncategorized',
     'version': '0.1',
     'depends': [
-        'purchase',
+        'purchase_totalindo',
         'hr_timesheet',
         'stock',
         'account',
     ],
     'data': [
         'data/data.xml',
-        'views/setting_inventory_view.xml',
-        'views/stock_picking_view.xml',
+        'views/inventory_adjustments_view.xml',
     ],
     'installable': True,
     'active': False,

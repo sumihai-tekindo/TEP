@@ -5,10 +5,13 @@
     		<field name="model">purchase.order</field>
     		<field name="inherit_id" ref="purchase.purchase_order_form" />
             <field name="arch" type="xml">
+                <button name="button_approve" position="after">
+                    <button name="button_approve" type="object" states='to approve' string="Approve Order" class="oe_highlight" groups="purchase.group_purchase_direktur"/>
+                </button>
             	<field name="date_order" position="after">
-            		<field name="task_id"/>
-            		<field name="department_id"/>
-            		<field name="contact_person"/>
+            		<field name="task_id" domain="[('project_id','=', project_id)]"/>
+            		<field name="department_ids" widget="many2many_tags"/>
+            		<field name="user_ids" widget="many2many_tags"/>
             	</field>
             </field>
     	</record>
@@ -18,9 +21,9 @@
             <field name="inherit_id" ref="purchase.purchase_order_form" />
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="before">
-                    <field name="spb_id"/>
+                    <field name="spb_id" domain="[('proyek_id','=', parent.project_id), ('state','=','done')]"/>
                 </xpath>
             </field>
-        </record>     	
+        </record>
     </data>
 </odoo>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import purchase_config_setting
-import spb
-import purchase
+from . import purchase_config_setting
+from . import spb
+from . import purchase

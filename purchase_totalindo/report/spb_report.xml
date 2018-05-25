@@ -5,7 +5,7 @@
             id="action_report_spb" 
             model="spb" 
             report_type="qweb-pdf"
-            name="purchase.report_purchaseorder" 
-            file="purchase.report_purchaseorder" 
+            name="purchase_totalindo.report_spb" 
+            file="purchase_totalindo.report_spb" 
         />
 </odoo>
