@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Accounting Totalindo",
+    'name': "Totalindo Monitoring Progress",
 
     'summary': """
         Developed by PT. Sumihai Teknologi Indonesia - Official Partner of Odoo""",
@@ -9,21 +9,20 @@
         Modul ini merupakan hasil pembuatan dari tim IT Developer
         PT. Sumihai Teknologi Indonesia. Modul ini berisi tentang
         informasi yang dibutuhkan oleh PT. Totalindo Eka Persada
-        untuk menu kontrak
+        untuk menu monitoring progress
     """,
 
     'author': "Yodi Safikri",
-    'maintainer': "Yodi Safikri - yodi.safikri@sumihai.co.id",
     'website': "http://www.yodisafikri.com",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/master/odoo/addons/base/module/module_data.xml
     # for the full list
-    'category': 'Accounting Totalindo',
+    'category': 'Monitoring Progress',
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account'],
+    'depends': ['base'],
 
     # always loaded
     'data': [

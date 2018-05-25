@@ -80,6 +80,14 @@ class custom_sale_order(models.Model):
 class monitoring_progress(models.Model):
 	_name = 'monitoring.progress'
 
+	@api.depends('detail_line.total_invoice')
+	def _amount_all(self):
+		for order in self:
+			total_amount = 0.0
+			for line in order.detail_line:
+				total_amount += line.total_invoice
+		self.total_amount = total_amount
+
 	contract_id = fields.Many2one('sale.order', string='Contract No', required=True)
 	name = fields.Char(string="Reference", default='/', readonly=True)
 	partner_id = fields.Many2one('res.partner', string='Customer Name', track_visibility='onchange')
@@ -93,7 +101,6 @@ class monitoring_progress(models.Model):
 	ap_approved = fields.Float(string='Akumulasi Progress Approved (%)')
 	detail_line = fields.One2many('monitoring.detail','monitoring_progress_id')
 	description = fields.Text(string='Description')
-	total_amount = fields.Integer(string='Total')
 	progress_line = fields.One2many('account.invoice', 'progress_id')
 	state = fields.Selection([
 		('new', 'New'),
@@ -102,7 +109,7 @@ class monitoring_progress(models.Model):
 		('billing', 'Billing'),
 		], string='Status', readonly=True, copy=False, default='new', track_visibility='onchange')
 	note = fields.Text(string="Description")
-	amount_total = fields.Float(string="Total", readonly=True)
+	total_amount = fields.Float(string="Total", store=True, readonly=True, compute='_amount_all', track_visibility='always')
 
 	@api.onchange('contract_id')
 	def monitoring_contract(self):
@@ -228,86 +235,3 @@ class monitoring_detail(models.Model):
 	# 	self.ensure_one()
 	# 	self.monitoring_progress_id.tp_approved = self.pp_approved
 	# 	print self.monitoring_progress_id.tp_approved
-
-class form_invoice(models.Model):
-	_inherit = 'account.invoice'
-
-	progress_id = fields.Many2one('monitoring.progress', string='No.Progress Report')
-	no_contract = fields.Many2one('sale.order', string='Contract No')
-	project_name_id = fields.Many2one('project.project',string='Project Name')
-	tanggal_invoice = fields.Date(string='Tanggal Invoice')
-	nilai_tender = fields.Float(string='Nilai Contract')
-	user_id = fields.Many2one('res.users',string='Sales Person')
-	uang_muka = fields.Float(string='Uang Muka')
-	proporsional_dp = fields.Boolean(string='Uang Muka Proporsional')
-	retensi = fields.Float(string='Retensi')
-	proporsional_retensi = fields.Boolean(string='Retensi Proporsional')
-	no_kwitansi = fields.Char(string='No. Kwitansi')
-	tanggal_kwitansi = fields.Date(string='Tanggal Kwitansi')
-	date_kwitansi_custom = fields.Char(compute='_get_custom_date_format', string="Tanggal Kwitansi")
-	no_faktur = fields.Char(string='No Faktur')
-	tanggal_faktur = fields.Date(string='Tanggal Faktur')
-	date_faktur_custom = fields.Char(compute='_get_custom_date_format', string="Tanggal Faktur")
-	amount_terbilang = fields.Char('Terbilang', compute='_get_terbilang')
-
-	@api.onchange('progress_id')
-	def progress_report(self):
-		self.no_contract = self.progress_id.contract_id.id
-		self.project_name_id = self.progress_id.project_name_id.id
-		self.partner_id = self.progress_id.partner_id.id
-
-	@api.model
-	def create(self, vals):
-		if vals.get('name', 'New') == 'New':
-			vals['name'] = self.env['ir.sequence'].next_by_code('account.sequence.inherit') or '/'
-			code = self.env['project.project'].browse(vals['project_name_id']).code
-			vals['name'] = vals['name'][:10]+'/TEP-'+code+vals['name'][10:]
-		return super(form_invoice, self).create(vals)
-
-	def _format_local_date(self,dt):
-		if not dt:
-			return '-'
-		elif len(dt)==10:
-			FORMAT = DF
-		else:
-			FORMAT = DTF
-		dt = datetime.strptime(dt, FORMAT)
-		dd = dt.day
-		dm = INDONESIAN_MONTHES[dt.month]
-		dy = dt.year
-		return '%s %s %s' % (dd,dm,dy)
-
-	@api.multi
-	@api.depends('date_kwitansi_custom', 'date_faktur_custom')
-	def _get_custom_date_format(self):
-		for inv in self:
-			if inv.tanggal_kwitansi:
-				self.date_kwitansi_custom = self._format_local_date(inv.tanggal_kwitansi)
-			if inv.tanggal_faktur:
-				self.date_faktur_custom = self._format_local_date(inv.tanggal_faktur)
-
-	@api.multi
-	def _get_terbilang(self):
-		result = {}
-		for row in self:
-			temp = terbilang(int(row.amount_total))
-			row.amount_terbilang = temp + " Rupiah" 
-
-	@api.multi
-	def cetak_kwitansi(self):
-		return self.env['report'].get_action(self, 'totalindo_contract.laporan_kwitansi')
-
-	@api.multi
-	def cetak_faktur(self):
-		return self.env['report'].get_action(self, 'totalindo_contract.laporan_faktur')
-
-class detail_invoice(models.Model):
-	_inherit = 'account.invoice.line'
-
-	no_invoice = fields.Char(string='No.')
-	work_description = fields.Char(string='Task')
-	progress_date = fields.Date(string='Progress Date')
-	progress_aktual = fields.Float(string='Progress Aktual')
-	progress_approved = fields.Float(string='Progress Approved')
-	tax = fields.Float(string='Tax')
-	nilai_invoice = fields.Float(string='Nilai Invoice')

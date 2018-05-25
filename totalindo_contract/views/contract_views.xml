@@ -1,6 +1,5 @@
 <odoo>
 	<data>
-
 		<record model="ir.ui.view" id="monitoring_progressc_tree_view">
 			<field name="name">monitoring.progress.custom</field>
 			<field name="model">monitoring.progress</field>
@@ -172,11 +171,11 @@
 									</field>
 									<group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
 										<div class="oe_subtotal_footer_separator oe_inline o_td_label">
-											<label for="amount_total" />
+											<label for="total_amount" />
 											<button name="button_dummy"
 												states="draft,sent" string="(update)" type="object" class="oe_edit_only oe_link"/>
 										</div>
-										<field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+										<field name="total_amount" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
 									</group>
 								</page>
 								<page string="Other Information">
@@ -186,99 +185,6 @@
 						</sheet>
 					</form>
 				</field>
-			</record>
-
-			<record model="ir.ui.view" id="form_invoice_form_view">
-				<field name="name">account.invoice.form</field>
-				<field name="model">account.invoice</field>
-				<field name="inherit_id" ref="account.invoice_form"/>
-				<field name="arch" type="xml">
-					<header>
-						
-					</header>
-					<xpath expr="//page[1]" position="attributes">
-						<attribute name="string">Detail Lines</attribute>
-					</xpath>
-					<field name="payment_term_id" position="after">
-						<field name="progress_id"/>
-						<field name="no_contract"/>
-						<field name="project_name_id"/>
-					</field>
-					<field name="team_id" position="after">
-						<field name="tanggal_invoice"/>
-						<field name="nilai_tender"/>
-						<field name="user_id"/>
-						<field name="proporsional_dp"/>
-						<field name="uang_muka" attrs="{'invisible': [('proporsional_dp','=', False)]}"/>
-						<field name="proporsional_retensi"/>
-						<field name="retensi" attrs="{'invisible': [('proporsional_retensi','=', False)]}"/>
-					</field>
-					<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='discount']" position="attributes">
-						<attribute name="invisible">1</attribute>
-					</xpath>
-					<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='account_analytic_id']" position="attributes">
-						<attribute name="invisible">1</attribute>
-					</xpath>
-					<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='account_id']" position="attributes">
-						<attribute name="invisible">1</attribute>
-					</xpath>
-					<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='analytic_tag_ids']" position="attributes">
-						<attribute name="invisible">1</attribute>
-					</xpath>
-					<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="attributes">
-						<attribute name="invisible">1</attribute>
-					</xpath>
-					<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='layout_category_id']" position="attributes">
-						<attribute name="invisible">1</attribute>
-					</xpath>
-					<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='quantity']" position="attributes">
-						<attribute name="invisible">1</attribute>
-					</xpath>
-					<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='uom_id']" position="attributes">
-						<attribute name="invisible">1</attribute>
-					</xpath>
-					<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='name']" position="attributes">
-						<attribute name="invisible">1</attribute>
-					</xpath>
-					<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
-						<field name="no_invoice"/>
-						<field name="work_description"/>
-						<field name="progress_date"/>
-						<field name="progress_aktual"/>
-						<field name="progress_approved"/>
-					</xpath>
-					<notebook>
-						<page string="Kwitansi">
-							<group>
-								<group>
-									<field name="no_kwitansi"/>
-									<field name="tanggal_kwitansi"/>
-								</group>
-								<group>
-								</group>
-							</group>
-						</page>
-						<page string="Faktur">
-							<group>
-								<group>
-									<field name="no_faktur"/>
-									<field name="tanggal_faktur"/>
-								</group>
-								<group>
-								</group>
-							</group>
-						</page>
-					</notebook>
-				</field>
-			</record>
-
-			<record id="sequence_invoice" model="ir.sequence">
-				<field name="name">Account Invoice</field>
-				<field name="code">account.sequence.inherit</field>
-				<field name="prefix">INV/</field>
-				<field name="padding">6</field>
-				<field name="suffix">/%(month)s/%(year)s</field>
-				<field name="company_id" eval="False"/>
 			</record>
 
 			<record id="sequence_so" model="ir.sequence">
@@ -308,7 +214,6 @@
 					<p class="oe_view_nocontent_create">Buatlah Monitoring Progressnya ...</p>
 				</field>
 			</record>
-
 
 			<menuitem id="contract_totalindo" name="Kontrak" parent="sales_team.menu_base_partner"/>
 

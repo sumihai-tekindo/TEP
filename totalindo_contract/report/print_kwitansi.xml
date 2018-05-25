@@ -36,7 +36,7 @@
 							</tr>
 							<tr>
 								<td><strong>Banyaknya Uang</strong></td>
-								<td><span t-field="o.amount_terbilang" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+								<td><span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
 							</tr>
 							<tr>
 								<td><strong>Untuk Pembayaran</strong></td>
