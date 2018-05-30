@@ -105,6 +105,7 @@
 								<field name="beban_pajak"/>
 								<field name="pph_4_2"/>
 								<field name="piutang_bruto"/>
+								<field name="journal_id"/>
 							</group>
 							<group string="Pengakuan COGS">
 								<field name="cogs"/>

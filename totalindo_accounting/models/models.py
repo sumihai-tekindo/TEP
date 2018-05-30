@@ -2,6 +2,8 @@
 
 from odoo import models, fields, api
 
+
+
 class form_invoice(models.Model):
 	_inherit = 'account.invoice'
 
@@ -21,7 +23,7 @@ class form_invoice(models.Model):
 	no_faktur = fields.Char(string='No Faktur')
 	tanggal_faktur = fields.Date(string='Tanggal Faktur')
 	date_faktur_custom = fields.Char(compute='_get_custom_date_format', string="Tanggal Faktur")
-	amount_terbilang = fields.Char('Terbilang', compute='_get_terbilang')
+	amount_terbilang = fields.Char('Terbilang')
 
 	@api.onchange('progress_id')
 	def progress_report(self):
@@ -29,10 +31,6 @@ class form_invoice(models.Model):
 		self.project_name_id = self.progress_id.project_name_id.id
 		self.partner_id = self.progress_id.partner_id.id
 		self.nilai_tender = self.progress_id.total_amount
-		self.invoice_line_ids.progress_aktual = self.progress_id.tp_aktual
-		self.invoice_line_ids.progress_approved = self.progress_id.tp_approved
-		# self.invoice_line_ids.progress_date = self.progress_id.detail_line.progress_date
-		print "========================progress date==",self.invoice_line_ids.progress_date
 
 	@api.model
 	def create(self, vals):
@@ -64,12 +62,12 @@ class form_invoice(models.Model):
 			if inv.tanggal_faktur:
 				self.date_faktur_custom = self._format_local_date(inv.tanggal_faktur)
 
-	@api.multi
-	def _get_terbilang(self):
-		result = {}
-		for row in self:
-			temp = terbilang(int(row.amount_total))
-			row.amount_terbilang = temp + " Rupiah" 
+	# @api.multi
+	# def _get_terbilang(self):
+	# 	result = {}
+	# 	for row in self:
+	# 		temp = terbilang(int(row.amount_total))
+	# 		row.amount_terbilang = temp + " Rupiah" 
 
 	@api.multi
 	def cetak_kwitansi(self):
@@ -104,7 +102,7 @@ class journal_project(models.Model):
 	cogs = fields.Many2one('account.account','COGS')
 	wip_cogs = fields.Many2one('account.account','WIP')
 	accrued_biaya = fields.Many2one('account.account','Accrued Biaya')
-	# accrued_biaya = fields.Many2one('account.account','Accrued Biaya', domain=[('is_journal_project', '=', True)])
+	journal_id = fields.Many2one('account.journal','Journal Invoice')
 
 	@api.model
 	def create(self, vals):
