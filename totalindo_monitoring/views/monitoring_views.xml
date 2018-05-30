@@ -23,9 +23,9 @@
 						<button name="generate_progress" string="Generate Progress" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'new')]}"/>
 						<button name="recalculate_progress" string="Recalculate Progress" type="object" class="btn-primary"/>
 						<button name="recognize_revenue" string="Recognize Revenue" type="object" class="btn-primary"/>
-						<button name="customer_approved" string="Customer Approved" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'approve')]}"/>
+						<button name="customer_approved" string="Customer Approved" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'approved')]}"/>
 						<button name="generate_billing" string="Generate Billing" type="object" class="btn-primary" attrs="{'invisible': ['|', ('state', '!=', 'billing')]}"/>
-						<field name="state" widget="statusbar" statusbar_visible="new,recognize,approve,billing"/>
+						<field name="state" widget="statusbar" statusbar_visible="new,recognize,approved,billing"/>
 					</header>
 					<sheet>
 						<group>
@@ -49,13 +49,13 @@
 								<field name="detail_line">
 									<tree string="Detail Lines" editable="bottom">
 										<field name="state" invisible="1"/>
-										<field name="no_task" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
-										<field name="task_description" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
-										<field name="unit_price" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
-										<field name="progress_date" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
-										<field name="pp_aktual" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
+										<field name="no_task" attrs="{'readonly': [('state', 'in', ('recognize', 'approved', 'billing'))]}"/>
+										<field name="task_description" attrs="{'readonly': [('state', 'in', ('recognize', 'approved', 'billing'))]}"/>
+										<field name="unit_price" attrs="{'readonly': [('state', 'in', ('recognize', 'approved', 'billing'))]}"/>
+										<field name="progress_date" attrs="{'readonly': [('state', 'in', ('recognize', 'approved', 'billing'))]}"/>
+										<field name="pp_aktual" attrs="{'readonly': [('state', 'in', ('recognize', 'approved', 'billing'))]}"/>
 										<field name="pp_approved"/>
-										<field name="total_revenue" attrs="{'readonly': [('state', 'in', ('recognize', 'approve', 'billing'))]}"/>
+										<field name="total_revenue" attrs="{'readonly': [('state', 'in', ('recognize', 'approved', 'billing'))]}"/>
 										<field name="total_invoice"/>
 									</tree>
 								</field>

@@ -13,17 +13,15 @@
 				</xpath>
 				<field name="payment_term_id" position="after">
 					<field name="progress_id"/>
-					<field name="no_contract"/>
+					<field name="contract_no_id"/>
 					<field name="project_name_id"/>
 				</field>
 				<field name="team_id" position="after">
 					<field name="tanggal_invoice"/>
 					<field name="nilai_tender"/>
 					<field name="user_id"/>
-					<field name="proporsional_dp"/>
-					<field name="uang_muka" attrs="{'invisible': [('proporsional_dp','=', False)]}"/>
-					<field name="proporsional_retensi"/>
-					<field name="retensi" attrs="{'invisible': [('proporsional_retensi','=', False)]}"/>
+					<field name="nilai_dp"/>
+					<field name="nilai_retensi"/>
 				</field>
 				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='discount']" position="attributes">
 					<attribute name="invisible">1</attribute>

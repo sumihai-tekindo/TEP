@@ -53,7 +53,7 @@ class monitoring_progress(models.Model):
 	state = fields.Selection([
 		('new', 'New'),
 		('recognize', 'Recognize Revenue'),
-		('approve', 'Customer Approved'),
+		('approved', 'Customer Approved'),
 		('billing', 'Billing'),
 		], string='Status', readonly=True, copy=False, default='new', track_visibility='onchange')
 	note = fields.Text(string="Description")
@@ -199,14 +199,40 @@ class monitoring_progress(models.Model):
 				print "============",move_id
 				recognize.write({'recognize_move_id':move_id.id})
 				move_id.post()
-		self.write({'state': 'approve'})
+		self.write({'state': 'approved'})
 
 	@api.multi
 	def customer_approved(self):
 		self.write({'state': 'billing'})
 
 	@api.multi
-	def generate_billing(self):
+	def generate_billing(self, progress):
+		gen_invoice = self.env['account.invoice'].search([('id','>',0)],limit=1)
+
+		billing = gen_invoice.create({
+			'partner_id': False,
+			'partner_shipping_id': False,
+			'progress_id': False,
+			'no_contract': False,
+			'project_name_id': False,
+			'invoice_line_ids': [(0, 0, {
+				'no_invoice': False,
+				'work_description': False,
+				'progress_date': False,
+				'progress_aktual': False,
+				'progress_approved': False,
+				'price_unit': False,
+				'invoice_line_tax_ids': False,
+			})],
+			'tanggal_invoice': False,
+			'nilai_tender': False,
+			'uang_muka': False,
+			'retensi': False,
+			'currency_id': False,
+			'payment_term_id': False,
+		})
+		invoice.compute_taxes()
+		return billing
 		self.write({'state': 'recognize'})
 
 class monitoring_detail(models.Model):

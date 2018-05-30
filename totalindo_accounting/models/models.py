@@ -8,15 +8,13 @@ class form_invoice(models.Model):
 	_inherit = 'account.invoice'
 
 	progress_id = fields.Many2one('monitoring.progress', string='No.Progress Report')
-	no_contract = fields.Many2one('sale.order', string='Contract No')
+	contract_no_id = fields.Many2one('sale.order', string='Contract No')
 	project_name_id = fields.Many2one('project.project',string='Project Name')
 	tanggal_invoice = fields.Date(string='Tanggal Invoice')
 	nilai_tender = fields.Float(string='Total Nilai Contract')
 	user_id = fields.Many2one('res.users',string='Sales Person')
-	uang_muka = fields.Float(string='Uang Muka')
-	proporsional_dp = fields.Boolean(string='Uang Muka Proporsional')
-	retensi = fields.Float(string='Retensi')
-	proporsional_retensi = fields.Boolean(string='Retensi Proporsional')
+	nilai_dp = fields.Float(string='Nilai Down Payment')
+	nilai_retensi = fields.Float(string='Nilai Retensi')
 	no_kwitansi = fields.Char(string='No. Kwitansi')
 	tanggal_kwitansi = fields.Date(string='Tanggal Kwitansi')
 	date_kwitansi_custom = fields.Char(compute='_get_custom_date_format', string="Tanggal Kwitansi")
@@ -32,13 +30,13 @@ class form_invoice(models.Model):
 		self.partner_id = self.progress_id.partner_id.id
 		self.nilai_tender = self.progress_id.total_amount
 
-	@api.model
-	def create(self, vals):
-		if vals.get('name', 'New') == 'New':
-			vals['name'] = self.env['ir.sequence'].next_by_code('account.sequence.inherit') or '/'
-			code = self.env['project.project'].browse(vals['project_name_id']).code
-			vals['name'] = vals['name'][:10]+'/TEP-'+code+vals['name'][10:]
-		return super(form_invoice, self).create(vals)
+	# @api.model
+	# def create(self, vals):
+	# 	if vals.get('name', 'New') == 'New':
+	# 		vals['name'] = self.env['ir.sequence'].next_by_code('account.sequence.inherit') or '/'
+	# 		code = self.env['project.project'].browse(vals['project_name_id']).code
+	# 		vals['name'] = vals['name'][:10]+'/TEP-'+code+vals['name'][10:]
+	# 	return super(form_invoice, self).create(vals)
 
 	def _format_local_date(self,dt):
 		if not dt:
