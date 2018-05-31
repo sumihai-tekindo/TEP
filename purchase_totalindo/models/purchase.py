@@ -7,8 +7,8 @@ class PurchaseOrder(models.Model):
 
 	project_id 		= fields.Many2one('project.project', string = "Project", required=True)
 	task_id 		= fields.Many2one('project.task', string = "Task")
-	department_ids 	= fields.Many2many('hr.department', string = "Department", compute="get_user_spb")
-	user_ids 		= fields.Many2many('res.users', string = "Contact Person", compute="get_user_spb")
+	department_ids 	= fields.Many2many('hr.department', string = "Department", compute="get_user_department")
+	user_ids 		= fields.Many2many('res.users', string = "Contact Person", compute="get_user_department")
 
 	@api.model
 	def create(self, vals):
@@ -60,15 +60,20 @@ class PurchaseOrder(models.Model):
 		return True
 
 	@api.depends('order_line.spb_id')
-	def get_user_spb(self):
+	def get_user_department(self):
 		cp = []
 		department = []
 		for order in self:
 			for line in order.order_line:
 				cp.append(line.spb_id.create_uid.id)
-				department.append(line.spb_id.departemen_id.id)
+				department.append(line.spb_id.departemen_id.id or False)
 		self.user_ids = cp
 		self.department_ids = department
+
+	@api.onchange('project_id')
+	def _set_receipt(self):
+		picking_type_id = self.env['stock.picking.type'].search([('code','=','incoming'),('default_location_dest_id','=',self.project_id.location_id.id)])
+		self.picking_type_id = picking_type_id.id
 
 class PurchaseOrderLine(models.Model):
 
@@ -81,12 +86,37 @@ class PurchaseOrderLine(models.Model):
 	def onchange_product_id_spb(self):
 		self.ensure_one()
 		product_ids = []
-		lines = self.env['spb.line'].search([('spb_id','=',self.spb_id.id),('outstanding_spb','>',0.0)])
-		product_ids = [x.product_id.id for x in lines if x.product_id]
+		lines = self.env['spb.line'].search([('spb_id','=',self.spb_id.id)])
+		product_ids = [x.product_id.id for x in lines if x.product_id and x.outstanding_spb>0.0]
 		return  {'domain':{'product_id':[('id','in', (product_ids))]}}
 
 	@api.onchange('product_id')
 	def onchange_product_id(self):
 		self.ensure_one()
 		super(PurchaseOrderLine,self).onchange_product_id()
-		self.product_qty =  self.env['spb.line'].search([('spb_id','=',self.spb_id.id),('product_id','=',self.product_id.id)]).outstanding_spb
+		self.product_qty =  sum([x.outstanding_spb for x in self.env['spb.line'].search([('spb_id','=',self.spb_id.id),('product_id','=',self.product_id.id)])])
+
+	@api.onchange('product_qty')
+	def _onchange_product_qty(self):
+		self.ensure_one()
+		super(PurchaseOrderLine,self)._onchange_product_qty()
+		product_qty =  sum([x.outstanding_spb for x in self.env['spb.line'].search([('spb_id','=',self.spb_id.id),('product_id','=',self.product_id.id)])])
+		
+		try:
+			current_id = self._origin.id
+		except:
+			current_id=False
+		
+		x=product_qty
+		if current_id:
+			oline = self.env['purchase.order.line'].search([('id','=',current_id)])
+			qty = oline.product_qty
+			x=product_qty+qty
+			
+		if self.product_qty > x:
+			self.product_qty = x
+			warning_mess = {
+				'title': _('Ordered quantity!'),
+				'message' : _('The order quantity is too large than jumlah permintaan on SPB.'),
+			}
+			return {'warning': warning_mess}

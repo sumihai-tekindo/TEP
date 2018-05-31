@@ -1,7 +1,7 @@
 <odoo>
 	<data>
 		<record id="sequence_spm" model="ir.sequence">
-            <field name="name">SPM Secuence</field>
+            <field name="name">SPM Sequence</field>
             <field name="code">spm.sequence.inherit</field>
             <field name="prefix">SPM/</field>
             <field name="padding">6</field>
@@ -9,7 +9,7 @@
             <field name="company_id" eval="False"/>
         </record>
         <record id="sequence_surat_jalan" model="ir.sequence">
-            <field name="name">SJL Secuence</field>
+            <field name="name">SJL Sequence</field>
             <field name="code">sjl.sequence.inherit</field>
             <field name="prefix">SJL/</field>
             <field name="padding">6</field>
@@ -17,7 +17,7 @@
             <field name="company_id" eval="False"/>
         </record>
         <record id="sequence_bok" model="ir.sequence">
-            <field name="name">BOK Secuence</field>
+            <field name="name">BOK Sequence</field>
             <field name="code">bok.sequence.inherit</field>
             <field name="prefix">BOK/</field>
             <field name="padding">6</field>
@@ -25,7 +25,7 @@
             <field name="company_id" eval="False"/>
         </record>
         <record id="sequence_bom" model="ir.sequence">
-            <field name="name">BOM Secuence</field>
+            <field name="name">BOM Sequence</field>
             <field name="code">bom.sequence.inherit</field>
             <field name="prefix">BOM/</field>
             <field name="padding">6</field>
@@ -33,7 +33,7 @@
             <field name="company_id" eval="False"/>
         </record>
         <record id="sequence_adj" model="ir.sequence">
-            <field name="name">Inventory Adjustment Inherit</field>
+            <field name="name">ADJ Sequence</field>
             <field name="code">adj.sequence.inherit</field>
             <field name="prefix">ADJ/</field>
             <field name="padding">6</field>

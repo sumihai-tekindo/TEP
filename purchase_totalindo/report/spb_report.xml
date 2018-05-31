@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
         <report 
-            string="Surat Permintaan Barang" 
+            string="Report Surat Permintaan Barang" 
             id="action_report_spb" 
             model="spb" 
             report_type="qweb-pdf"

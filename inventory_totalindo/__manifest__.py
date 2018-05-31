@@ -15,7 +15,9 @@
     ],
     'data': [
         'data/data.xml',
-        'views/inventory_adjustments_view.xml',
+        'views/setting_inventory.xml',
+        'views/stock_picking.xml',
+        'views/inventory_adjustments.xml',
     ],
     'installable': True,
     'active': False,
