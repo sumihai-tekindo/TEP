@@ -23,13 +23,16 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account'],
+    'depends': ['base', 'product', 'sale', 'project', 'account',],
 
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'report/print_faktur.xml',
+        'report/print_kwitansi.xml',
+        'report/report_view.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
