@@ -1,13 +1,12 @@
 <odoo>
 	<data>
-
 		<report 
 			id="cetak_kwitansi"
 			string="Cetak Kwitansi"
 			model="account.invoice" 
 			report_type="qweb-pdf"
-			file="totalindo_contract.laporan_kwitansi" 
-			name="totalindo_contract.laporan_kwitansi" 
+			file="totalindo_accounting.laporan_kwitansi" 
+			name="totalindo_accounting.laporan_kwitansi" 
 			/>
 
 		<report 
@@ -15,8 +14,8 @@
 			string="Cetak Faktur"
 			model="account.invoice" 
 			report_type="qweb-pdf"
-			file="totalindo_contract.laporan_faktur" 
-			name="totalindo_contract.laporan_faktur" 
+			file="totalindo_accounting.laporan_faktur" 
+			name="totalindo_accounting.laporan_faktur" 
 			/>
 
 		</data>

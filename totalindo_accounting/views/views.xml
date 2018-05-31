@@ -26,6 +26,9 @@
 				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='discount']" position="attributes">
 					<attribute name="invisible">1</attribute>
 				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='discount']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
 				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='account_analytic_id']" position="attributes">
 					<attribute name="invisible">1</attribute>
 				</xpath>
@@ -147,7 +150,7 @@
 			<field name="name">Journal Project</field>
 			<field name="res_model">journal.project</field>
 			<field name="view_type">form</field>
-			<field name="view_mode">form</field>
+			<field name="view_mode">tree,form</field>
 			<field name="help" type="html">
 				<p class="oe_view_nocontent_create">Buatlah Journal Projectnya ...</p>
 			</field>

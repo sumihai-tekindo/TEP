@@ -1,8 +1,28 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from datetime import datetime
 
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError, ValidationError
+from odoo.addons.totalindo_report import terbilang
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTF
+import odoo.addons.decimal_precision as dp
 
+INDONESIAN_MONTHES = {
+	1: 'Januari',
+	2: 'Februari',
+	3: 'Maret',
+	4: 'April',
+	5: 'Mei',
+	6: 'Juni',
+	7: 'Juli',
+	8: 'Agustus',
+	9: 'September',
+	10: 'Oktober',
+	11: 'Nopember',
+	12: 'Desember',    
+}
 
 class form_invoice(models.Model):
 	_inherit = 'account.invoice'
@@ -25,10 +45,13 @@ class form_invoice(models.Model):
 
 	@api.onchange('progress_id')
 	def progress_report(self):
-		self.no_contract = self.progress_id.contract_id.id
+		self.contract_no_id = self.progress_id.contract_id.id
 		self.project_name_id = self.progress_id.project_name_id.id
 		self.partner_id = self.progress_id.partner_id.id
 		self.nilai_tender = self.progress_id.total_amount
+		self.tanggal_invoice = fields.date.today()
+		self.nilai_dp = self.contract_no_id.nilai_dp
+		self.nilai_retensi = self.contract_no_id.nilai_retensi
 
 	# @api.model
 	# def create(self, vals):
@@ -69,11 +92,11 @@ class form_invoice(models.Model):
 
 	@api.multi
 	def cetak_kwitansi(self):
-		return self.env['report'].get_action(self, 'totalindo_contract.laporan_kwitansi')
+		return self.env['report'].get_action(self, 'totalindo_accounting.laporan_kwitansi')\
 
 	@api.multi
 	def cetak_faktur(self):
-		return self.env['report'].get_action(self, 'totalindo_contract.laporan_faktur')
+		return self.env['report'].get_action(self, 'totalindo_accounting.laporan_faktur')
 
 class detail_invoice(models.Model):
 	_inherit = 'account.invoice.line'
