@@ -17,5 +17,6 @@ Thumbs.db
 # Compiled source #
 ###################
 *.pyc
+*.pyc.orig
 
 .local/
