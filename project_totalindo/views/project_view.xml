@@ -7,6 +7,14 @@
 			<field name="model">project.project</field>
 			<field name="arch" type="xml">
 				<form string="Project">
+					<header>
+						<button name="action_confirm" states="draft,revision"
+							string="Confirm" type="object" class="oe_highlight" />
+						<button name="action_revision" states="normal" string="Revision"
+							type="object" />
+						<field name="state" widget="statusbar" statusbar_visible="draft,normal,done"
+							readonly="1" />
+					</header>
 					<sheet string="Project">
 						<field name="analytic_account_id" invisible="1" required="0" />
 						<div class="oe_button_box" name="button_box" groups="base.group_user">

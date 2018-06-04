@@ -25,9 +25,28 @@ from odoo import api, fields, models, _
 class AccountAnalyticAccount(models.Model):
     _inherit = 'account.analytic.account'
     
+    READONLY_STATES = {
+        'normal': [('readonly', True)],
+        'done': [('readonly', True)],
+        'blocked': [('readonly', True)],
+    }
+    state = fields.Selection(related='project_id.state', store=True, readonly=True)
+    planned_amount = fields.Float('Planned Amount', required=True, digits=0, states=READONLY_STATES)
     project_id = fields.Many2one('project.project', string='Project', related='level_3_id.level_2_id.level_1_id.project_id',
         store=True, readonly=True)
+    revision = fields.Integer(string='Revision', default=0)
+    log_ids = fields.One2many('account.budget.log', 'analytic_id', string="Log", readonly=True)
 
+    @api.multi
+    def action_log(self):
+        for this in self:
+            self.env['account.budget.log'].create({
+                'name': this.revision,
+                'analytic_id': this.id,
+                'amount': this.planned_amount,
+            })
+            this.revision += 1
+        return True
 
 class BudgetLevelOne(models.Model):
     _inherit = 'budget.level.one'

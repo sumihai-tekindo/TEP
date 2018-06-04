@@ -97,6 +97,14 @@ class AccountAnalyticAccount(models.Model):
 #     theoritical_amount = fields.Float(compute='_compute_theoritical_amount', string='Theoretical Amount', digits=0)
 #     percentage = fields.Float(compute='_compute_percentage', string='Achievement')
 
+class AccountBudgetLog(models.Model):
+    _name = 'account.budget.log'
+    _description = 'Budget Log'
+    
+    name = fields.Integer(string='Revision')
+    analytic_id = fields.Many2one('account.analytic.account', string='Analytic')
+    amount = fields.Float(string='Amount')
+
 
 class BudgetLevelOne(models.Model):
     _name = 'budget.level.one'
@@ -119,3 +127,4 @@ class BudgetLevelThree(models.Model):
 
     name = fields.Char(string='Name', required=True)
     level_2_id = fields.Many2one('budget.level.two', string="Level 2")
+

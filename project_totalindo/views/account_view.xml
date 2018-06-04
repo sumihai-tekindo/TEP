@@ -4,10 +4,36 @@
 		<record id="view_account_analytic_account_form" model="ir.ui.view">
 			<field name="name">Analytic Project</field>
 			<field name="model">account.analytic.account</field>
-			<field name="inherit_id" ref="account_analytic_budget.view_account_analytic_account_form" />
+			<field name="inherit_id"
+				ref="account_analytic_budget.view_account_analytic_account_form" />
 			<field name="arch" type="xml">
 				<field name="level_3_id" position="before">
 					<field name="project_id" />
+				</field>
+				<group name="main" position="inside">
+					<field name="log_ids" nolabel="1">
+						<tree>
+							<field name="name" />
+							<field name="amount" />
+						</tree>
+					</field>
+				</group>
+				<xpath expr="//form/sheet" position="before">
+					<header>
+						<field name="state" widget="statusbar" statusbar_visible="draft,normal,done"
+							readonly="1" />
+					</header>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="view_account_analytic_account_list" model="ir.ui.view">
+			<field name="name">Analytic Project Tree</field>
+			<field name="model">account.analytic.account</field>
+			<field name="inherit_id" ref="analytic.view_account_analytic_account_list" />
+			<field name="arch" type="xml">
+				<field name="company_id" position="after">
+					<field name="state" invisible="1" />
 				</field>
 			</field>
 		</record>

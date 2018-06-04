@@ -89,6 +89,22 @@ class ProjectProject(models.Model):
         string='Expenses', compute='_expense_ids')
     
     location_id = fields.Many2one('stock.location', string='Project Location', domain=[('usage', '=', 'internal')])
+    state = fields.Selection([('draft', 'Draft'),
+                              ('normal', 'Normal'),
+                              ('done', 'Done'),
+                              ('blocked', 'Blocked'),
+                              ('revision', 'Revision')], string='State', default='draft')
+    
+    @api.multi
+    def action_confirm(self):
+        for this in self:
+            this.state = 'normal'
+            this.budget_ids.action_log()
+            
+    @api.multi
+    def action_revision(self):
+        for this in self:
+            this.state = 'revision'
     
     @api.multi
     def budget_tree_view(self):
