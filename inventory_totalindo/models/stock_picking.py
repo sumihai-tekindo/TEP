@@ -44,15 +44,27 @@ class StockPicking(models.Model):
 	def change_stock_move(self):
 		move_lines=[]
 
-		if self.spb_id:
-			self.project_id = self.spb_id.proyek_id.id
+		if self.picking_type_code=='internal' and self.type_bon==False:
+			self.project_id	= self.spb_id.proyek_id.id
 			self.location_dest_id = self.spb_id.proyek_id.location_id.id or self.location_dest_id or False
-			
-			self.with_context({
-					'default_location_id'		:self.location_id.id,
-					'default_location_dest_id'	:self.location_dest_id.id,
-				})
 
+		if self.picking_type_code=='internal' and self.type_bon=='in':
+			self.project_id = self.no_sjl.project_id.id
+			self.location_id = self.no_sjl.location_dest_id.id or False
+			self.location_dest_id = self.no_sjl.location_id.id or False
+
+		if self.picking_type_code=='internal' and self.type_bon=='out':
+			self.project_id = self.spb_id.proyek_id.id
+			self.location_id = self.spb_id.proyek_id.location_id.id or False
+			self.user = self.spb_id.create_uid.id
+			# self.department = self.spb_id.departemen_id.id
+
+		self.with_context({
+				'default_location_id'		:self.location_id.id,
+				'default_location_dest_id'	:self.location_dest_id.id,
+			})
+
+		if self.spb_id:
 			for spb_line in self.spb_id.spb_line_ids:
 				data = {
 					'date_expected'		: fields.Date.context_today(self), #ini sesuai tanggal diperlukan spb?
@@ -68,14 +80,6 @@ class StockPicking(models.Model):
 				move_lines.append(data)
 		
 		elif self.no_sjl:
-			self.location_id = self.no_sjl.location_dest_id.id
-			self.location_dest_id = self.no_sjl.location_id.id
-
-			self.with_context({
-					'default_location_id'		:self.location_id.id,
-					'default_location_dest_id'	:self.location_dest_id.id,
-				})
-
 			for line in self.no_sjl.move_lines:
 				data = {
 					'date_expected'		: line.date_expected,
@@ -89,11 +93,8 @@ class StockPicking(models.Model):
 					'name'				: line.name,
 				}
 				move_lines.append(data)
-		self.move_lines = move_lines
 
-		if self.type_bon == 'out':
-			self.user = self.spb_id.create_uid.id
-			self.department = self.spb_id.departemen_id.id
+		self.move_lines = move_lines
 
 	
 	

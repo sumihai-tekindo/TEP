@@ -61,7 +61,7 @@
 							<field name="nomer_gambar" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
 						</group>
 						<group>
-							<field name="budegeted" widget="radio" options="{'horizontal': true}" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
+							<field name="budgeted" widget="radio" options="{'horizontal': true}" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
 							<field name="sifat_kebutuhan" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
 							<field name="tanggal_diperlukan" attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"/>
 						</group>
@@ -105,7 +105,7 @@
 									</sheet>
 								</form>
 							</field>
-							<field name="notes" class="oe_inline" placeholder="Notes"/>
+							<field name="notes" class="oe_inline" placeholder="Keterangan"/>
 							<div class="oe_clear"/>
 						</page>
 					</notebook>
@@ -127,7 +127,7 @@
 					<field name="tanggal_spb"/>
 					<field name="proyek_id"/>
 					<field name="departemen_id"/>
-					<field name="budegeted"/>
+					<field name="budgeted"/>
 					<field name="sifat_kebutuhan"/>
 					<field name="tanggal_diperlukan"/>
 					<field name="state"/>
@@ -144,7 +144,7 @@
 					<field name="tanggal_spb"/>
 					<field name="proyek_id"/>
 					<field name="departemen_id"/>
-					<field name="budegeted"/>
+					<field name="budgeted"/>
 					<field name="sifat_kebutuhan"/>
 					<field name="tanggal_diperlukan"/>
 					<field name="state"/>

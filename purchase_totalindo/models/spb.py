@@ -21,7 +21,7 @@ class SPB(models.Model):
 	tanggal_spb			= fields.Date(string="Date",default=fields.Date.today)
 	proyek_id			= fields.Many2one('project.project',string="Project", required=True, track_visibility='always')
 	departemen_id		= fields.Many2one('hr.department',string="Department")
-	budegeted			= fields.Selection([('yes','Yes'),('no','No')],string="Budgeted")
+	budgeted			= fields.Selection([('yes','Yes'),('no','No')],string="Budgeted")
 	sifat_kebutuhan		= fields.Char(string="Sifat Kebutuhan")
 	tanggal_diperlukan	= fields.Date(string="Tanggal Diperlukan",default=fields.Date.today)
 	nomer_gambar 		= fields.Many2one('project.document',string="No Gambar") 
@@ -33,6 +33,8 @@ class SPB(models.Model):
 											('done', 'Done'),
 											('cancel', 'Cancel')],
 											string="Status", default="draft", track_visibility='onchange')
+	company_id			= fields.Many2one('res.company', default=lambda self: self.env.user.company_id.id)
+	notes 				= fields.Text('Terms and Conditions')
 
 	@api.model
 	def create(self, vals):

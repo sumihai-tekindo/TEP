@@ -36,20 +36,21 @@
             </field>
         </record>
 
-        <!-- ini inherit listing surat jalan / internal transfer -->
-        <!-- <record id="vpicktree_inherit" model="ir.ui.view">
+        <record id="vpicktree_inherit" model="ir.ui.view">
             <field name="name">stock.picking.tree</field>
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.vpicktree" />
             <field name="arch" type="xml">
-                <xpath expr="//tree/field[@name='picking_type_id']" position="after">
+                <xpath expr="//tree/field[@name='name']" position="after">
                     <field name="type_bon" invisible="1"/>
-                    <field name="picking_type_code" invisible="1"/>
-                    <field name="project_id" string="Project" attrs="{'invisible': [('picking_type_code', '!=', 'internal'),('type_bon', '=', 'in,out')]}"/>
+                    <field name="picking_type_code"/>
+                    <field name="project_id" invisible="context.get('picking_type_code'),'=','incoming'"/>
                 </xpath>
+                <!-- <xpath expr="//tree/field[@name='project_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('picking_type_code', '=', 'incoming')]}</attribute>
+                </xpath> -->
             </field>
-        </record> -->
-        <!-- inherit surat jalan -->
-
+        </record>
+        
     </data>
 </odoo>
