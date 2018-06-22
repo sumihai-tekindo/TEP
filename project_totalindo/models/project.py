@@ -95,6 +95,9 @@ class ProjectProject(models.Model):
                               ('blocked', 'Blocked'),
                               ('revision', 'Revision')], string='State', default='draft')
     
+    spk_sequence_id = fields.Many2one('ir.sequence', string='SPK Sequence', required=True)
+    om_sequence_id = fields.Many2one('ir.sequence', string='Opname Mandor Sequence', required=True)
+    
     @api.multi
     def action_confirm(self):
         for this in self:

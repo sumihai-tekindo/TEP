@@ -57,6 +57,8 @@ class OpnameMandor(models.Model):
     @api.multi
     def action_confirm(self):
         for opname in self:
+            if not opname.name:
+                opname.name = opname.project_id.om_sequence_id.with_context({'ir_sequence_date': opname.date}).next_by_id()
             opname.state = 'qs_approve'
     
     @api.multi
@@ -114,7 +116,7 @@ class OpnameMandor(models.Model):
             return {}
         spk = self.spk_id
         # set sequence
-        opname_ids = self.search([('spk_id', '=', vals['spk_id'])])
+        opname_ids = self.search([('spk_id', '=', self.spk_id.id), ('name', '!=', self.name)])
         sequence = max(opname_ids.mapped('sequence')) + 1 if opname_ids else 1
         # set line values
         line_vals = []
@@ -133,6 +135,9 @@ class OpnameMandor(models.Model):
                 'price_total_last': line.price_total_last,
                 'amount_ret_last': line.amount_ret_last,
                 'amount_net_last': line.amount_net_last,
+                # upnow values
+                'progress_upnow': line.progress_last,
+                'qty_upnow': line.qty_last,
             }))
         return {'value': {
             'partner_id': spk.partner_id.id,
@@ -141,6 +146,7 @@ class OpnameMandor(models.Model):
             'opname_line': line_vals,
             'sequence': sequence,
         }}
+
     
 class OpnameMandorLine(models.Model):
     _name = 'opname.mandor.line'
