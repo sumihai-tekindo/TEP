@@ -36,11 +36,15 @@
 	                        </h1>
                     	</div>
                     	<group>
+                    		<field name="date"/>
                     		<field name="fleet_id"/>
                     		<field name="nama_karyawan"/>
                     		<field name="project_id"/>
                     		<field name="jabatan"/>
+                    		<!-- <field name="alokasi_unit"/> -->
+                    		<field name="kondisi_unit"/>
                     		<field name="keterangan"/>
+
                     	</group>
                     </sheet>
 				</form>

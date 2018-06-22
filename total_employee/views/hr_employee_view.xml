@@ -25,6 +25,10 @@
                 <xpath expr="//field[@name='identification_id']" position="attributes">
                 	<attribute name="string">No.KTP</attribute>
                 </xpath>
+                <xpath expr="//field[@name='barcode']" position="after">
+                	<field name="nomor_urut"/>
+                	<field name="nik"/>
+                </xpath>
                 <xpath expr="/form/sheet/notebook/page[2]" position="after">
                 	<page string="Keluarga">
 	                    <field name="keluarga_ids">

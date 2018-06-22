@@ -41,6 +41,19 @@ class SuratPeringatan(models.Model):
 		self.jabatan 	= self.employee_id.job_id.id
 
 
+	@api.multi
+	def terminate_sp(self):
+		print "=====================================CHEECKKKKKK SCHEDULEEERR RUNNIIINNGG==================================="
+		for data in self.search([('state','=','approved')]):
+			if data.end_date:
+				datetimeFormat = '%Y-%m-%d'
+				date_end =  datetime.strptime(data.end_date, datetimeFormat)
+				if date_end < datetime.now():
+					data.write({'state': 'done'})
+				else:
+					return False
+
+
 
 	@api.one
 	def submit_to_legal(self):

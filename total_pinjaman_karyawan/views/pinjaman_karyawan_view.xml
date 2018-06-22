@@ -11,6 +11,7 @@
 					<field name="karyawan_id"/>
 					<field name="jabatan_id"/>
 					<field name="nilai_pinjaman"/>
+					<field name="sisa_cicilan"/>
 				</tree>
 			</field>
 		</record>
@@ -49,6 +50,7 @@
 	                                    <field name="jumlah_cicilan"/><span>kali</span>
 	                                </div>
 	                            <field name="cicilan_perbulan"/>
+	                            <field name="sisa_cicilan"/>
                     		</group>
                     		<group>
                     			<field name="bulan_awal_pemotongan"/>

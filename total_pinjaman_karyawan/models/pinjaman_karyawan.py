@@ -27,6 +27,7 @@ class PinjamanKaryawan(models.Model):
 	no_rekening 		= fields.Char('Nomor Rekening', required=True)
 	alasan_reject 		= fields.Text('Alasan Reject', required=True)
 	detail_ids 			= fields.One2many('pinjaman.karyawan.detail','detail_id',' ')
+	sisa_cicilan		= fields.Float('Sisa Cicilan', compute="_get_sisa_cicilan")
 	state				= fields.Selection([('new','New'),
 											('to_submit','To Submit'),
 											('reported','Reported'),
@@ -34,6 +35,16 @@ class PinjamanKaryawan(models.Model):
 											('dalam_cicilan','Dalam Cicilan'),
 											('lunas','Lunas'),
 											('rejected','Rejected')],'State', default="new")
+
+
+	@api.one
+	def _get_sisa_cicilan(self):
+		total_lunas = 0
+		for x in self.detail_ids:
+			if x.state == 'lunas':
+				total_lunas += x.nilai_cicilan
+
+		self.sisa_cicilan = self.nilai_pinjaman - total_lunas
 
 
 

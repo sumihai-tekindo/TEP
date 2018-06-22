@@ -1,4 +1,5 @@
 from odoo import models, fields, api, _
+from datetime import datetime
 
 
 class hr_employee(models.Model):
@@ -16,6 +17,36 @@ class hr_employee(models.Model):
 	count_pinjaman         = fields.Integer('#Pinjaman', compute='_get_pinjaman')
 	count_expense		   = fields.Integer('#Expense', compute='_get_expense')
 	count_sp 				= fields.Integer('#Surat Peringatan', compute='_get_sp')
+	nik						= fields.Char('NIK', compute='_get_nik', store=True)
+	nomor_urut				= fields.Char('No Urut')
+
+
+
+	@api.one
+	@api.depends('nomor_urut')
+	def _get_nik(self):
+		datetimeFormat = '%Y-%m-%d'
+		stat_number = 0
+		join_date_formatted = datetime.strptime(str(self.join_date),datetimeFormat)
+		tahun = str(join_date_formatted.year)
+		bulan = str('%02d' % join_date_formatted.month)
+
+		prof_data_permanen = self.env['hr.employee.category'].search([('name','=','Permanen')])
+		prof_data_kontrak = self.env['hr.employee.category'].search([('name','=','Kontrak')])
+		prof_data_evaluasi = self.env['hr.employee.category'].search([('name','=','Evaluasi')])
+
+		if prof_data_permanen in self.category_ids:
+			stat_number = 1
+		elif prof_data_kontrak in self.category_ids:
+			stat_number = 2
+		elif prof_data_evaluasi  in self.category_ids:
+			stat_number = 0
+
+		self.nik = str(tahun) + str(bulan) + str(stat_number) + str(self.nomor_urut) 
+
+
+		print "tahun", tahun,bulan
+
 
 
 

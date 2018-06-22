@@ -6,8 +6,8 @@ class FleetVehicle(models.Model):
 
 
 
-	machine_number 			= fields.Integer('Machine Number')
-	production_year			= fields.Integer('Production Year')
+	machine_number 			= fields.Char('Machine Number')
+	production_year			= fields.Char('Production Year')
 	fuel_type = fields.Selection([('premium', 'Premium'),
 								 ('pertamax', 'Pertamax'), 
 								 ('petralite', 'Petralite'), 
