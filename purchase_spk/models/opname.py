@@ -10,12 +10,12 @@ class OpnameMandor(models.Model):
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _order = 'date desc, id desc'
 
-    @api.depends('opname_line.price_total')
+    @api.depends('opname_line.amount_net')
     def _amount_all(self):
         for opname in self:
             amount_total = 0.0
             for line in opname.opname_line:
-                amount_total += line.price_total
+                amount_total += line.amount_net
             opname.update({
                 'amount_total': opname.currency_id.round(amount_total),
             })
@@ -68,6 +68,18 @@ class OpnameMandor(models.Model):
     def action_pm_approve(self):
         for opname in self:
             opname.state = 'open'
+            # store line's value to spk line as last value
+            for line in opname.opname_line:
+                progress_upnow = line.progress_upnow
+                qty_upnow = line.qty_upnow
+                line.spk_line_id.update({
+                    'progress_last': progress_upnow,
+                    'qty_last': qty_upnow,
+                    'price_total_last': qty_upnow * line.price_spk,
+                    'amount_ret_last': line.amount_ret_upnow,
+                    'amount_net_last': line.amount_net_upnow,
+                    'amount_ret_hold': line.spk_line_id.amount_ret_hold + line.amount_ret - line.amount_ret_release,
+                })
     
     @api.multi
     def action_done(self):
@@ -101,38 +113,75 @@ class OpnameMandor(models.Model):
         if not self.spk_id:
             return {}
         spk = self.spk_id
+        # set sequence
+        opname_ids = self.search([('spk_id', '=', vals['spk_id'])])
+        sequence = max(opname_ids.mapped('sequence')) + 1 if opname_ids else 1
+        # set line values
         line_vals = []
         for line in self.spk_id.order_line:
             line_vals.append((0, 0, {
+                'spk_line_id': line.id,
                 'name': line.name,
                 'uom_id': line.uom_id.id,
                 'account_analytic_id': line.account_analytic_id.id,
                 'qty_spk': line.quantity,
                 'price_spk': line.price_unit,
                 'price_total_spk': line.price_subtotal,
+                # last values
+                'progress_last': line.progress_last,
+                'qty_last': line.qty_last,
+                'price_total_last': line.price_total_last,
+                'amount_ret_last': line.amount_ret_last,
+                'amount_net_last': line.amount_net_last,
             }))
         return {'value': {
             'partner_id': spk.partner_id.id,
             'project_id': spk.project_id.id,
             'task_id': spk.task_id.id,
             'opname_line': line_vals,
+            'sequence': sequence,
         }}
-    
     
 class OpnameMandorLine(models.Model):
     _name = 'opname.mandor.line'
     _description = 'Opname Lines'
 
-    @api.depends('qty')
+    @api.depends('progress_upnow', 'ret_hold')
     def _compute_amount(self):
         for line in self:
+            price_spk = line.price_spk
+            price_total_spk = line.price_total_spk
+            retention = line.opname_id.spk_id.retention
+            ret_hold = line.ret_hold
+            qty_spk = line.qty_spk
+            progress_upnow = line.progress_upnow
+            progress = progress_upnow - line.progress_last
+            qty_upnow = qty_spk * progress_upnow / 100
+            qty = qty_upnow - line.qty_last
+            price_total = qty * price_spk
+            amount_ret_upnow = progress_upnow * retention * price_total_spk / 100 / 100 if ret_hold else 0.0
+            amount_ret = progress * retention * price_total_spk / 100 / 100 if ret_hold else 0.0
+            price_total_upnow = qty_upnow * price_spk
+            amount_ret_release = line.spk_line_id.amount_ret_hold if not ret_hold else 0.0
+            qty_balance = qty_spk - qty_upnow
             line.update({
-                'price_total': line.qty,
+                'qty': qty,
+                'progress': progress,
+                'qty_upnow': qty_upnow,
+                'price_total': price_total,
+                'amount_ret': amount_ret,
+                'amount_net': price_total - amount_ret,
+                'price_total_upnow': price_total_upnow,
+                'amount_ret_upnow': amount_ret_upnow,
+                'amount_net_upnow': price_total_upnow - amount_ret_upnow,
+                'amount_ret_release': amount_ret_release,
+                'qty_balance': qty_balance,
             })
             
     sequence = fields.Integer(string='Sequence', default=10)
     name = fields.Char(string='Description', required=True)
     opname_id = fields.Many2one('opname.mandor', string='Opname')
+    spk_line_id = fields.Many2one('purchase.spk.line', string='SPK Line')
     state = fields.Selection(related='opname_id.state', store=True)
     company_id = fields.Many2one('res.company', 'Company', related='opname_id.company_id', readonly=True)
     currency_id = fields.Many2one('res.currency', 'Currency', related='opname_id.currency_id', readonly=True)
@@ -144,15 +193,29 @@ class OpnameMandorLine(models.Model):
     price_spk = fields.Float(string='Price SPK', digits=dp.get_precision('Product Price'), readonly=True)
     price_total_spk = fields.Monetary(string='Total', readonly=True)
     
-    amount_ret_release = fields.Monetary(string='Ret Release Amount')
+    progress_last = fields.Float(string='Progress', digits=dp.get_precision('Product Unit of Measure'), readonly=True)
+    qty_last = fields.Float(string='Volume', digits=dp.get_precision('Product Unit of Measure'), readonly=True)
+    price_total_last = fields.Monetary(string='Total', readonly=True)
+    amount_ret_last = fields.Monetary(string='Ret Amount', readonly=True)
+    amount_net_last = fields.Monetary(string='Net Amount', readonly=True)
+    
+    amount_ret_release = fields.Monetary(compute='_compute_amount', string='Ret Release Amount', store=True)
     
     ret_hold = fields.Boolean(string='Hold Ret')
     
-    qty = fields.Float(string='Volume', digits=dp.get_precision('Product Unit of Measure'), required=True)
+    progress = fields.Float(compute='_compute_amount', string='Progress', digits=dp.get_precision('Product Unit of Measure'), store=True)
+    qty = fields.Float(compute='_compute_amount', string='Volume', digits=dp.get_precision('Product Unit of Measure'), store=True)
     price_total = fields.Monetary(compute='_compute_amount', string='Total', store=True)
-    amount_ret = fields.Monetary(string='Ret Amount')
-    amount_net = fields.Monetary(string='Net Amount')
-    qty_balance = fields.Float(string='Balance Vol', digits=dp.get_precision('Product Unit of Measure'), required=True)
+    amount_ret = fields.Monetary(compute='_compute_amount', string='Ret Amount', store=True)
+    amount_net = fields.Monetary(compute='_compute_amount', string='Net Amount', store=True)
+    
+    progress_upnow = fields.Float(string='Progress', digits=dp.get_precision('Product Unit of Measure'), required=True)
+    qty_upnow = fields.Float(compute='_compute_amount', string='Volume', digits=dp.get_precision('Product Unit of Measure'), store=True)
+    price_total_upnow = fields.Monetary(compute='_compute_amount', string='Total', store=True)
+    amount_ret_upnow = fields.Monetary(compute='_compute_amount', string='Ret Amount', store=True)
+    amount_net_upnow = fields.Monetary(compute='_compute_amount', string='Net Amount', store=True)
+    
+    qty_balance = fields.Float(compute='_compute_amount', string='Balance Vol', digits=dp.get_precision('Product Unit of Measure'), store=True)
     amount_ret_exc = fields.Monetary(string='Exc Ret Amount')
     
     price_tax = fields.Monetary(compute='_compute_amount', string='Tax', store=True)

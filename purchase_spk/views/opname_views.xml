@@ -76,23 +76,40 @@
 												<field name="account_analytic_id" context="{'default_partner_id':parent.partner_id}"
 													groups="purchase.group_analytic_accounting" />
 											</group>
+											<group string="Retention">
+												<field name="ret_hold" />
+												<field name="amount_ret_release" />
+											</group>
 											<group string="SPK">
 												<field name="qty_spk" />
 												<field name="price_spk" />
 												<field name="price_total_spk" widget="monetary" />
 											</group>
-											<group string="Current">
-												<field name="qty" />
+											<group string="Previously">
+												<field name="progress_last" />
+												<field name="qty_last" />
+												<field name="price_total_last" />
+												<field name="amount_ret_last" />
+												<field name="amount_net_last" />
 											</group>
-											<group string="Retention">
-												<field name="ret_hold" />
-												<field name="amount_ret_release" />
+											<group string="Current">
+												<field name="progress" />
+												<field name="qty" />
+												<field name="price_total" />
 												<field name="amount_ret" />
 												<field name="amount_net" />
+											</group>
+											<group string="Up to Now">
+												<field name="progress_upnow" />
+												<field name="qty_upnow" />
+												<field name="price_total_upnow" />
+												<!-- <field name="amount_ret_upnow" /> -->
+												<!-- <field name="amount_net_upnow" /> -->
 											</group>
 											<group string="Balance">
 												<field name="qty_balance" />
 												<field name="amount_ret_exc" />
+												<field name="spk_line_id" invisible="0" />
 											</group>
 										</group>
 									</form>
@@ -110,6 +127,8 @@
 										<field name="price_total_spk" widget="monetary" />
 										<field name="amount_ret_release" />
 										<field name="ret_hold" />
+										<field name="progress" />
+										<field name="qty" />
 										<field name="amount_ret" />
 										<field name="amount_net" />
 										<field name="qty_balance" />

@@ -49,6 +49,7 @@
 							<group>
 								<field name="project_id" />
 								<field name="task_id" />
+                                <field name="retention" />
 							</group>
 						</group>
 						<notebook>
