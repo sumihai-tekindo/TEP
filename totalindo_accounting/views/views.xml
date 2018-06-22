@@ -1,0 +1,162 @@
+<odoo>
+	<data>
+		<record model="ir.ui.view" id="form_invoice_form_view">
+			<field name="name">account.invoice.form</field>
+			<field name="model">account.invoice</field>
+			<field name="inherit_id" ref="account.invoice_form"/>
+			<field name="arch" type="xml">
+				<header>
+					
+				</header>
+				<xpath expr="//page[1]" position="attributes">
+					<attribute name="string">Detail Lines</attribute>
+				</xpath>
+				<field name="payment_term_id" position="after">
+					<field name="progress_id"/>
+					<field name="contract_no_id"/>
+					<field name="project_name_id"/>
+				</field>
+				<field name="team_id" position="after">
+					<field name="tanggal_invoice"/>
+					<field name="nilai_tender"/>
+					<field name="user_id"/>
+					<field name="nilai_dp"/>
+					<field name="nilai_retensi"/>
+				</field>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='discount']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='discount']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='account_analytic_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='account_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='analytic_tag_ids']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='layout_category_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='quantity']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='uom_id']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='name']" position="attributes">
+					<attribute name="invisible">1</attribute>
+				</xpath>
+				<xpath expr="/form/sheet/notebook/page/field[@name='invoice_line_ids']/tree/field[@name='name']" position="after">
+					<field name="no_invoice"/>
+					<field name="work_description"/>
+					<field name="progress_date"/>
+					<field name="progress_aktual"/>
+					<field name="progress_approved"/>
+				</xpath>
+				<notebook>
+					<page string="Kwitansi">
+						<group>
+							<group>
+								<field name="no_kwitansi"/>
+								<field name="tanggal_kwitansi"/>
+							</group>
+							<group>
+							</group>
+						</group>
+					</page>
+					<page string="Faktur">
+						<group>
+							<group>
+								<field name="no_faktur"/>
+								<field name="tanggal_faktur"/>
+							</group>
+							<group>
+							</group>
+						</group>
+					</page>
+				</notebook>
+			</field>
+		</record>
+
+		<record id="sequence_invoice" model="ir.sequence">
+			<field name="name">Account Invoice</field>
+			<field name="code">account.sequence.inherit</field>
+			<field name="prefix">INV/</field>
+			<field name="padding">6</field>
+			<field name="suffix">/%(month)s/%(year)s</field>
+			<field name="company_id" eval="False"/>
+		</record>
+		
+		<record model="ir.ui.view" id="journal_project_form_view">
+			<field name="name">journal.project.form</field>
+			<field name="model">journal.project</field>
+			<field name="arch" type="xml">
+				<form string="Journal Project">
+					<sheet>
+						<group>
+							<group string="Pengakuan Pendapatan">
+								<field name="revenue"/>
+								<field name="beban_pajak"/>
+								<field name="pph_4_2"/>
+								<field name="piutang_bruto"/>
+								<field name="journal_id"/>
+							</group>
+							<group string="Pengakuan COGS">
+								<field name="cogs"/>
+								<field name="wip_cogs"/>
+								<field name="accrued_biaya"/>
+							</group>
+						</group>
+						<group col="2">
+							<group string="Billing Ke Customer">
+								<field name="ar_retensi"/>
+								<field name="uang_muka"/>
+								<field name="ppn_keluaran"/>
+							</group>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="account_account_inherit_form">
+			<field name="name">account.account.form.inherit</field>
+			<field name="model">account.account</field>
+			<field name="inherit_id" ref="account.view_account_form"/>
+			<field name="arch" type="xml">
+				<field name="deprecated" position="after">
+					<field name="is_journal_project"/>
+				</field>
+			</field>
+		</record>
+
+		<record id="seq_journal" model="ir.sequence">
+			<field name="name">Journal Project Berjalan</field>
+			<field name="code">account.journal</field>
+			<field name="prefix">JP/</field>
+			<field name="suffix">/TEP/%(month)s/%(year)s</field>
+			<field name="padding">6</field>
+			<field eval="1" name="number_increment"/>
+		</record>
+
+		<record model="ir.actions.act_window" id="journal_project_list_action">
+			<field name="name">Journal Project</field>
+			<field name="res_model">journal.project</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">Buatlah Journal Projectnya ...</p>
+			</field>
+		</record>
+
+		<menuitem id="journal_project" name="Journal Project" parent="account.account_account_menu"
+			action="journal_project_list_action"/>
+		</data>
+	</odoo>

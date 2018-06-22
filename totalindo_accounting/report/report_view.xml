@@ -1,0 +1,22 @@
+<odoo>
+	<data>
+		<report 
+			id="cetak_kwitansi"
+			string="Cetak Kwitansi"
+			model="account.invoice" 
+			report_type="qweb-pdf"
+			file="totalindo_accounting.laporan_kwitansi" 
+			name="totalindo_accounting.laporan_kwitansi" 
+			/>
+
+		<report 
+			id="cetak_faktur"
+			string="Cetak Faktur"
+			model="account.invoice" 
+			report_type="qweb-pdf"
+			file="totalindo_accounting.laporan_faktur" 
+			name="totalindo_accounting.laporan_faktur" 
+			/>
+
+		</data>
+	</odoo>

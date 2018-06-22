@@ -42,6 +42,7 @@ class PurchaseSpk(models.Model):
     task_id = fields.Many2one('project.task', string='Task', required=True, states=READONLY_STATES)
     date_order = fields.Date(string='Order Date', required=True, states=READONLY_STATES)
     order_line = fields.One2many('purchase.spk.line', 'order_id', string='Lines', states=READONLY_STATES)
+    retention = fields.Float(string='Retention', states=READONLY_STATES)
     
     company_id = fields.Many2one('res.company', 'Company', required=True, index=True, default=lambda self: self.env.user.company_id.id)
     currency_id = fields.Many2one('res.currency', 'Currency', required=True, default=lambda self: self.env.user.company_id.currency_id.id)
@@ -114,7 +115,7 @@ class PurchaseSpkLine(models.Model):
                 'price_total': taxes['total_included'],
                 'price_subtotal': taxes['total_excluded'],
             })
-            
+    
     sequence = fields.Integer(string='Sequence', default=10)
     name = fields.Char(string='Description', required=True)
     order_id = fields.Many2one('purchase.spk', string='SPK')
@@ -128,6 +129,14 @@ class PurchaseSpkLine(models.Model):
     company_id = fields.Many2one('res.company', 'Company', related='order_id.company_id', readonly=True)
     currency_id = fields.Many2one('res.currency', 'Currency', related='order_id.currency_id', readonly=True)
     
+    progress_last = fields.Float(string='Last Progress', digits=dp.get_precision('Unit Price'), default=0.0)
+    qty_last = fields.Float(string='Last Volume', digits=dp.get_precision('Product Unit of Measure'), default=0.0)
+    price_total_last = fields.Float(string='Last Volume', digits=dp.get_precision('Unit Price'), default=0.0)
+    amount_ret_last = fields.Float(string='Last Volume', digits=dp.get_precision('Unit Price'), default=0.0)
+    amount_net_last = fields.Float(string='Last Volume', digits=dp.get_precision('Unit Price'), default=0.0)
+
+    amount_ret_hold = fields.Float(string='Retention Held', digits=dp.get_precision('Unit Price'), default=0.0)
+                
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', store=True)
     price_total = fields.Monetary(compute='_compute_amount', string='Total', store=True)
     price_tax = fields.Monetary(compute='_compute_amount', string='Tax', store=True)

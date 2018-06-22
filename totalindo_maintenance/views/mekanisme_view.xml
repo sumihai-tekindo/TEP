@@ -1,0 +1,121 @@
+<odoo>
+	<data>
+		<!-- <record model="ir.ui.view" id="mekanisme_maintenance_tree_view">
+			<field name="name">Tree Mekanisme Maintenance</field>
+			<field name="model">mekanisme.maintenance</field>
+			<field name="arch" type="xml">
+				<field name="mekanisme_line">
+					<tree string="Mekanisme Lines" editable="bottom">
+						<field name="equipment"/>
+						<field name="mekanisme"/>
+					</tree>
+				</field>
+			</field>
+		</record>
+ -->
+		<record model="ir.ui.view" id="mekanisme_maintenance_form_view">
+			<field name="name">Form Mekanisme Maintenance</field>
+			<field name="model">mekanisme.maintenance</field>
+			<field name="arch" type="xml">
+				<form string="Mekanisme Maintenance">
+					<sheet>
+						<notebook>
+							<page string="Mekanisme Maintenance">
+								<field name="mekanisme_line">
+									<tree string="Mekanisme Lines" editable="bottom">
+										<field name="equipment"/>
+										<field name="mekanisme"/>
+									</tree>
+								</field>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="preventive_maintenance_form_view">
+			<field name="name">Form Preventive Maintenance</field>
+			<field name="model">preventive.maintenance</field>
+			<field name="arch" type="xml">
+				<form string="Preventive Maintenance">
+					<sheet>
+						<notebook>
+							<page string="Preventive Maintenance">
+								<field name="preventive_line">
+									<tree string="Preventive Lines" editable="bottom">
+										<field name="equipment"/>
+										<field name="mekanisme"/>
+										<field name="jenis_pekerjaan"/>
+										<field name="jam_kerja"/>
+									</tree>
+								</field>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.ui.view" id="jam_kerja_maintenance_form_view">
+			<field name="name">Form Jam Kerja Maintenance</field>
+			<field name="model">jam.kerja</field>
+			<field name="arch" type="xml">
+				<form string="Jam Kerja Maintenance">
+					<sheet>
+						<notebook>
+							<page string="Jam Kerja Maintenance">
+								<field name="jam_line">
+									<tree string="Jam Lines" editable="bottom">
+										<field name="name"/>
+									</tree>
+								</field>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="mekanisme_maintenance_list_action">
+			<field name="name">Mekanisme Maintenance</field>
+			<field name="res_model">mekanisme.maintenance</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">Buatlah Mekanisme Maintenancenya ...</p>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="preventive_maintenance_list_action">
+			<field name="name">Preventive Maintenance</field>
+			<field name="res_model">preventive.maintenance</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">Buatlah Preventive Maintenancenya ...</p>
+			</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="jam_kerja_maintenance_list_action">
+			<field name="name">Jam Kerja</field>
+			<field name="res_model">jam.kerja</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">Buatlah Jam Kerja Maintenancenya ...</p>
+			</field>
+		</record>
+
+		<menuitem id="maintenance_totalindo" name="Maintenance Custom" parent="maintenance.menu_maintenance_title"/>
+
+		<menuitem id="mekanisme_maintenance_totalindo" name="Mekanisme Maintenance" parent="maintenance_totalindo"
+			action="mekanisme_maintenance_list_action"/>
+
+		<menuitem id="preventive_maintenance_totalindo" name="Preventive Maintenance" parent="maintenance_totalindo"
+			action="preventive_maintenance_list_action"/>
+
+		<menuitem id="jam_kerja_totalindo" name="Jam Kerja Maintenance" parent="maintenance_totalindo"
+			action="jam_kerja_maintenance_list_action"/>
+		</data>
+	</odoo>
