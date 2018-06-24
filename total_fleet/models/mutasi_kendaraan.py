@@ -18,9 +18,11 @@ class MutasiKendaraan(models.Model):
 
 
 	date 				= fields.Date('Tanggal', default=fields.Date.today())
-	fleet_id			= fields.Many2one('fleet.vehicle','Kendaraan')
+	fleet_id			= fields.Many2one('fleet.vehicle','Nomor Polisi')
 	nama_karyawan		= fields.Many2one('hr.employee','Karyawan')
 	project_id			= fields.Many2one('project.project','Proyek')
+	alokasi_unit		= fields.Float('Alokasi Unit')
+	kondisi_unit		= fields.Char('Kondisi Unit')
 	jabatan				= fields.Many2one('hr.job','Jabatan')
 	keterangan			= fields.Text('Keterangan')
 	state				= fields.Selection([('new','New'),

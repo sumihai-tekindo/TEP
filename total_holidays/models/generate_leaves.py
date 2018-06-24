@@ -28,7 +28,7 @@ class GenerateLeaves(models.Model):
             	join_date_formatted = datetime.strptime(emp.join_date, datetimeFormat)
             	duration = str((end_year_formatted-join_date_formatted).days)
             	vals = {
-            		'name' : "Legal Leaves" + emp.name + self.tahun,
+            		'name' : "Legal Leaves" + ' ' + emp.name + self.tahun,
             		'holiday_status_id' : jenis_cuti.id,
             		'number_of_days_temp': int(duration) / 30,
             		'mode'				: 'employee',
@@ -40,7 +40,7 @@ class GenerateLeaves(models.Model):
             	if emp.gender == 'female' and emp.marital == 'married':
             		jenis_cuti_hamil = self.env['hr.holidays.status'].search([('name','=','Cuti Hamil')])
             		vals_hamil = {
-            			'name' : "Cuti Hamil" + emp.name + self.tahun,
+            			'name' : "Cuti Hamil" + ' ' + emp.name + self.tahun,
 	            		'holiday_status_id' : jenis_cuti_hamil.id,
 	            		'number_of_days_temp': 3,
 	            		'mode'				: 'employee',
@@ -51,7 +51,7 @@ class GenerateLeaves(models.Model):
             		holidays_obj.create(vals_hamil)
 
             	vals_pernikahan = {
-            		'name' : "Cuti Pernikahan" + emp.name + self.tahun,
+            		'name' : "Cuti Pernikahan" + ' ' + emp.name + self.tahun,
             		'holiday_status_id' : jenis_cuti_pernikahan.id,
             		'number_of_days_temp': 3,
             		'mode'				: 'employee',

@@ -11,6 +11,7 @@
 					<field name="jabatan_id"/>
 					<field name="project_id"/>
 					<field name="tanggal_phk"/>
+					<field name="alasan_id"/>
 				</tree>
 			</field>
 		</record>
@@ -38,7 +39,7 @@
 							<field name="project_id"/>
 							<field name="mulai_bekerja"/>
 							<field name="tanggal_phk"/>
-							<field name="alasan"/>
+							<field name="alasan_id"/>
 							<field name="note"/>
 						</group>
 					</sheet>
@@ -73,6 +74,48 @@
 		</record>
 
 
+		<record id="view_phk_karyawan_alasan_tree" model="ir.ui.view">
+			<field name="name">phk.karyawan.alasan.tree</field>
+			<field name="model">hr.phk.alasan</field>
+			<field name="type">tree</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<tree string="PHK Karyawan Alasan">
+					<field name="name" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_phk_karyawan_alasan_form" model="ir.ui.view">
+			<field name="name">phk.karyawan.alasan.form</field>
+			<field name="model">hr.phk.alasan</field>
+			<field name="type">form</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<form>
+					<sheet>
+						<group>
+							<field name="name"/>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_phk_alasan_karyawan" model="ir.actions.act_window">
+			<field name="name">Alasan PHK</field>
+			<field name="res_model">hr.phk.alasan</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_phk_karyawan_alasan_tree"/>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+				Click to add a new data
+				</p>
+				<p>klik tombol create untuk membuat data baru</p>
+			</field>
+		</record>
+
+
 		<menuitem
             id="menu_phk_karyawan"
             name="Pemutusan Hubungan Kerja"
@@ -84,6 +127,12 @@
             action="action_phk_karyawan"
             parent="menu_phk_karyawan"
             sequence="1"/>
+
+        <menuitem
+            id="menu_view_alasan_phk_karyawan"
+            action="action_phk_alasan_karyawan"
+            parent="hr.menu_human_resources_configuration"
+            sequence="3"/>
 
 
 

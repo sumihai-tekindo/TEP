@@ -8,6 +8,7 @@
 			<field name="arch" type="xml">
 				<tree string="Plafon Medical">
 					<field name="name" />
+					<field name="jabatan"/>
 				</tree>
 			</field>
 		</record>
@@ -26,10 +27,11 @@
 						<group>
 							<field name="name"/>
 							<field name="jabatan"/>
-							<label for="percentage"/>
+							<field name="nilai"/>
+							<!-- <label for="percentage"/>
 	                                <div class="o_row">
 	                                    <field name="percentage"/><span>%</span>
-	                                </div>
+	                                </div> -->
 						</group>
 					</sheet>
 				</form>

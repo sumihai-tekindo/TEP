@@ -16,10 +16,12 @@ class PemutusanHubunganKerja(models.Model):
 	project_id			= fields.Many2one('project.project','Project')
 	mulai_bekerja		= fields.Date('Mulai Bekerja')
 	tanggal_phk			= fields.Date('Tanggal PHK')
-	alasan				= fields.Selection([('kedisiplinan','Kedisiplinan'),
-											('sakit_berkepanjangan','Sakit Berkepanjangan'),
-											('performance','Performance'),
-											('tidak_lulus_prob','Tidak Lulus Probation')])
+	# #alasan				= fields.Selection([('kedisiplinan','Kedisiplinan'),
+	# 										('sakit_berkepanjangan','Sakit Berkepanjangan'),
+	# 										('performance','Performance'),
+	# 										('tidak_lulus_prob','Tidak Lulus Probation')])
+
+	alasan_id 			= fields.Many2one('hr.phk.alasan','Alasan')
 
 	note				= fields.Text('Note')
 	state				= fields.Selection([('new','New'),
@@ -52,3 +54,11 @@ class PemutusanHubunganKerja(models.Model):
 	@api.one
 	def rejected(self):
 		self.state = 'rejected'
+
+
+class PemutusanHubunganKerjaAlasan(models.Model):
+	_name 	= 'hr.phk.alasan'
+	_rec_name = 'name'
+
+
+	name 		= fields.Char('Alasan')

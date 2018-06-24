@@ -10,6 +10,7 @@
     'depends'   : ['base','hr'],
     'data'      : [
             'views/surat_peringatan_views.xml',
+            'data/scheduler_sp.xml',
     ],
     'demo': [
     ],

@@ -16,6 +16,8 @@ class PlafonMedical(models.Model):
 										('bod','BOD'),
 										('manager','Manager'),
 										('staff','Staff')],'Jabatan')
+
+	nilai			= fields.Float('Nilai')
 	percentage		= fields.Integer('Percentage')
 
 

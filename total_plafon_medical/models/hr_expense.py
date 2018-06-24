@@ -8,7 +8,9 @@ class hr_expense(models.Model):
 	_inherit = 'hr.expense'
 
 
+
 	tipe_medical			= fields.Many2one('hr.plafon.medical','Tipe Medical')
+	nilai_maksimal			= fields.Float('Nilai Maksimal',compute="_get_nilai", store=True)
 
 
 	nama_pasien 			= fields.Char('Nama Pasien')
@@ -35,6 +37,13 @@ class hr_expense(models.Model):
 
 	tahun					= fields.Char('Tahun', compute='_get_tahun', store=True)
 
+
+	@api.one
+	@api.depends('tipe_medical','product_id')
+	def _get_nilai(self):
+		if self.tipe_medical and self.product_id.name == 'Expenses':
+			self.nilai_maksimal = self.tipe_medical.nilai
+
 	state = fields.Selection([
         ('draft', 'To Submit'),
         ('reported', 'Approved by PM'),
@@ -59,7 +68,14 @@ class hr_expense(models.Model):
 	@api.onchange('biaya_konsultasi_dokter','biaya_obat','biaya_lab','biaya_rumah_sakit','biaya_lain','total_biaya','tipe_medical')
 	def onchange_biaya(self):
 		self.total_biaya = self.biaya_konsultasi_dokter + self.biaya_obat + self.biaya_lab + self.biaya_rumah_sakit + self.biaya_lain
-		self.total_penggantian = (self.total_biaya * self.tipe_medical.percentage) / 100
+		if self.product_id.name == 'Expenses' and self.tipe_medical.name != 'Sakit':
+			if self.total_biaya > self.nilai_maksimal:
+				self.total_penggantian = self.nilai_maksimal
+			else:
+				self.total_penggantian = self.total_biaya
+		else:
+			print "qqqqqqqqq", self.total_biaya
+			self.total_penggantian = (self.total_biaya*90)/100
 
 	@api.multi
 	def submit_expenses(self):
@@ -69,22 +85,23 @@ class hr_expense(models.Model):
 		prof_data_kontrak = self.env['hr.employee.category'].search([('name','=','Kontrak')])
 		date_expense = datetime.strptime(self.date, datetimeFormat)
 		date_expense_year = date_expense.year
-		if prof_data_probation in self.employee_id.category_ids:
-			raise UserError(_("Maaf, karyawan masih probation"))
-		if self.employee_id.gender == 'female' and not self.employee_id.surat_pernyataan:
-			raise UserError(_('Karyawati harus melampirkan surat pernyataan'))
+		if product_id.name == 'Expenses' and tipe_medical.name != 'Sakit':
+			if prof_data_probation in self.employee_id.category_ids:
+				raise UserError(_("Maaf, karyawan masih probation"))
+			if self.employee_id.gender == 'female' and not self.employee_id.surat_pernyataan:
+				raise UserError(_('Karyawati harus melampirkan surat pernyataan'))
 
-		for x in self.employee_id.medical_ids:
-			plafon_amount.append(str(x.tahun))
-
-
-		if str(date_expense_year) not in plafon_amount:
-			raise UserError(_('Plafon tidak Tersedia'))
-		else:
 			for x in self.employee_id.medical_ids:
-				if str(date_expense_year) == x.tahun:
-					if self.total_amount > x.saldo_medical:
-						raise UserError(_('Jumlah plafon lebih besar dari plafon yang tersedia'))
+				plafon_amount.append(str(x.tahun))
+
+
+			if str(date_expense_year) not in plafon_amount:
+				raise UserError(_('Plafon tidak Tersedia'))
+			else:
+				for x in self.employee_id.medical_ids:
+					if str(date_expense_year) == x.tahun:
+						if self.total_amount > x.saldo_medical and self.tipe_medical.name == 'Sakit':
+							raise UserError(_('Jumlah plafon lebih besar dari plafon yang tersedia'))
 
 
 
@@ -115,7 +132,7 @@ class hr_expense_sheet(models.Model):
 
 	accounting_date			= fields.Date('Accounting Date', default=fields.Date.today())
 	state 					= fields.Selection([('submit', 'Submitted'),
-						                              ('approve', 'Approved by PM'),
+						                              ('approve', 'Approved by HRD'),
 						                              ('post', 'Posted'),
 						                              ('done', 'Paid'),
 						                              ('cancel', 'Refused')
