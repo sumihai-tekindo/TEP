@@ -63,8 +63,12 @@ class PurchaseSpk(models.Model):
     @api.multi
     def action_confirm(self):
         for order in self:
-            if order.name == 'Draft SPK':
-                order.name = order.project_id.spk_sequence_id.with_context({'ir_sequence_date': order.date_order}).next_by_id()
+            if not order.name == 'Draft SPK':
+                ctx = {
+                    'ir_sequence_date': order.date_order,
+                    'suffix': order.project_id.code or '',
+                }
+                order.name = self.env['ir.sequence'].with_context(ctx).next_by_code('spk')
             order.state = 'pm_approve'
     
     @api.multi

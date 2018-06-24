@@ -85,8 +85,6 @@
 									string="Customer" /> </group> -->
 								<group name="misc">
 									<group string="Configuration">
-                                        <field name="spk_sequence_id" />
-										<field name="om_sequence_id" />
 										<field name="sequence" groups="base.group_no_one" />
 									</group>
 									<group string="Time Scheduling" groups="base.group_no_one">
