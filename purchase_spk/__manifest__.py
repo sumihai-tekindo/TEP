@@ -28,11 +28,15 @@
     'website': 'https://arkana.co.id',
     'depends': [
         'purchase',
+        'project',
+        'base_sequence_custom',
     ],
     'data': [
         'views/res_config_views.xml',
+        'views/project_views.xml',
         'views/spk_views.xml',
         'views/opname_views.xml',
+        'views/recap_views.xml',
     ],
     'installable': True,
     'active': False,

@@ -84,7 +84,7 @@
 									/> <field name="privacy_visibility" widget="radio" /> <field name="partner_id" 
 									string="Customer" /> </group> -->
 								<group name="misc">
-									<group string="Configuration" groups="base.group_no_one">
+									<group string="Configuration">
 										<field name="sequence" groups="base.group_no_one" />
 									</group>
 									<group string="Time Scheduling" groups="base.group_no_one">

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="edit_project_spk" model="ir.ui.view">
+		<field name="name">project.project.form</field>
+		<field name="model">project.project</field>
+		<field name="inherit_id" ref="project.edit_project" />
+		<field name="arch" type="xml">
+			<field name="sequence" position="before">
+				<field name="spk_sequence_id" />
+				<field name="om_sequence_id" />
+			</field>
+		</field>
+	</record>
+</odoo>

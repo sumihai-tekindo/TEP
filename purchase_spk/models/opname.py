@@ -10,14 +10,33 @@ class OpnameMandor(models.Model):
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _order = 'date desc, id desc'
 
-    @api.depends('opname_line.amount_net')
+    @api.depends('opname_line.progress_upnow', 'opname_line.ret_hold')
     def _amount_all(self):
         for opname in self:
             amount_total = 0.0
+            progress_last = ret_last = amount_last = \
+            progress = ret = amount = \
+            progress_upnow = ret_upnow = amount_upnow = []
             for line in opname.opname_line:
-                amount_total += line.amount_net
+                progress_last.append(line.progress_last)
+                ret_last.append(line.amount_ret_last)
+                amount_last.append(line.amount_net_last)
+                progress.append(line.progress)
+                ret.append(line.amount_ret)
+                amount.append(line.amount_net)
+                progress_upnow.append(line.progress_upnow)
+                ret_upnow.append(line.amount_ret_upnow)
+                amount_upnow.append(line.amount_net_upnow)
             opname.update({
-                'amount_total': opname.currency_id.round(amount_total),
+                'progress_last_total': sum(progress_last) / len(progress_last) if progress_last else 0.0,
+                'ret_last_total': opname.currency_id.round(sum(ret_last)),
+                'amount_last_total': opname.currency_id.round(sum(amount_last)),
+                'progress_total': sum(progress) / len(progress) if progress else 0.0,
+                'ret_total': opname.currency_id.round(sum(ret)),
+                'amount_total': opname.currency_id.round(sum(amount)),
+                'progress_upnow_total': sum(progress_upnow) / len(progress_upnow) if progress_upnow else 0.0,
+                'ret_upnow_total': opname.currency_id.round(sum(ret_upnow)),
+                'amount_upnow_total': opname.currency_id.round(sum(amount_upnow)),
             })
             
     READONLY_STATES = {
@@ -34,7 +53,7 @@ class OpnameMandor(models.Model):
     partner_ref = fields.Char(string='Vendor Reference', states=READONLY_STATES)
     project_id = fields.Many2one('project.project', string='Project', required=True, states=READONLY_STATES)
     task_id = fields.Many2one('project.task', string='Task', required=True, states=READONLY_STATES)
-    date = fields.Date(string='Order Date', required=True, states=READONLY_STATES)
+    date = fields.Date(string='Order Date', required=True, states=READONLY_STATES, default=fields.Date.context_today)
     sequence = fields.Integer(string='Opname Sequence', readonly=True)
     period_start = fields.Date(string='Period', required=True, states=READONLY_STATES)
     period_end = fields.Date(string='Period End', required=True, states=READONLY_STATES)
@@ -44,7 +63,16 @@ class OpnameMandor(models.Model):
     currency_id = fields.Many2one('res.currency', 'Currency', required=True, default=lambda self: self.env.user.company_id.currency_id.id)
     user_id = fields.Many2one('res.users', string='Done by', default=lambda self: self.env.uid, required=True, states=READONLY_STATES)
 
-    amount_total = fields.Monetary(string='Total', store=True, readonly=True, compute='_amount_all')
+    amount_spk = fields.Monetary(string='Total SKP', related='spk_id.amount_total', readonly=True)
+    progress_last_total = fields.Monetary(string='Last Progress', store=True, compute='_amount_all')
+    ret_last_total = fields.Monetary(string='Last Retention', store=True, compute='_amount_all')
+    amount_last_total = fields.Monetary(string='Last Total', store=True, compute='_amount_all')
+    progress_total = fields.Monetary(string='Progress', store=True, compute='_amount_all')
+    ret_total = fields.Monetary(string='Retention', store=True, compute='_amount_all')
+    amount_total = fields.Monetary(string='Total', store=True, compute='_amount_all')
+    progress_upnow_total = fields.Monetary(string='Current Progress', store=True, compute='_amount_all')
+    ret_upnow_total = fields.Monetary(string='Current Retention', store=True, compute='_amount_all')
+    amount_upnow_total = fields.Monetary(string='Current Total', store=True, compute='_amount_all')
     
     state = fields.Selection([('draft', 'Draft'),
                               ('qs_approve', 'QS Approval'),
@@ -57,6 +85,8 @@ class OpnameMandor(models.Model):
     @api.multi
     def action_confirm(self):
         for opname in self:
+            if opname.name == 'Draft Opname':
+                opname.name = opname.project_id.om_sequence_id.with_context({'ir_sequence_date': opname.date}).next_by_id()
             opname.state = 'qs_approve'
     
     @api.multi
@@ -114,7 +144,7 @@ class OpnameMandor(models.Model):
             return {}
         spk = self.spk_id
         # set sequence
-        opname_ids = self.search([('spk_id', '=', vals['spk_id'])])
+        opname_ids = self.search([('spk_id', '=', self.spk_id.id), ('name', '!=', self.name)])
         sequence = max(opname_ids.mapped('sequence')) + 1 if opname_ids else 1
         # set line values
         line_vals = []
@@ -133,14 +163,18 @@ class OpnameMandor(models.Model):
                 'price_total_last': line.price_total_last,
                 'amount_ret_last': line.amount_ret_last,
                 'amount_net_last': line.amount_net_last,
+                # upnow values
+                'progress_upnow': line.progress_last,
+                'qty_upnow': line.qty_last,
             }))
+        self.sequence = sequence
         return {'value': {
             'partner_id': spk.partner_id.id,
             'project_id': spk.project_id.id,
             'task_id': spk.task_id.id,
             'opname_line': line_vals,
-            'sequence': sequence,
         }}
+
     
 class OpnameMandorLine(models.Model):
     _name = 'opname.mandor.line'

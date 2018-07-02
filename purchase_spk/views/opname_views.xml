@@ -2,7 +2,7 @@
 <odoo>
 	<data>
 		<menuitem name="Opname" id="opname_menu" parent="purchase.menu_purchase_root"
-			sequence="20" />
+			sequence="5" />
 
 		<!-- Opname Mandor -->
 		<record model="ir.ui.view" id="opname_mandor_view_form">

@@ -19,28 +19,17 @@
 #
 ##############################################################################
 {
-    'name': 'Project Totalindo',
-    'description': '''Project Management for Totalindo''',
+    'name': 'Custom Sequence',
+    'description': '''Custom Sequence''',
     'version': '10.1.0',
     'category': 'Project',
     'author': "Joenan <joenannr@gmail.com>",
     'license': 'AGPL-3',
-    'website': 'https://www.arkana.co.id',
+    'website': 'https://arkana.co.id',
     'depends': [
-        'account_analytic_budget',
-        'project',
-        'hr_timesheet',
-        'stock',
-        'purchase',
-        'sale',
+        'base',
     ],
     'data': [
-        'views/project_view.xml',
-        'views/task_view.xml',
-        'views/account_view.xml',
-        'views/project_templates.xml',
-        'views/stock_view.xml',
-        'views/purchase_view.xml',
     ],
     'installable': True,
     'active': False,
