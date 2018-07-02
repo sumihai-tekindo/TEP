@@ -3,6 +3,7 @@ from odoo.exceptions import except_orm, Warning, RedirectWarning
 import datetime
 from dateutil.relativedelta import relativedelta
 from datetime import date, datetime, timedelta
+from odoo.tools.safe_eval import safe_eval
 
 
 class PemutusanHubunganKerja(models.Model):
@@ -29,6 +30,46 @@ class PemutusanHubunganKerja(models.Model):
 											('submit_to_hrd','Submit to HRD'),
 											('approved','Approved'),
 											('rejected','Rejected')],'State', default='new')
+
+
+	x_value				= fields.Float('X')
+	y_value				= fields.Float('Y')
+	z_value				= fields.Float('Z')
+	o_value				= fields.Float('O')
+	code				= fields.Char('Code')
+
+	value_all			= fields.Float('Value All')
+
+
+	@api.onchange('code')
+	def onchange_code(self):
+		code = self.code
+		#code = compile('a = 1 + 2', '<string>', 'exec')
+		x = self.x_value
+		y = self.y_value
+		z = self.z_value
+		o = self.o_value
+
+		# incr = 0
+
+		# # print "222",x,y,z,o
+		# # a = safe_eval(self.code,mode='exec')
+		# for loop in self.code:
+		# 	print "222", loop
+		# 	if loop == 'x':
+		# 		x_val = x
+		# 	elif loop == 'y':
+		# 		y_val = y
+		# 	elif loop == 'z':
+		# 		z_val = z
+		# 	elif loop == 'o':
+		# 		o_val = o
+		# 	incr += 1
+		result = eval(self.code)
+		self.value_all = result
+
+
+
 
 
 	@api.onchange('employee_id')

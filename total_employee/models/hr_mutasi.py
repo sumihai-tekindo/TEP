@@ -13,7 +13,7 @@ class MutasiKaryawan(models.Model):
 
 	name 						= fields.Char('Name')
 	tanggal_pengajuan 			= fields.Date('Tanggal Pengajuan', default=fields.Date.today())
-	kebutuhan_proyek			= fields.Char('Kebutuhan Proyek')
+	kebutuhan_proyek			= fields.Many2one('project.project','Kebutuhan Proyek')
 	state 						= fields.Selection([('new','New'),
 													('submit','Submit'),
 													('approved','Approved'),
@@ -24,6 +24,18 @@ class MutasiKaryawan(models.Model):
 
 
 
+
+	@api.one
+	def submit(self):
+		self.state = 'submit'
+
+	@api.one
+	def approve(self):
+		self.state = 'approve'
+
+	@api.one
+	def reject(self):
+		self.state = 'reject'
 
 
 class MutasiKaryawanDetail(models.Model):

@@ -12,6 +12,7 @@
 					<field name="project_id"/>
 					<field name="tanggal_phk"/>
 					<field name="alasan_id"/>
+					<field name="state"/>
 				</tree>
 			</field>
 		</record>
@@ -34,14 +35,22 @@
 					</header>
 					<sheet>
 						<group>
-							<field name="employee_id" />
-							<field name="jabatan_id"/>
-							<field name="project_id"/>
-							<field name="mulai_bekerja"/>
-							<field name="tanggal_phk"/>
-							<field name="alasan_id"/>
-							<field name="note"/>
+							<field name="employee_id" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+							<field name="jabatan_id" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+							<field name="project_id" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+							<field name="mulai_bekerja" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+							<field name="tanggal_phk" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+							<field name="alasan_id" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+							<field name="note" attrs="{'readonly': [('state', '!=', 'new')]}"/>
 						</group>
+						<!-- <group>
+							<field name="x_value"/>
+							<field name="y_value"/>
+							<field name="z_value"/>
+							<field name="o_value"/>
+							<field name="code"/>
+							<field name="value_all"/>
+						</group> -->
 					</sheet>
 				</form>
 

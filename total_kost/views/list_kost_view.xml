@@ -1,0 +1,77 @@
+<odoo>
+	<data>
+		<record id="view_list_kost_tree" model="ir.ui.view">
+			<field name="name">list.kost.tree</field>
+			<field name="model">list.kost</field>
+			<field name="type">tree</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<tree string="List Kost">
+					<field name="name" />
+					<field name="date"/>
+					<field name="pemilik"/>
+					<field name="employee_id"/>
+					<field name="start_date"/>
+					<field name="end_date"/>
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_list_kost_form" model="ir.ui.view">
+			<field name="name">list.kost.form</field>
+			<field name="model">list.kost</field>
+			<field name="type">form</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<form string="List Kost">
+					<header>
+					</header>
+					<sheet>
+						<div class="oe_title">
+	                        <label for="name"/>
+	                        <h1>
+	                            <field name="name"/>
+	                        </h1>
+                    	</div>
+                    	<group>
+                    		<field name="date"/>
+                    		<field name="pemilik"/>
+                    		<field name="employee_id"/>
+                    		<field name="start_date"/>
+                    		<field name="end_date"/>
+                    	</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_list_kost_filter" model="ir.ui.view">
+            <field name="name">form.list.kost.filter</field>
+            <field name="model">list.kost</field>
+            <field name="arch" type="xml">
+                <search string="Employee">
+                    <field name="employee_id" string="Karyawan"/>
+               </search>
+            </field>
+        </record>
+
+        <record id="action_list_kost" model="ir.actions.act_window">
+			<field name="name">List Kost</field>
+			<field name="res_model">list.kost</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_list_kost_tree"/>
+			<field name="help" type="html">
+			<field name="search_view_id" ref="view_list_kost_filter"/>
+				<p class="oe_view_nocontent_create">
+				Click to add a new data
+				</p>
+				<p>klik tombol create untuk membuat data baru</p>
+			</field>
+		</record>
+
+		<menuitem id="kost_menu" name="Kost" sequence="20"/>
+		<menuitem id="list_kost_menu" name="List Kost" parent="kost_menu" sequence="1"/>
+		<menuitem id="menu_list_kost" name="List Kost" parent="list_kost_menu" action="action_list_kost" sequence="1"/>
+
+	</data>
+</odoo>

@@ -37,26 +37,27 @@
 						<div class="oe_title">
 	                        <label for="name"/>
 	                        <h1>
-	                            <field name="name"/>
+	                            <field name="name" attrs="{'readonly': [('state', '!=', 'new')]}"/>
 	                        </h1>
                     	</div>
                     	<group>
                     		<group>
-                    			<field name="tanggal_pelanggaran"/>
-                    			<field name="employee_id"/>
-                    			<field name="nama_atasan"/>
-                    			<field name="jabatan"/>
-                    			<field name="project_id"/>
-                    			<label for="start_date"/>
+                    			<field name="tanggal_pelanggaran" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+                    			<field name="employee_id" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+                    			<field name="nama_atasan" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+                    			<field name="jabatan" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+                    			<field name="project_id" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+                    			<label for="start_date" attrs="{'readonly': [('state', '!=', 'new')]}"/>
 	                                <div class="o_row">
-	                                    <field name="start_date"/><span>-</span><field name="end_date"/>
+	                                    <field name="start_date" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+	                                    <span>-</span><field name="end_date" attrs="{'readonly': [('state', '!=', 'new')]}"/>
 	                                </div>
                     		</group>
                     		<group>
-                    			<field name="tipe_sp"/>
-                    			<field name="category_id"/>
-                    			<field name="note"/>
-                    			<field name="phk"/>
+                    			<field name="tipe_sp" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+                    			<field name="category_id" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+                    			<field name="note" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+                    			<field name="phk" attrs="{'readonly': [('state', '!=', 'new')]}"/>
                     		</group>
                     	</group>
 					</sheet>

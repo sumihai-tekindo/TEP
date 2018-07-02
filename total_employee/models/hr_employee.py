@@ -27,9 +27,13 @@ class hr_employee(models.Model):
 	def _get_nik(self):
 		datetimeFormat = '%Y-%m-%d'
 		stat_number = 0
-		join_date_formatted = datetime.strptime(str(self.join_date),datetimeFormat)
-		tahun = str(join_date_formatted.year)
-		bulan = str('%02d' % join_date_formatted.month)
+		join_date_formatted = False
+		if self.join_date:
+			join_date_formatted = datetime.strptime(str(self.join_date),datetimeFormat)
+			tahun = str(join_date_formatted.year)
+			#if join_date_formatted:
+			bulan = str('%02d' % join_date_formatted.month)
+
 
 		prof_data_permanen = self.env['hr.employee.category'].search([('name','=','Permanen')])
 		prof_data_kontrak = self.env['hr.employee.category'].search([('name','=','Kontrak')])
@@ -42,10 +46,10 @@ class hr_employee(models.Model):
 		elif prof_data_evaluasi  in self.category_ids:
 			stat_number = 0
 
-		self.nik = str(tahun) + str(bulan) + str(stat_number) + str(self.nomor_urut) 
+		if join_date_formatted:
+			self.nik = str(tahun) + str(bulan) + str(stat_number) + str(self.nomor_urut) 
 
 
-		print "tahun", tahun,bulan
 
 
 
