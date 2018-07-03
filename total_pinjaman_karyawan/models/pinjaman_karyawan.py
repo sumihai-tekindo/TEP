@@ -25,7 +25,7 @@ class PinjamanKaryawan(models.Model):
 	keperluan 			= fields.Char('Keperluan', required=True)
 	transfer_ke_rek 	= fields.Many2one('res.bank', 'Transfer ke', required=True)
 	no_rekening 		= fields.Char('Nomor Rekening', required=True)
-	alasan_reject 		= fields.Text('Alasan Reject', required=True)
+	#alasan_reject 		= fields.Text('Alasan Reject')
 	detail_ids 			= fields.One2many('pinjaman.karyawan.detail','detail_id',' ')
 	sisa_cicilan		= fields.Float('Sisa Cicilan', compute="_get_sisa_cicilan")
 	state				= fields.Selection([('new','New'),
