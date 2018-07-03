@@ -79,6 +79,7 @@ class hr_expense(models.Model):
 
 	@api.multi
 	def submit_expenses(self):
+		print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 		datetimeFormat = '%Y-%m-%d'
 		plafon_amount = []
 		prof_data_probation = self.env['hr.employee.category'].search([('name','=','Probation')])
@@ -86,6 +87,23 @@ class hr_expense(models.Model):
 		date_expense = datetime.strptime(self.date, datetimeFormat)
 		date_expense_year = date_expense.year
 		if self.product_id.name == 'Expenses' and self.tipe_medical.name != 'Sakit':
+			if prof_data_probation in self.employee_id.category_ids:
+				raise UserError(_("Maaf, karyawan masih probation"))
+			if self.employee_id.gender == 'female' and not self.employee_id.surat_pernyataan:
+				raise UserError(_('Karyawati harus melampirkan surat pernyataan'))
+
+			for x in self.employee_id.medical_ids:
+				plafon_amount.append(str(x.tahun))
+
+
+			if str(date_expense_year) not in plafon_amount:
+				raise UserError(_('Plafon tidak Tersedia'))
+			else:
+				for x in self.employee_id.medical_ids:
+					if str(date_expense_year) == x.tahun:
+						if self.total_amount > x.saldo_medical and self.tipe_medical.name == 'Sakit':
+							raise UserError(_('Jumlah plafon lebih besar dari plafon yang tersedia'))
+		else:
 			if prof_data_probation in self.employee_id.category_ids:
 				raise UserError(_("Maaf, karyawan masih probation"))
 			if self.employee_id.gender == 'female' and not self.employee_id.surat_pernyataan:
