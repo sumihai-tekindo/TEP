@@ -85,7 +85,7 @@ class hr_expense(models.Model):
 		prof_data_kontrak = self.env['hr.employee.category'].search([('name','=','Kontrak')])
 		date_expense = datetime.strptime(self.date, datetimeFormat)
 		date_expense_year = date_expense.year
-		if product_id.name == 'Expenses' and tipe_medical.name != 'Sakit':
+		if self.product_id.name == 'Expenses' and self.tipe_medical.name != 'Sakit':
 			if prof_data_probation in self.employee_id.category_ids:
 				raise UserError(_("Maaf, karyawan masih probation"))
 			if self.employee_id.gender == 'female' and not self.employee_id.surat_pernyataan:
