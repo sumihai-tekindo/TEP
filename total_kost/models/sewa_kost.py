@@ -23,3 +23,15 @@ class SewaKost(models.Model):
 	biaya_kost		= fields.Float('Biaya Kost/Kamar')
 	start_date		= fields.Date('Start Date')
 	end_date		= fields.Date('End Date')
+	state 			= fields.Selection([('new','New'),('approved','Approved'),('rejected','Rejected')],'State', readonly=True, default="new")
+
+
+
+
+@api.one
+def approve(self):
+	self.sate = 'approved'
+
+@api.one
+def reject(self):
+	self.state = 'rejected'
