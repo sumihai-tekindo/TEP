@@ -23,7 +23,7 @@ class hr_employee(models.Model):
 				self.medical_trigger = False
 			else:
 				self.medical_trigger = True
-				join_date_formatted = datetime.strptime(self.join_date, datetimeFormat)
+				join_date_formatted = datetime.strptime(self.join_date if self.join_date else fields.Date.today(), datetimeFormat)
 				today_formatted = datetime.strptime(today,datetimeFormat)
 				end_year_formatted = datetime.strptime(str(ending_day_of_current_year),datetimeFormat)
 				bulan_berjalan = str((end_year_formatted-join_date_formatted).days)
@@ -46,17 +46,17 @@ class hr_employee(models.Model):
 		else:
 			self.medical_trigger = False
 
-	@api.one
-	@api.depends('join_date_trigger')
-	def _get_join_date(self):
-		contract_id = self.env['hr.contract'].search([('employee_id','=',self.id),('state','=','open')])
-		if len(contract_id) > 1:
-			raise Warning('Karyawan harus memiliki lebih dari 1 kontrak yg running')
-		for contract in contract_id:
-			if contract.trial_date_start:
-				self.join_date = contract.trial_date_start
-			else:
-				self.join_date = contract.date_start
+	# @api.one
+	# @api.depends('join_date_trigger')
+	# def _get_join_date(self):
+	# 	contract_id = self.env['hr.contract'].search([('employee_id','=',self.id),('state','=','open')])
+	# 	if len(contract_id) > 1:
+	# 		raise Warning('Karyawan hanya boleh memiliki 1 kontrak yg running')
+	# 	for contract in contract_id:
+	# 		if contract.trial_date_start:
+	# 			self.join_date = contract.trial_date_start
+	# 		else:
+	# 			self.join_date = contract.date_start
 
 
 
@@ -64,7 +64,8 @@ class hr_employee(models.Model):
 
 	medical_ids				= fields.One2many('hr.employee.plafon.medical','medical_id',' ')
 	medical_trigger			= fields.Boolean('Med.Trigger', compute="_get_trigger")
-	join_date       		= fields.Date('Join Date', compute='_get_join_date',store=True)
+	#join_date       		= fields.Date('Join Date', compute='_get_join_date',store=True)
+	join_date       		= fields.Date('Join Date')
 	join_date_trigger		= fields.Boolean('JD Trigger') 
 
 

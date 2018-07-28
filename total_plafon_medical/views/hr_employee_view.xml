@@ -17,7 +17,7 @@
 	                </page>
 	            </xpath>
 	            <field name="calendar_id" position="after">
-	            	<field name="medical_trigger"/>
+	            	<field name="medical_trigger" invisible="1"/>
 	            	<field name="join_date_trigger" invisible="1"/>
 	            </field>
 	            <field name="work_phone" position="after">
