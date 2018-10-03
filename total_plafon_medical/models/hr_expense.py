@@ -97,6 +97,7 @@ class hr_expense(models.Model):
 
 
 			if str(date_expense_year) not in plafon_amount:
+				print "DION"
 				raise UserError(_('Plafon tidak Tersedia'))
 			else:
 				for x in self.employee_id.medical_ids:
@@ -114,6 +115,7 @@ class hr_expense(models.Model):
 
 
 			if str(date_expense_year) not in plafon_amount:
+				print "MARTIN",date_expense_year, plafon_amount
 				raise UserError(_('Plafon tidak Tersedia'))
 			else:
 				for x in self.employee_id.medical_ids:

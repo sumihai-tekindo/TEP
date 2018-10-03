@@ -6,7 +6,8 @@
             <field name="inherit_id" ref="hr_holidays.edit_holiday_new"/>
             <field name="arch" type="xml">
             	<field name="department_id" position="after">
-            		<field name="karyawan_pengganti"/>
+            		<field name="karyawan_pengganti" attrs="{'invisible': [('type', '=', 'add')]}"/>
+                    <field name="surat_keterangan_dokter" attrs="{'invisible': ['|',('type', '=', 'add'),('holiday_status_id','!=',15)]}"/>
             	</field>
             	<xpath expr="/form/header/button[@name='action_confirm']" position="after">
             		<button string="Approve by Manager" name="approve_by_manager" states="draft" type="object" class="oe_highlight"/>

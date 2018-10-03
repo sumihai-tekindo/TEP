@@ -9,6 +9,7 @@ class hr_holidays(models.Model):
 
 
 	karyawan_pengganti		= fields.Many2one('hr.employee','Karyawan Pengganti')
+	surat_keterangan_dokter	= fields.Binary('Surat Keterangan')
 
 	state = fields.Selection([
         ('draft', 'To Submit'),

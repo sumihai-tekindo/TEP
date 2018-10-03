@@ -23,8 +23,11 @@ class GenerateLeaves(models.Model):
         permanen_emp = self.env['hr.employee'].search([('id','!=',0)])
         jenis_cuti	= self.env['hr.holidays.status'].search([('name','=','Cuti Tahunan')])
         jenis_cuti_pernikahan	= self.env['hr.holidays.status'].search([('name','=','Cuti Pernikahan')])
+        jenis_cuti_sakit   = self.env['hr.holidays.status'].search([('name','=','Sick Leaves')])
         for emp in permanen_emp:
-            if prof_data_permanen in emp.category_ids:
+            if not emp.join_date:
+                emp.join_date = fields.Date.today()
+            if prof_data_permanen in emp.category_ids or prof_data_kontrak in emp.category_ids:
             	join_date_formatted = datetime.strptime(emp.join_date, datetimeFormat)
             	duration = str((end_year_formatted-join_date_formatted).days)
             	vals = {
@@ -40,7 +43,7 @@ class GenerateLeaves(models.Model):
             	if emp.gender == 'female' and emp.marital == 'married':
             		jenis_cuti_hamil = self.env['hr.holidays.status'].search([('name','=','Cuti Hamil')])
             		vals_hamil = {
-            			'name' : "Cuti Hamil" + ' ' + emp.name + self.tahun,
+            			'name' : "Cuti Hamil" + ' ' + emp.name + ' ' + self.tahun,
 	            		'holiday_status_id' : jenis_cuti_hamil.id,
 	            		'number_of_days_temp': 3,
 	            		'mode'				: 'employee',
@@ -60,3 +63,16 @@ class GenerateLeaves(models.Model):
             		'type'				: 'add',
             	}
             	holidays_obj.create(vals_pernikahan)
+
+                vals_sakit =  {
+                    'name' : "Sick Leaves" + ' ' + emp.name + self.tahun,
+                    'holiday_status_id' : jenis_cuti_sakit.id,
+                    'number_of_days_temp': 3,
+                    'mode'              : 'employee',
+                    'employee_id'       : emp.id,
+                    'department_id'     : emp.department_id.id,
+                    'type'              : 'add',
+                }
+
+                holidays_obj.create(vals_sakit)
+

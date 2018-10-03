@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+		<record id="hr_rule_transport" model="hr.salary.rule">
+            <field name="name">Transport</field>
+            <field name="sequence" eval="2"/>
+            <field name="code">Transport</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.transport_wage</field>
+        </record>
+        <record id="hr_rule_meal" model="hr.salary.rule">
+            <field name="name">Meal</field>
+            <field name="sequence" eval="3"/>
+            <field name="code">Meal</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.meal_wage</field>
+        </record>
+        <record id="hr_rule_overtime" model="hr.salary.rule">
+            <field name="name">Overtime</field>
+            <field name="sequence" eval="4"/>
+            <field name="code">Overtime</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.overtime_wage</field>
+        </record>
+
+
+        <record id="hr_rule_medical_reimbursement" model="hr.salary.rule">
+            <field name="name">Medical Reimbursement</field>
+            <field name="sequence" eval="5"/>
+            <field name="code">MR</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.medical_reimbursement</field>
+        </record>
+
+        <record id="hr_rule_cicilan" model="hr.salary.rule">
+            <field name="name">Cicilan</field>
+            <field name="sequence" eval="7"/>
+            <field name="code">CIC</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = -contract.cicilan_active</field>
+        </record>
+
+        <record id="hr_rule_jaminan_hari_tua" model="hr.salary.rule">
+            <field name="name">Jaminan Hari Tua</field>
+            <field name="sequence" eval="7"/>
+            <field name="code">JHT</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = -(contract.wage + contract.transport_wage + contract.meal_wage + contract.overtime_wage) * 0.02</field>
+        </record>
+
+        <record id="hr_rule_cuti_minus" model="hr.salary.rule">
+            <field name="name">Cuti Minus</field>
+            <field name="sequence" eval="8"/>
+            <field name="code">CM</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.cuti_minus *(contract.transport_wage + contract.meal_wage + contract.overtime_wage) * 0.03</field>
+        </record>
+
+        <record id="hr_rule_cuti_sakit_lebih_dari_satu_hari" model="hr.salary.rule">
+            <field name="name">Cuti Sakit Lebih dari satu hari tanpa surat dokter</field>
+            <field name="sequence" eval="9"/>
+            <field name="code">CSLSH</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = -contract.cuti_sakit_lebih_dari_satu_hari *(contract.transport_wage + contract.meal_wage + contract.overtime_wage) * 0.03</field>
+        </record>
+
+        <record id="hr_payroll.hr_rule_net" model="hr.salary.rule">
+            <field name="name">Net/Take Home Pay</field>
+            <field name="sequence" eval="9999"/>
+            <field name="code">NET</field>
+            <field name="category_id" ref="hr_payroll.NET"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.get_sakit_berkepanjangan(contract.is_sakit_berkepanjangan,employee.id,contract.id,categories.BASIC,categories.ALW,categories.DED)</field>
+            <field name="register_id" ref="hr_payroll.contrib_register_employees"/>
+        </record>
+
+
+        <record id="totalindo_base" model="hr.payroll.structure">
+            <field name="code">BASET</field>
+            <field name="name">Base Totalindo</field>
+            <field eval="[(6, 0, [ref('hr_rule_transport')
+                , ref('hr_rule_meal')
+                , ref('hr_rule_overtime')
+                , ref('hr_rule_medical_reimbursement')
+                , ref('hr_rule_jaminan_hari_tua')
+                , ref('hr_rule_cuti_minus')
+                , ref('hr_rule_cuti_sakit_lebih_dari_satu_hari')
+                , ref('hr_rule_cuti_sakit_lebih_dari_satu_hari')])]" name="rule_ids"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="parent_id" ref="hr_payroll.structure_base"/>
+        </record>
+
+	</data>
+</odoo>
+
+
+       

@@ -1,0 +1,89 @@
+<odoo>
+	<data>
+		<record id="view_sakit_berkepanjangan_tree" model="ir.ui.view">
+			<field name="name">sakit.berkepanjangan.tree</field>
+			<field name="model">hr.sakit.berkepanjangan</field>
+			<field name="type">tree</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<tree string="Sakit Berkepanjangan">
+					<field name="name" />
+					<field name="employee_id"/>
+					<field name="date_start"/>
+					<field name="state"/>
+				</tree>
+			</field>
+		</record>
+
+
+		<record id="view_sakit_berkepanjangan_form" model="ir.ui.view">
+			<field name="name">sakit.berkepanjangan.form</field>
+			<field name="model">hr.sakit.berkepanjangan</field>
+			<field name="type">form</field>
+			<field name="priority" eval="8"/>
+			<field name="arch" type="xml">
+				<form>
+					<header>
+						<button string="Progress" name="progress" type="object" states="new" class="oe_highlight"/>
+						<button string="Finish" name="finish" type="object" states="approve" class="oe_highlight"/>
+						<button string="Set to New" name="set_to_new" type="object" class="oe_highlight"/>
+						<field name="state" widget="statusbar"/>
+					</header>
+					
+					<sheet>
+						<div class="oe_title">
+		                    <label for="name"/>
+		                    <h1>
+		                        <field name="name" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+		                    </h1>
+	                	</div>
+	                	<group>
+	                		<field name="employee_id" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+	                		<field name="date_start" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+	                	</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="view_sakit_berkepanjangan_filter" model="ir.ui.view">
+            <field name="name">form.sakit.berkepanjangan.filter</field>
+            <field name="model">hr.sakit.berkepanjangan</field>
+            <field name="arch" type="xml">
+                <search string="Search Tanggal">
+                    <field name="date_start" string="tanggal"/>
+               </search>
+            </field>
+        </record>
+		
+
+		<record id="action_sakit_berkepanjangan" model="ir.actions.act_window">
+			<field name="name">Sakit Berkepanjangan</field>
+			<field name="res_model">hr.sakit.berkepanjangan</field>
+			<field name="view_mode">tree,form</field>
+			<field name="view_id" ref="view_sakit_berkepanjangan_tree"/>
+			<field name="help" type="html">
+			<field name="search_view_id" ref="view_sakit_berkepanjangan_filter"/>
+				<p class="oe_view_nocontent_create">
+				Click to add a new data
+				</p>
+				<p>klik tombol create untuk membuat data baru</p>
+			</field>
+		</record>
+
+
+		<menuitem
+            id="menu_sakit_berkepanjangan"
+            name="Sakit Berkepanjangan"
+            parent="hr.menu_hr_root"
+            sequence="101"/>
+
+        <menuitem
+            id="menu_view_sakit_berkepanjangan"
+            action="action_sakit_berkepanjangan"
+            parent="menu_sakit_berkepanjangan"
+            sequence="1"/>
+
+	</data>
+</odoo>

@@ -65,7 +65,7 @@ class hr_employee(models.Model):
 	medical_ids				= fields.One2many('hr.employee.plafon.medical','medical_id',' ')
 	medical_trigger			= fields.Boolean('Med.Trigger', compute="_get_trigger")
 	#join_date       		= fields.Date('Join Date', compute='_get_join_date',store=True)
-	join_date       		= fields.Date('Join Date')
+	join_date       		= fields.Date('Join Date', default=fields.Date.today())
 	join_date_trigger		= fields.Boolean('JD Trigger') 
 
 

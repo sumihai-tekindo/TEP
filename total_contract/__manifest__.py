@@ -9,6 +9,7 @@
     'category'  : 'Human Resource',
     'depends'   : ['base','hr'],
     'data'      : [
+            'views/hr_contract_view.xml',
     ],
     'demo': [
     ],

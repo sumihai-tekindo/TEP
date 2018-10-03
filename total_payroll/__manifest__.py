@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 {
-    'name'      : "Totalindo Employee",
+    'name'      : "Totalindo Payroll",
     'version'   : '1.1',
-    'summary'   : 'Inherit Employee Module',
+    'summary'   : 'HR Payroll',
     'sequence'  : 30,
     'author'    : "Dion Martin",
     # 'website'   : "http://odooabc.com",
     'category'  : 'Human Resource',
-    'depends'   : ['base','hr','hr_expense'],
+    'depends'   : ['base','hr','hr_payroll'],
     'data'      : [
-            'views/hr_employee_view.xml',
-            'views/hr_mutasi_view.xml',
-            'views/hr_phk_view.xml',
-            'views/hr_sakit_berkepanjangan_view.xml',
+            'data/hr_rule_data.xml',
     ],
     'demo': [
     ],
