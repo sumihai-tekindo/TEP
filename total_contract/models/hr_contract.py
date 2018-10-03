@@ -78,7 +78,6 @@ class hr_contract(models.Model):
 		bulan_berjalan = datetime.strptime(today,dateFormat).month
 		if self.state == 'open':
 			cuti_sakit = self.env['hr.holidays'].search([('employee_id','=',self.employee_id.id),('type','=','remove'),('state','=','validate')])
-			print ">><<<", cuti_sakit
 			for sakit in cuti_sakit:
 				bulan_cuti = datetime.strptime(sakit.date_from,datetimeFormat).month
 				if bulan_cuti == bulan_berjalan:
@@ -104,7 +103,6 @@ class hr_contract(models.Model):
 
 
 	def get_sakit_berkepanjangan(self,is_sakit_berkepanjangan,employee_id,contract_id,basic,allowance,deduction):
-		print "qweqwe", basic,allowance,deduction
 		datetimeFormat = '%Y-%m-%d'
 		dateFormat = '%Y-%m-%d'
 		today = fields.Date.today()
@@ -117,10 +115,8 @@ class hr_contract(models.Model):
 					lama_sakit_str = str((bulan_berjalan-bulan_awal_sakit).days)
 					lama_sakit = int(lama_sakit_str) / 30
 					contract_ids = self.env['hr.contract'].search([('id','=',contract_id)])
-					print ">>>", lama_sakit
 					if len(contract_ids) == 1:
 						for con in contract_ids:
-							print "WEKWKEKW", lama_sakit
 							if lama_sakit > 0 and lama_sakit <= 4:
 								result = con.wage + con.transport_wage + con.meal_wage + con.overtime_wage
 							elif lama_sakit > 4 and lama_sakit <=8:
@@ -133,7 +129,6 @@ class hr_contract(models.Model):
 								result = 0
 
 		else:
-			print "ELESEEEEEEEEEEEE" 
 			result = int(basic) + int(allowance) + int(deduction)
 
 
