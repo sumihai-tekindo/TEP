@@ -40,6 +40,16 @@
             <field name="amount_python_compute">result = contract.medical_reimbursement</field>
         </record>
 
+        <record id="hr_rule_thrt" model="hr.salary.rule">
+            <field name="name">THR</field>
+            <field name="sequence" eval="5"/>
+            <field name="code">THR</field>
+            <field name="category_id" ref="hr_payroll.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = contract.get_thr(payslip.id, contract.id)</field>
+        </record>
+
         <record id="hr_rule_cicilan" model="hr.salary.rule">
             <field name="name">Cicilan</field>
             <field name="sequence" eval="7"/>
@@ -91,6 +101,8 @@
             <field name="register_id" ref="hr_payroll.contrib_register_employees"/>
         </record>
 
+        
+
 
         <record id="totalindo_base" model="hr.payroll.structure">
             <field name="code">BASET</field>
@@ -99,10 +111,11 @@
                 , ref('hr_rule_meal')
                 , ref('hr_rule_overtime')
                 , ref('hr_rule_medical_reimbursement')
+                , ref('hr_rule_cicilan')
                 , ref('hr_rule_jaminan_hari_tua')
                 , ref('hr_rule_cuti_minus')
                 , ref('hr_rule_cuti_sakit_lebih_dari_satu_hari')
-                , ref('hr_rule_cuti_sakit_lebih_dari_satu_hari')])]" name="rule_ids"/>
+                , ref('hr_rule_thrt')])]" name="rule_ids"/>
             <field name="company_id" ref="base.main_company"/>
             <field name="parent_id" ref="hr_payroll.structure_base"/>
         </record>

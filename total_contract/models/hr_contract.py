@@ -20,6 +20,7 @@ class hr_contract(models.Model):
 	cuti_minus			= fields.Float('Cuti Minus',compute='_get_cuti_minus')
 
 	cuti_sakit_lebih_dari_satu_hari = fields.Float('Cuti Sakit Lebih dari 1 Hari tanpa Surat Dokter',compute='_get_cuti_sakit')
+	pinjaman_id 		= fields.Many2one('pinjaman.karyawan','Pinjaman',compute='_get_cicilan')
 	#cuti_sakit_lebih_dari_satu_hari = fields.Float('Cuti Minus')
 
 	@api.onchange('trial_date_start','date_start')
@@ -44,7 +45,7 @@ class hr_contract(models.Model):
 						bulan_pemotongan = datetime.strptime(detail.tanggal_cicil,datetimeFormat).month
 						if bulan_pemotongan == bulan_berjalan:
 							self.cicilan_active = detail.nilai_cicilan
-
+							self.pinjaman_id = pinjaman.id
 
 	@api.one
 	def _get_medical_reimbursement(self):
@@ -134,3 +135,51 @@ class hr_contract(models.Model):
 
 		return int(result)
 
+
+
+
+	def get_thr(self,payslip_id,contract_id):
+		datetimeFormat = '%Y-%m-%d'
+		dateFormat = '%Y-%m-%d'
+		today = fields.Date.today()
+		bulan_berjalan = datetime.strptime(today,dateFormat)
+		payslip_ids = self.env['hr.payslip'].search([('id','=',payslip_id)])
+		for x in payslip_ids:
+			date_to = datetime.strptime(x.date_to,dateFormat).month
+			if date_to == 12:
+				join_date = datetime.strptime(x.employee_id.join_date,datetimeFormat)
+				bulan_payslip = datetime.strptime(x.date_to,datetimeFormat)
+				lama_kerja_str = str((bulan_payslip-join_date).days)
+				lama_kerja = int(lama_kerja_str) / 30
+				contract_ids = self.env['hr.contract'].search([('id','=',contract_id)])
+				if len(contract_ids) == 1:
+						for con in contract_ids:
+							print "kkkkkk"
+							if lama_kerja <= 12:
+								result = (lama_kerja/12) * (con.wage + con.transport_wage + con.meal_wage + con.overtime_wage)
+							else:
+								result = con.wage + con.transport_wage + con.meal_wage + con.overtime_wage
+			else:
+				result = 0
+
+		return int(result)
+
+                    # Available variables:
+                    #----------------------
+                    # payslip: object containing the payslips
+                    # employee: hr.employee object
+                    # contract: hr.contract object
+                    # rules: object containing the rules code (previously computed)
+                    # categories: object containing the computed salary rule categories (sum of amount of all rules belonging to that category).
+                    # worked_days: object containing the computed worked days
+                    # inputs: object containing the computed inputs
+
+                    # Note: returned value have to be set in the variable 'result'
+
+                    #result = rules.NET > categories.NET * 0.10
+
+
+
+
+
+      
