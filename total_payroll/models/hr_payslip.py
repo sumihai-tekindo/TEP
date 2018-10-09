@@ -21,7 +21,6 @@ class hr_payslip(models.Model):
 		for cicilan in self.contract_id.pinjaman_id.detail_ids:
 			bulan_pemotongan = datetime.strptime(cicilan.tanggal_cicil,dateFormat).month
 			tahun_pemotongan = datetime.strptime(cicilan.tanggal_cicil,dateFormat).year
-			print "assddf", bulan_pemotongan, tahun_pemotongan
 			if bulan_gajian == bulan_pemotongan and tahun_gajian == tahun_pemotongan:
 				cicilan.write({'state': 'lunas'})
 		self.compute_sheet()

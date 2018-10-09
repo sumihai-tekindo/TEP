@@ -1,28 +1,28 @@
 <odoo>
 	<data>
 		<record model="ir.ui.view" id="hr_contract_view_form_inherit">
-            <field name="name">hr.contract</field>
-            <field name="model">hr.contract</field>
-            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
-            <field name="arch" type="xml">
-            	<field name="wage" position="after">
-            		<field name="transport_wage"/>
-            		<field name="meal_wage"/>
-            		<field name="overtime_wage"/>
-            	</field>
-            	<xpath expr="//page[2]" position="after">
-            		<page string="Payroll Information">
-            			<group>
-            				<field name="cicilan_active"/>
-                                    <field name="is_sakit_berkepanjangan"/>
-                                    <field name="medical_reimbursement"/>
-                                    <field name="cuti_minus"/>
-                                    <field name="cuti_sakit_lebih_dari_satu_hari"/>
-                                    <field name="pinjaman_id" invisible="1"/>
-            			</group>
-            		</page>
-            	</xpath>
-            </field>
-    	</record>
+                  <field name="name">hr.contract</field>
+                  <field name="model">hr.contract</field>
+                  <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+                  <field name="arch" type="xml">
+                  	<field name="wage" position="after">
+                  		<field name="transport_wage"/>
+                  		<field name="meal_wage"/>
+                  		<field name="overtime_wage"/>
+                  	</field>
+                  	<xpath expr="//page[2]" position="after">
+                  		<page string="Payroll Information">
+                  			<group>
+                  				<field name="cicilan_active"/>
+                                          <field name="is_sakit_berkepanjangan"/>
+                                          <field name="medical_reimbursement"/>
+                                          <field name="cuti_minus"/>
+                                          <field name="cuti_sakit_lebih_dari_satu_hari"/>
+                                          <field name="pinjaman_id" invisible="1"/>
+                  			</group>
+                  		</page>
+                  	</xpath>
+                  </field>
+            </record>
 	</data>
 </odoo>
