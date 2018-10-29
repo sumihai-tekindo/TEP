@@ -21,6 +21,8 @@ class hr_contract(models.Model):
 
 	cuti_sakit_lebih_dari_satu_hari = fields.Float('Cuti Sakit Lebih dari 1 Hari tanpa Surat Dokter',compute='_get_cuti_sakit')
 	pinjaman_id 		= fields.Many2one('pinjaman.karyawan','Pinjaman',compute='_get_cicilan')
+	two_month_notice	= fields.Boolean('2 Notice', compute='_get_notice')
+	one_month_notice	= fields.Boolean('1 Notice', compute='_get_notice')
 	#cuti_sakit_lebih_dari_satu_hari = fields.Float('Cuti Minus')
 
 	@api.onchange('trial_date_start','date_start')
@@ -30,6 +32,32 @@ class hr_contract(models.Model):
 			employee_obj.write({'join_date_trigger':False})
 		else:
 			employee_obj.write({'join_date_trigger':True})
+
+
+
+	@api.one
+	def _get_notice(self):
+		datetimeFormat = '%Y-%m-%d'
+		today = fields.Date.today()
+		bulan_berjalan = datetime.strptime(today,datetimeFormat)
+		if self.state == 'open':
+			if self.date_end:
+				print "1"
+				end_date_contract = datetime.strptime(self.date_end,datetimeFormat)
+				days_notice = str((end_date_contract-bulan_berjalan).days)
+				days_notice_int = int(days_notice) / 30
+			else:
+				print"2"
+				end_date_contract_prob = datetime.strptime(self.trial_date_end,datetimeFormat)
+				days_notice = str((end_date_contract_prob-bulan_berjalan).days)
+				days_notice_int = int(days_notice) / 30
+
+			
+			if days_notice_int == 2:
+				self.two_month_notice = True
+			elif days_notice_int == 1:
+				self.one_month_notice = True
+
 
 
 	@api.one

@@ -19,9 +19,26 @@
                                           <field name="cuti_minus"/>
                                           <field name="cuti_sakit_lebih_dari_satu_hari"/>
                                           <field name="pinjaman_id" invisible="1"/>
+                                          <field name="two_month_notice"/>
+                                          <field name="one_month_notice"/>
                   			</group>
                   		</page>
                   	</xpath>
+                  </field>
+            </record>
+
+            <record model="ir.ui.view" id="hr_contract_view_tree_inherit">
+                  <field name="name">hr.contract</field>
+                  <field name="model">hr.contract</field>
+                  <field name="inherit_id" ref="hr_contract.hr_contract_view_tree"/>
+                  <field name="arch" type="xml">
+                        <xpath expr="//field[@name='date_end']" position="after">
+                              <field name="two_month_notice" invisible="1"/>
+                              <field name="one_month_notice" invisible="1"/>
+                        </xpath>
+                        <xpath expr="/tree" position="attributes">
+                              <attribute name="colors">orange:two_month_notice==True;red:one_month_notice==True</attribute>
+                        </xpath>
                   </field>
             </record>
 	</data>
