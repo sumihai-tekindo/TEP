@@ -34,6 +34,8 @@ class SuratPeringatan(models.Model):
 													('rejected','Rejected'),
 													('done','Done')],'State', default="new")
 
+	create_uid					= fields.Many2one('res.users', default=lambda self:self.env.user)
+
 
 	@api.onchange('employee_id')
 	def onchange_employee(self):
@@ -54,7 +56,6 @@ class SuratPeringatan(models.Model):
 					return False
 
 
-
 	@api.one
 	def submit_to_legal(self):
 		sp_obj = self.env['surat.peringatan']
@@ -69,8 +70,13 @@ class SuratPeringatan(models.Model):
 						self.state = 'submit_to_legal'
 				else:
 					self.phk = True
-					self.state = 'submit_to_legal'
-		self.state = 'submit_to_legal'
+					# self.state = 'submit_to_legal'
+
+		if self.name == '/':
+			self.name = self.env['ir.sequence'].next_by_code('surat.peringatan') or '/'
+			self.state = 'submit_to_legal' 
+		else:
+			self.state = 'submit_to_legal'
 
 
 	@api.one

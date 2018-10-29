@@ -37,7 +37,8 @@
 						<div class="oe_title">
 	                        <label for="name"/>
 	                        <h1>
-	                            <field name="name" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+	                            <!-- <field name="name" attrs="{'readonly': [('state', '!=', 'new')]}"/> -->
+	                            <field name="name" readonly="1"/>
 	                        </h1>
                     	</div>
                     	<group>
@@ -57,7 +58,8 @@
                     			<field name="tipe_sp" attrs="{'readonly': [('state', '!=', 'new')]}"/>
                     			<field name="category_id" attrs="{'readonly': [('state', '!=', 'new')]}"/>
                     			<field name="note" attrs="{'readonly': [('state', '!=', 'new')]}"/>
-                    			<field name="phk" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+                    			<field name="create_uid" attrs="{'readonly': [('state', '!=', 'new')]}"/>
+                    			<field name="phk" attrs="{'readonly': [('state', '!=', 'new')]}" invisible="1"/>
                     		</group>
                     	</group>
 					</sheet>
