@@ -9,6 +9,9 @@
     'category'  : 'Human Resource',
     'depends'   : ['base','hr','hr_expense'],
     'data'      : [
+            'report/report_config.xml', 
+            'report/report_surat_perintah_penugasan.xml',
+            'report/report_surat_perintah_penarikan.xml',
             'views/hr_employee_view.xml',
             'views/hr_mutasi_view.xml',
             'views/hr_phk_view.xml',

@@ -31,7 +31,7 @@ class MutasiKaryawan(models.Model):
 
 	@api.one
 	def approve(self):
-		self.state = 'approve'
+		self.state = 'approved'
 
 	@api.one
 	def reject(self):

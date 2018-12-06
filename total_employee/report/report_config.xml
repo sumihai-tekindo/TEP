@@ -1,0 +1,22 @@
+<odoo>
+    <data>
+         <report 
+            id="report_mutasi_karyawan"
+            string="Surat Perintah Penugasan"
+            model="hr.mutasi.karyawan.detail" 
+            report_type="qweb-pdf"
+            file="total_employee.report_surat_perintah_penugasan" 
+            name="total_employee.report_surat_perintah_penugasan"
+        />
+
+
+        <report 
+            id="report_penarikan_karyawan"
+            string="Surat Perintah Penarikan"
+            model="hr.mutasi.karyawan.detail" 
+            report_type="qweb-pdf"
+            file="total_employee.report_surat_perintah_penarikan" 
+            name="total_employee.report_surat_perintah_penarikan"
+        />
+    </data>
+</odoo>

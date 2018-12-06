@@ -26,7 +26,9 @@
 						<button string="Submit" name="submit" type="object" states="new" class="oe_highlight"/>
 						<button string="Approve" name="approve" type="object" states="submit" class="oe_highlight"/>
 						<button string="Reject" name="reject" type="object" states="submit" class="oe_highlight"/>
+						<!-- <button name="%(report_mutasi_karyawan)d" string="Print Surat Penugasan" type="action" states='approved'/> -->
 						<field name="state" widget="statusbar"/>
+						
 					</header>
 					<sheet>
 						<div class="oe_title">
@@ -49,6 +51,8 @@
                     					<field name="proyek_dituju"/>
                     					<field name="jabatan_baru"/>
                     					<field name="mobilisasi_date"/>
+                    					<button name="%(report_mutasi_karyawan)d" string="Penugasan" type="action"/>
+                    					<button name="%(report_penarikan_karyawan)d" string="Penarikan" type="action"/>
                     				</tree>
                     			</field>
                     		</page>

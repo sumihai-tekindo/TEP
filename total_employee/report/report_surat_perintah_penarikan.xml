@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+<template id="report_surat_perintah_penarikan">
+    <t t-call="report.external_layout">
+        <t t-foreach="docs" t-as="o">
+            <div class="page">
+                <div class="oe_structure"/>
+                <div class="row">
+                    
+                </div>
+ 
+                <div class="row mt32 mb32" id="informations">
+            </div>
+            <br/>
+            <p align="center">Surat Perintah Penarikan</p>
+            <p align="center"><strong><u><span t-field="o.detail_id.name"/></u></strong></p>
+            
+
+
+            <p><left>I.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; Dasar</left></p>
+            <p><left>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; Peraturan Perusahaan PT Totalindo Eka Persada Tbk</left></p>
+            <p><left>II.&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; Diperintahkan kepada:</left></p>
+            <p><left>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; -&#160;&#160; Nama &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; : &#160; <span t-field="o.nama_karyawan.name"/> </left></p>
+            <p><left>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; -&#160;&#160; Jabatan &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; : &#160; <span t-field="o.jabatan_semula.name"/> </left></p>
+            <p><left>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; -&#160;&#160; Proyek Asal &#160;&#160;&#160;&#160; : &#160; <span t-field="o.proyek_semula.name"/> </left></p>
+            <br/>
+
+            <p><left>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;** &#160;&#160;&#160;&#160; Untuk bertugas di proyek <span t-field="o.proyek_dituju.name"/> terhitung mulai <span t-field="o.mobilisasi_date" t-field-options='{"format": "d MMMM y"}'/></left></p>
+            
+            <p><left>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;** &#160;&#160;&#160;&#160; Surat Perintah Penarikan ini berlaku sejak tanggal <span t-field="o.detail_id.tanggal_pengajuan" t-field-options='{"format": "d MMMM y"}'/> sampai adanya ketentuan baru </left></p>
+            <p><left>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;** &#160;&#160;&#160;&#160; Agar Surat Perintah Penarikan ini dijalankan dengan sebaik-baiknya dan dengan penuh rasa tanggung jawab</left></p>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <p><left>Jakarta,<span t-field="o.detail_id.tanggal_pengajuan" t-field-options='{"format": "d MMMM y"}'/> </left></p>
+            <p><left>PT. Totalindo Eka Persada Tbk. </left></p>
+            <br/>
+            <br/>
+            <br/>
+            <p><left>HR &amp; GA Manager </left></p>
+
+            </div>
+        </t>
+    </t>
+</template>
+
+
+<template id="report_surat_penarikan_template">
+    <t t-call="report.html_container">
+        <t t-foreach="doc_ids" t-as="doc_id">
+            <t t-raw="translate_doc(doc_id, doc_model, 'partner_id.lang', 'total_employee.report_surat_perintah_penarikan')"/>
+        </t>
+    </t>
+</template>
+
+</data>
+</odoo>
+
