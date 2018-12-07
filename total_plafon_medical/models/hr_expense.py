@@ -8,7 +8,7 @@ class hr_expense(models.Model):
 	_inherit = 'hr.expense'
 
 
-
+	product_name 				= fields.Char('Product Name',related="product_id.name")
 	tipe_medical			= fields.Many2one('hr.plafon.medical','Tipe Medical')
 	nilai_maksimal			= fields.Float('Nilai Maksimal',compute="_get_nilai", store=True)
 

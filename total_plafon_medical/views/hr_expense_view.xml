@@ -22,8 +22,9 @@
                         <field name="state" widget="statusbar" statusbar_visible="draft,reported,done"/>
                   </field>
                   <field name="product_id" position="after">
-                        <field name="tipe_medical" attrs="{'invisible': [('product_id', '!=',42)]}"/>
-                        <field name="nilai_maksimal" attrs="{'invisible': [('product_id', '!=',42)]}"/>
+                        <field name="product_name" invisible="1"/>
+                        <field name="tipe_medical" attrs="{'invisible': [('product_name', '!=','Medical')]}"/>
+                        <field name="nilai_maksimal" attrs="{'invisible': [('product_name', '!=','Medical')]}"/>
                   </field>
             	<field name="unit_amount" position="attributes">
             		<attribute name="invisible">1</attribute>
@@ -41,7 +42,7 @@
             		<notebook>
             			<page string="Detail">
             				<group>
-            					<group attrs="{'invisible': [('product_id', '!=',42)]}">
+            					<group attrs="{'invisible': [('product_name', '!=','Medical')]}">
             						<field name="nama_pasien"/>
             						<field name="nama_dokter"/>
             						<field name="nama_rumah_sakit"/>
@@ -51,17 +52,17 @@
             						<field name="butuh_istirahat"/>
             						<label for="istirahat_sakit_selama"/>
       	                                    <div class="o_row">
-            	                                    <field name="istirahat_sakit_selama"/><field name="istirahat_sakit_selection" attrs="{'invisible': [('product_id', '!=',42)]}"/>
+            	                                    <field name="istirahat_sakit_selama"/><field name="istirahat_sakit_selection" attrs="{'invisible': [('product_name', '!=','Medical')]}"/>
       	                                    </div>
-      	                                    <field name="lain_lain" attrs="{'invisible': [('product_id', '!=',42)]}"/>
+      	                                    <field name="lain_lain" attrs="{'invisible': [('product_name', '!=','Medical')]}"/>
             					</group>
             					<group>
-            						<field name="biaya_konsultasi_dokter" attrs="{'invisible': [('product_id', '!=',42)]}"/>
-            						<field name="biaya_obat" attrs="{'invisible': [('product_id', '!=',42)]}"/>
-            						<field name="biaya_lab" attrs="{'invisible': [('product_id', '!=',42)]}"/>
-            						<field name="biaya_rumah_sakit" attrs="{'invisible': [('product_id', '!=',42)]}"/>
-            						<field name="biaya_lain" attrs="{'invisible': [('product_id', '!=',42)]}"/>
-            						<field name="total_biaya" attrs="{'invisible': [('product_id', '!=',42)]}"/>
+            						<field name="biaya_konsultasi_dokter" attrs="{'invisible': [('product_name', '!=','Medical')]}"/>
+            						<field name="biaya_obat" attrs="{'invisible': [('product_name', '!=','Medical')]}"/>
+            						<field name="biaya_lab" attrs="{'invisible': [('product_name', '!=','Medical')]}"/>
+            						<field name="biaya_rumah_sakit" attrs="{'invisible': [('product_name', '!=','Medical')]}"/>
+            						<field name="biaya_lain" attrs="{'invisible': [('product_name', '!=','Medical')]}"/>
+            						<field name="total_biaya" attrs="{'invisible': [('product_name', '!=','Medical')]}"/>
             						<field name="total_penggantian"/>
             					</group>
             				</group>
