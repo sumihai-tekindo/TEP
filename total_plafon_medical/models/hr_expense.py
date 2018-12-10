@@ -41,7 +41,7 @@ class hr_expense(models.Model):
 	@api.one
 	@api.depends('tipe_medical','product_id')
 	def _get_nilai(self):
-		if self.tipe_medical and self.product_id.name == 'Expenses':
+		if self.tipe_medical and self.product_id.name == 'Medical':
 			self.nilai_maksimal = self.tipe_medical.nilai
 
 	state = fields.Selection([
@@ -65,10 +65,10 @@ class hr_expense(models.Model):
 			expense.total_amount = expense.total_penggantian
 
 
-	@api.onchange('biaya_konsultasi_dokter','biaya_obat','biaya_lab','biaya_rumah_sakit','biaya_lain','total_biaya','tipe_medical')
+	@api.onchange('biaya_konsultasi_dokter','biaya_obat','biaya_lab','biaya_rumah_sakit','biaya_lain','total_biaya','tipe_medical','total_penggantian')
 	def onchange_biaya(self):
 		self.total_biaya = self.biaya_konsultasi_dokter + self.biaya_obat + self.biaya_lab + self.biaya_rumah_sakit + self.biaya_lain
-		if self.product_id.name == 'Expenses' and self.tipe_medical.name != 'Sakit':
+		if self.product_id.name == 'Medical' and self.tipe_medical.name != 'Sakit':
 			if self.total_biaya > self.nilai_maksimal:
 				self.total_penggantian = self.nilai_maksimal
 			else:
@@ -86,7 +86,7 @@ class hr_expense(models.Model):
 		prof_data_kontrak = self.env['hr.employee.category'].search([('name','=','Kontrak')])
 		date_expense = datetime.strptime(self.date, datetimeFormat)
 		date_expense_year = date_expense.year
-		if self.product_id.name == 'Expenses' and self.tipe_medical.name != 'Sakit':
+		if self.product_id.name == 'Medical' and self.tipe_medical.name != 'Sakit':
 			if prof_data_probation in self.employee_id.category_ids:
 				raise UserError(_("Maaf, karyawan masih probation"))
 			if self.employee_id.gender == 'female' and not self.employee_id.surat_pernyataan:
@@ -115,7 +115,6 @@ class hr_expense(models.Model):
 
 
 			if str(date_expense_year) not in plafon_amount:
-				print "MARTIN",date_expense_year, plafon_amount
 				raise UserError(_('Plafon tidak Tersedia'))
 			else:
 				for x in self.employee_id.medical_ids:

@@ -31,6 +31,8 @@ class MutasiKaryawan(models.Model):
 
 	@api.one
 	def approve(self):
+		for detail in self.detail_ids:
+			lead_id.write({'project': detail.proyek_dituju.id,'job_id':detail.jabatan_baru})
 		self.state = 'approved'
 
 	@api.one
@@ -48,3 +50,8 @@ class MutasiKaryawanDetail(models.Model):
 	proyek_dituju				= fields.Many2one('project.project','Proyek Dituju')
 	jabatan_baru				= fields.Many2one('hr.job','Jabatan Baru')
 	mobilisasi_date				= fields.Date('Mobilisasi')
+
+	@api.onchange('nama_karyawan')
+	def onchange_nama_karyawan(self):
+		self.proyek_semula = self.nama_karyawan.project.detail_id
+		self.jabatan_semula = self.nama_karyawan.job_id.id
