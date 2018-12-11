@@ -55,5 +55,5 @@ class MutasiKaryawanDetail(models.Model):
 
 	@api.onchange('nama_karyawan')
 	def onchange_nama_karyawan(self):
-		self.proyek_semula = self.nama_karyawan.project.detail_id
+		self.proyek_semula = self.nama_karyawan.project.id
 		self.jabatan_semula = self.nama_karyawan.job_id.id
