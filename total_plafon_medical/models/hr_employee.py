@@ -29,7 +29,7 @@ class hr_employee(models.Model):
 				bulan_berjalan = str((end_year_formatted-join_date_formatted).days)
 				bulan_berjalan_int = int(bulan_berjalan) / 30
 				if int(bulan_berjalan_int) >= 12:
-					saldo = contract_data.wage
+					saldo = contract_data.wage + contract_data.transport_wage + contract_data.meal_wage + contract_data.overtime_wage
 				else:
 					saldo = float(bulan_berjalan_int)/12 * contract_data.wage
 				for x in self.medical_ids:
