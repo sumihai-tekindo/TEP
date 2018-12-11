@@ -34,7 +34,7 @@ class MutasiKaryawan(models.Model):
 		for detail in self.detail_ids:
 			employee_id = self.env['hr.employee'].search([('id','=',detail.nama_karyawan.id)])
 			for employee in employee_id:
-				employee.write({'project': detail.proyek_dituju.id,'job_id':detail.jabatan_baru})
+				employee.write({'project': detail.proyek_dituju.id,'job_id':detail.jabatan_baru.id})
 		self.state = 'approved'
 
 	@api.one

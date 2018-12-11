@@ -65,7 +65,7 @@ class hr_expense(models.Model):
 			expense.total_amount = expense.total_penggantian
 
 
-	@api.onchange('biaya_konsultasi_dokter','biaya_obat','biaya_lab','biaya_rumah_sakit','biaya_lain','total_biaya','tipe_medical','total_penggantian')
+	@api.onchange('biaya_konsultasi_dokter','biaya_obat','biaya_lab','biaya_rumah_sakit','biaya_lain','total_biaya','tipe_medical')
 	def onchange_biaya(self):
 		self.total_biaya = self.biaya_konsultasi_dokter + self.biaya_obat + self.biaya_lab + self.biaya_rumah_sakit + self.biaya_lain
 		if self.product_id.name == 'Medical' and self.tipe_medical.name != 'Sakit':
@@ -180,13 +180,15 @@ class hr_expense_sheet(models.Model):
 		else:
 			self.write({'state': 'done'})
 
-		for plafon in self.employee_id.medical_ids:
-			if str(date_expense_year) == plafon.tahun:
-				total = plafon.saldo_medical - self.total_amount
-				if total < 0:
-					raise Warning('Error')
-				else:
-					plafon.write({'saldo_medical': total})
+		for line in self.expense_line_ids:
+			if line.tipe_medical.name == 'Sakit':
+				for plafon in self.employee_id.medical_ids:
+					if str(date_expense_year) == plafon.tahun:
+						total = plafon.saldo_medical - self.total_amount
+						if total < 0:
+							raise Warning('Error')
+						else:
+							plafon.write({'saldo_medical': total})
 
 
 
