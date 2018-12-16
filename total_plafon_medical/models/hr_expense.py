@@ -48,10 +48,21 @@ class hr_expense(models.Model):
         ('draft', 'To Submit'),
         ('reported', 'Approved by PM'),
         ('done', 'Posted'),
+        ('rejected','Rejected'),
+        ('set_to_draft','Set to Draft'),
         ('refused', 'Refused')
         ], compute='_compute_state', string='Status', copy=False, index=True, readonly=True, store=True,
         help="Status of the expense.")	
 
+
+
+	@api.one
+	def rejected(self):
+		self.state = 'rejected'
+
+	@api.one
+	def set_to_draft(self):
+		self.state = 'draft'
 
 	@api.one
 	@api.depends('date')
@@ -62,7 +73,10 @@ class hr_expense(models.Model):
 	@api.depends('biaya_konsultasi_dokter','biaya_obat','biaya_lab','biaya_rumah_sakit','biaya_lain','total_biaya')
 	def _compute_amount(self):
 		for expense in self:
-			expense.total_amount = expense.total_penggantian
+			if expense.tipe_medical.name != 'Sakit':
+				expense.total_amount = expense.nilai_maksimal
+			else:
+				expense.total_amount = expense.total_penggantian
 
 
 	@api.onchange('biaya_konsultasi_dokter','biaya_obat','biaya_lab','biaya_rumah_sakit','biaya_lain','total_biaya','tipe_medical')
@@ -96,9 +110,8 @@ class hr_expense(models.Model):
 				plafon_amount.append(str(x.tahun))
 
 
-			if str(date_expense_year) not in plafon_amount:
-				print "DION"
-				raise UserError(_('Plafon tidak Tersedia'))
+			# if str(date_expense_year) not in plafon_amount:
+			# 	raise UserError(_('Plafon tidak Tersedia'))
 			else:
 				for x in self.employee_id.medical_ids:
 					if str(date_expense_year) == x.tahun:
@@ -113,8 +126,7 @@ class hr_expense(models.Model):
 			for x in self.employee_id.medical_ids:
 				plafon_amount.append(str(x.tahun))
 
-
-			if str(date_expense_year) not in plafon_amount:
+			if self.tipe_medical.name == 'Sakit' and str(date_expense_year) not in plafon_amount:
 				raise UserError(_('Plafon tidak Tersedia'))
 			else:
 				for x in self.employee_id.medical_ids:

@@ -18,8 +18,15 @@
             <field name="model">hr.expense</field>
             <field name="inherit_id" ref="hr_expense.hr_expense_form_view"/>
             <field name="arch" type="xml">
+                  <button name="view_sheet" position="replace">
+                        <button name="view_sheet" type="object" string="View Report" class="oe_highlight" attrs="{'invisible': [('state', 'in',['draft','rejected'])]}"/>
+                  </button>
+                  <button name="submit_expenses" position="after">
+                        <button name="rejected" states="draft" type="object" class="oe_highlight" string="Reject"/>
+                        <button name="set_to_draft" states="rejected" type="object" class="oe_highlight" string="Set to Draft"/>
+                  </button>
                   <field name="state" position="replace">
-                        <field name="state" widget="statusbar" statusbar_visible="draft,reported,done"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,reported,done,rejected"/>
                   </field>
                   <field name="product_id" position="after">
                         <field name="product_name" invisible="1"/>
